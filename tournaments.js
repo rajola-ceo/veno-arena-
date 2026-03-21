@@ -509,7 +509,7 @@ if (menuSettings) menuSettings.addEventListener('click', () => window.location.h
 const venauraIcon = document.getElementById('venauraIcon');
 if (venauraIcon) {
     venauraIcon.addEventListener('click', () => {
-        window.open('https://your-venaura-app-url.com', '_blank');
+        window.open('https://venauraai.netlify.app/', '_blank');
     });
 }
 
