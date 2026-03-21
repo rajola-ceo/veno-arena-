@@ -24,6 +24,15 @@ const PRECACHE_ASSETS = [
   '/tournaments.js',
   '/nav.js',
   '/login.js',
+  '/icon-512x512.png',
+  '/icons/icon-72x72.png',
+  '/icons/icon-96x96.png',
+  '/icons/icon-128x128.png',
+  '/icons/icon-144x144.png',
+  '/icons/icon-152x152.png',
+  '/icons/icon-192x192.png',
+  '/icons/icon-384x384.png',
+  '/icons/icon-512x512.png',
   'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css',
   'https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css',
   'https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap'
@@ -89,23 +98,18 @@ self.addEventListener('fetch', event => {
   event.respondWith(
     caches.match(event.request)
       .then(cachedResponse => {
-        // Return cached response if available
         if (cachedResponse) {
           return cachedResponse;
         }
         
-        // Otherwise fetch from network
         return fetch(event.request)
           .then(networkResponse => {
-            // Don't cache if not successful
             if (!networkResponse || networkResponse.status !== 200) {
               return networkResponse;
             }
             
-            // Clone the response
             const responseToCache = networkResponse.clone();
             
-            // Open runtime cache
             caches.open(RUNTIME_CACHE)
               .then(cache => {
                 cache.put(event.request, responseToCache);
@@ -116,7 +120,6 @@ self.addEventListener('fetch', event => {
           .catch(error => {
             console.error('[Service Worker] Fetch error:', error);
             
-            // Return offline page for navigation requests
             if (event.request.mode === 'navigate') {
               return caches.match('/offline.html');
             }
@@ -129,118 +132,3 @@ self.addEventListener('fetch', event => {
       })
   );
 });
-
-// Background sync for offline messages
-self.addEventListener('sync', event => {
-  console.log('[Service Worker] Sync event:', event.tag);
-  
-  if (event.tag === 'sync-messages') {
-    event.waitUntil(syncMessages());
-  }
-});
-
-async function syncMessages() {
-  const pendingMessages = await getPendingMessages();
-  
-  for (const message of pendingMessages) {
-    try {
-      await sendMessageToServer(message);
-      await removePendingMessage(message.id);
-    } catch (error) {
-      console.error('Failed to sync message:', error);
-    }
-  }
-}
-
-// Push notification event
-self.addEventListener('push', event => {
-  console.log('[Service Worker] Push notification received');
-  
-  let data = {
-    title: 'Crunk Games',
-    body: 'You have a new notification',
-    icon: '/icons/icon-192x192.png',
-    badge: '/icons/badge-icon.png'
-  };
-  
-  if (event.data) {
-    try {
-      data = event.data.json();
-    } catch (e) {
-      data.body = event.data.text();
-    }
-  }
-  
-  const options = {
-    body: data.body,
-    icon: data.icon || '/icons/icon-192x192.png',
-    badge: data.badge || '/icons/badge-icon.png',
-    vibrate: [200, 100, 200],
-    data: {
-      url: data.url || '/',
-      dateOfArrival: Date.now()
-    },
-    actions: [
-      {
-        action: 'open',
-        title: 'Open',
-        icon: '/icons/open-icon.png'
-      },
-      {
-        action: 'close',
-        title: 'Close',
-        icon: '/icons/close-icon.png'
-      }
-    ]
-  };
-  
-  event.waitUntil(
-    self.registration.showNotification(data.title, options)
-  );
-});
-
-// Notification click event
-self.addEventListener('notificationclick', event => {
-  console.log('[Service Worker] Notification clicked');
-  
-  event.notification.close();
-  
-  const urlToOpen = event.notification.data?.url || '/';
-  
-  event.waitUntil(
-    clients.matchAll({
-      type: 'window',
-      includeUncontrolled: true
-    }).then(windowClients => {
-      // Check if there's already a window/tab open
-      for (let client of windowClients) {
-        if (client.url === urlToOpen && 'focus' in client) {
-          return client.focus();
-        }
-      }
-      // If not, open a new window
-      if (clients.openWindow) {
-        return clients.openWindow(urlToOpen);
-      }
-    })
-  );
-});
-
-// Helper functions for background sync
-async function getPendingMessages() {
-  // Get from IndexedDB or localStorage
-  const messages = localStorage.getItem('pendingMessages');
-  return messages ? JSON.parse(messages) : [];
-}
-
-async function sendMessageToServer(message) {
-  // Implement your message sending logic here
-  console.log('Sending message:', message);
-  return Promise.resolve();
-}
-
-async function removePendingMessage(id) {
-  const messages = await getPendingMessages();
-  const filtered = messages.filter(m => m.id !== id);
-  localStorage.setItem('pendingMessages', JSON.stringify(filtered));
-}
