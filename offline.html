@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Offline - Crunk Games</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #05070d, #0f172a);
+            color: #e6e6e6;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .offline-container {
+            max-width: 400px;
+        }
+        
+        .offline-icon {
+            font-size: 80px;
+            margin-bottom: 20px;
+            color: #10b981;
+        }
+        
+        h1 {
+            font-size: 28px;
+            margin-bottom: 12px;
+        }
+        
+        p {
+            color: #9ca3af;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+        
+        .retry-btn {
+            background: linear-gradient(135deg, #10b981, #059669);
+            border: none;
+            padding: 12px 32px;
+            border-radius: 40px;
+            color: white;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 20px;
+        }
+        
+        .retry-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(16, 185, 129, 0.4);
+        }
+        
+        .tips {
+            background: rgba(16, 185, 129, 0.1);
+            border-radius: 16px;
+            padding: 15px;
+            border: 1px solid rgba(16, 185, 129, 0.2);
+        }
+        
+        .tips h3 {
+            font-size: 14px;
+            margin-bottom: 10px;
+            color: #10b981;
+        }
+        
+        .tips ul {
+            list-style: none;
+            font-size: 12px;
+            color: #9ca3af;
+        }
+        
+        .tips li {
+            margin: 5px 0;
+        }
+        
+        .tips li i {
+            margin-right: 5px;
+            color: #10b981;
+        }
+    </style>
+</head>
+<body>
+    <div class="offline-container">
+        <div class="offline-icon">
+            <i class="fas fa-wifi"></i>
+        </div>
+        <h1>You're Offline</h1>
+        <p>Please check your internet connection and try again. Your saved data will sync when you're back online.</p>
+        <button class="retry-btn" onclick="location.reload()">
+            <i class="fas fa-sync-alt"></i> Try Again
+        </button>
+        
+        <div class="tips">
+            <h3><i class="fas fa-lightbulb"></i> What you can do offline:</h3>
+            <ul>
+                <li><i class="fas fa-check-circle"></i> View your saved teams</li>
+                <li><i class="fas fa-check-circle"></i> Check your Veno Coins balance</li>
+                <li><i class="fas fa-check-circle"></i> View previously loaded tournaments</li>
+                <li><i class="fas fa-check-circle"></i> Plan your next strategy</li>
+            </ul>
+        </div>
+    </div>
+    
+    <script>
+        // Listen for online event
+        window.addEventListener('online', () => {
+            location.reload();
+        });
+    </script>
+</body>
+</html>
