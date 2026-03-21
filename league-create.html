@@ -354,5 +354,44 @@
         });
     }
 </script>
+    <!-- PWA Service Worker Registration -->
+<script>
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js')
+            .then(registration => {
+                console.log('✅ Service Worker registered:', registration);
+            })
+            .catch(error => {
+                console.error('❌ Service Worker registration failed:', error);
+            });
+    });
+}
+
+// Show install prompt
+let deferredPrompt;
+window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    
+    // Optional: Show install button
+    const installBtn = document.getElementById('installBtn');
+    if (installBtn) {
+        installBtn.style.display = 'flex';
+        installBtn.onclick = () => {
+            deferredPrompt.prompt();
+            deferredPrompt.userChoice.then(() => {
+                deferredPrompt = null;
+                installBtn.style.display = 'none';
+            });
+        };
+    }
+});
+</script>
+
+<!-- Optional Install Button (add to top bar) -->
+<button id="installBtn" style="display: none; background: none; border: none; color: #10b981; cursor: pointer;">
+    <i class="fas fa-download"></i> Install App
+</button>
 </body>
 </html>
