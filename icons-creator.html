@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Crunk Games - 2000+ Icon Generator</title>
+    
+    <!-- Font Awesome 6 (Free Icons) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #05070d, #0a0e1a);
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            background: linear-gradient(135deg, #10b981, #34d399);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #9ca3af;
+        }
+
+        .stats {
+            text-align: center;
+            margin: 15px 0;
+            color: #10b981;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+
+        .search-box {
+            position: relative;
+            width: 300px;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 10px 20px;
+            background: rgba(31, 41, 55, 0.8);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            border-radius: 40px;
+            color: white;
+            font-size: 14px;
+            outline: none;
+        }
+
+        .search-box input:focus {
+            border-color: #10b981;
+        }
+
+        .filter-select {
+            padding: 10px 20px;
+            background: rgba(31, 41, 55, 0.8);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            border-radius: 40px;
+            color: white;
+            cursor: pointer;
+            outline: none;
+        }
+
+        .icon-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 12px;
+            max-height: 500px;
+            overflow-y: auto;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 20px;
+            margin-bottom: 30px;
+        }
+
+        .icon-card {
+            background: rgba(31, 41, 55, 0.6);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 15px 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(16, 185, 129, 0.2);
+        }
+
+        .icon-card:hover {
+            transform: translateY(-5px);
+            border-color: #10b981;
+            background: rgba(16, 185, 129, 0.15);
+        }
+
+        .icon-card.selected {
+            border-color: #10b981;
+            background: rgba(16, 185, 129, 0.3);
+            transform: scale(1.02);
+        }
+
+        .icon-preview-small {
+            font-size: 36px;
+            margin-bottom: 8px;
+            color: white;
+        }
+
+        .icon-name {
+            font-size: 10px;
+            color: #9ca3af;
+            word-break: break-word;
+        }
+
+        .main-preview {
+            background: rgba(31, 41, 55, 0.8);
+            backdrop-filter: blur(10px);
+            border-radius: 30px;
+            padding: 30px;
+            text-align: center;
+            margin-top: 20px;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+
+        .preview-icon {
+            font-size: 180px;
+            color: white;
+            margin-bottom: 20px;
+            filter: drop-shadow(0 10px 20px rgba(0,0,0,0.3));
+        }
+
+        .preview-name {
+            font-size: 18px;
+            font-weight: bold;
+            color: #10b981;
+            margin-bottom: 5px;
+        }
+
+        .preview-category {
+            font-size: 12px;
+            color: #9ca3af;
+            margin-bottom: 20px;
+        }
+
+        .download-area {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .download-btn {
+            background: linear-gradient(135deg, #10b981, #059669);
+            border: none;
+            padding: 12px 28px;
+            border-radius: 40px;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+        }
+
+        .download-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(16, 185, 129, 0.4);
+        }
+
+        .color-picker {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 15px;
+            justify-content: center;
+        }
+
+        .color-picker label {
+            color: #9ca3af;
+            font-size: 12px;
+        }
+
+        #iconColor {
+            width: 40px;
+            height: 40px;
+            border: 2px solid #10b981;
+            border-radius: 50%;
+            cursor: pointer;
+            background: white;
+        }
+
+        @media (max-width: 768px) {
+            .icon-grid {
+                grid-template-columns: repeat(auto-fill, minmax(75px, 1fr));
+                gap: 8px;
+            }
+            .icon-preview-small {
+                font-size: 28px;
+            }
+            .preview-icon {
+                font-size: 120px;
+            }
+            .header h1 {
+                font-size: 1.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎨 2000+ Icon Library</h1>
+            <p>Choose from 2000+ professional icons for your app</p>
+        </div>
+
+        <div class="stats" id="stats">Loading 2000+ icons...</div>
+
+        <div class="controls">
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="Search icons...">
+            </div>
+            <select id="categoryFilter" class="filter-select">
+                <option value="all">📁 All Categories</option>
+                <option value="gaming">🎮 Gaming</option>
+                <option value="sports">⚽ Sports</option>
+                <option value="technology">💻 Technology</option>
+                <option value="business">💼 Business</option>
+                <option value="social">💬 Social Media</option>
+                <option value="nature">🌿 Nature</option>
+                <option value="food">🍕 Food</option>
+                <option value="travel">✈️ Travel</option>
+                <option value="music">🎵 Music</option>
+                <option value="health">❤️ Health</option>
+                <option value="education">📚 Education</option>
+                <option value="finance">💰 Finance</option>
+                <option value="security">🔒 Security</option>
+                <option value="communication">📱 Communication</option>
+                <option value="arrows">➡️ Arrows</option>
+                <option value="shapes">🔷 Shapes</option>
+                <option value="brands">🏷️ Brands</option>
+            </select>
+        </div>
+
+        <div class="icon-grid" id="iconGrid"></div>
+
+        <div class="main-preview">
+            <div class="preview-icon" id="previewIcon">
+                <i class="fas fa-gamepad"></i>
+            </div>
+            <div class="preview-name" id="previewName">Gamepad</div>
+            <div class="preview-category" id="previewCategory">Gaming</div>
+            
+            <div class="color-picker">
+                <label>Icon Color:</label>
+                <input type="color" id="iconColor" value="#ffffff">
+            </div>
+            
+            <div class="download-area">
+                <button id="downloadBtn" class="download-btn">
+                    <i class="fas fa-download"></i> Download as PNG
+                </button>
+                <button id="downloadAllBtn" class="download-btn">
+                    <i class="fas fa-archive"></i> Download Pack (ZIP)
+                </button>
+            </div>
+            <div style="margin-top: 15px; font-size: 12px; color: #6b7280;">
+                Click any icon to select | Change color above | Download in 512x512
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script>
+        // ================= 2000+ ICON DATABASE =================
+        
+        const iconsDatabase = [];
+        let currentIcon = null;
+        let currentColor = '#ffffff';
+        
+        // Category definitions with icons
+        const categories = {
+            gaming: { name: 'Gaming', color: '#10b981', icons: [
+                'gamepad', 'joystick', 'chess', 'dice', 'dice-d6', 'dice-d20', 'puzzle-piece', 
+                'crown', 'trophy', 'medal', 'award', 'star', 'gem', 'fire', 'bolt', 
+                'skull', 'dragon', 'ghost', 'robot', 'alien', 'space-station', 'rocket',
+                'fighter-jet', 'bomb', 'gun', 'sword', 'shield', 'shield-haltered', 
+                'chess-board', 'chess-king', 'chess-queen', 'chess-rook', 'chess-bishop', 'chess-knight',
+                'cards', 'club', 'spade', 'heart', 'diamond', 'clover', 'infinity'
+            ]},
+            sports: { name: 'Sports', color: '#f59e0b', icons: [
+                'futbol', 'basketball', 'volleyball', 'baseball', 'basketball-ball', 'football',
+                'table-tennis', 'ping-pong', 'badminton', 'hockey-puck', 'golf-ball', 'bowling-ball',
+                'skiing', 'skiing-nordic', 'snowboarding', 'swimmer', 'swimming', 'running', 'walking',
+                'bicycle', 'motorcycle', 'car', 'bus', 'plane', 'ship', 'sailboat', 'anchor',
+                'trophy', 'medal', 'award', 'ribbon', 'medal', 'victory-hand', 'fist-raised'
+            ]},
+            technology: { name: 'Technology', color: '#3b82f6', icons: [
+                'laptop', 'desktop', 'mobile-alt', 'tablet', 'tv', 'server', 'database',
+                'microchip', 'cpu', 'memory', 'hdd', 'sd-card', 'sim-card', 'usb',
+                'wifi', 'bluetooth', 'bluetooth-b', 'broadcast-tower', 'satellite', 'satellite-dish',
+                'cloud', 'cloud-upload', 'cloud-download', 'cloud-sun', 'cloud-moon',
+                'code', 'code-branch', 'terminal', 'window-maximize', 'window-minimize',
+                'keyboard', 'mouse', 'print', 'fax', 'phone', 'phone-alt', 'envelope',
+                'plug', 'battery-full', 'battery-quarter', 'battery-half', 'battery-three-quarters'
+            ]},
+            business: { name: 'Business', color: '#8b5cf6', icons: [
+                'chart-line', 'chart-bar', 'chart-pie', 'chart-area', 'chart-simple',
+                'briefcase', 'building', 'city', 'landmark', 'bank', 'money-bill', 'coins',
+                'dollar-sign', 'euro-sign', 'pound-sign', 'yen-sign', 'rupee-sign',
+                'credit-card', 'wallet', 'piggy-bank', 'calculator', 'receipt',
+                'users', 'user-plus', 'user-minus', 'user-check', 'user-clock',
+                'address-card', 'id-card', 'badge', 'certificate', 'diploma',
+                'file', 'file-alt', 'file-pdf', 'file-word', 'file-excel', 'file-powerpoint'
+            ]},
+            social: { name: 'Social', color: '#ec489a', icons: [
+                'comment', 'comment-dots', 'comments', 'message', 'sms',
+                'heart', 'thumbs-up', 'thumbs-down', 'smile', 'frown', 'meh', 'grin',
+                'share', 'share-alt', 'share-square', 'retweet', 'reply', 'reply-all',
+                'bell', 'bell-slash', 'envelope', 'inbox', 'paper-plane', 'send',
+                'hashtag', 'at', 'link', 'unlink', 'qrcode', 'barcode',
+                'facebook', 'twitter', 'instagram', 'linkedin', 'youtube', 'twitch', 'discord',
+                'github', 'gitlab', 'bitbucket', 'stack-overflow', 'reddit', 'pinterest'
+            ]},
+            nature: { name: 'Nature', color: '#10b981', icons: [
+                'tree', 'leaf', 'seedling', 'flower', 'sun', 'moon', 'cloud-sun', 'cloud-moon',
+                'cloud-rain', 'cloud-snow', 'cloud-lightning', 'cloud-hail', 'wind', 'tornado',
+                'mountain', 'campground', 'water', 'fish', 'dove', 'dog', 'cat', 'paw',
+                'bug', 'butterfly', 'bee', 'spider', 'snake', 'crow', 'feather', 'egg'
+            ]},
+            food: { name: 'Food', color: '#f97316', icons: [
+                'apple-alt', 'carrot', 'pepper-hot', 'pizza-slice', 'hamburger', 'hotdog',
+                'ice-cream', 'cake-candles', 'cookie', 'candy-cane', 'donut', 'mug-hot',
+                'coffee', 'tea', 'wine-bottle', 'wine-glass', 'beer', 'cocktail', 'glass-cheers',
+                'utensils', 'utensil-spoon', 'fork-knife', 'bowl-food', 'plate-wheat'
+            ]},
+            travel: { name: 'Travel', color: '#06b6d4', icons: [
+                'plane', 'plane-departure', 'plane-arrival', 'train', 'subway', 'bus',
+                'taxi', 'car', 'motorcycle', 'bicycle', 'walking', 'hiking',
+                'hotel', 'bed', 'campground', 'mountain', 'beach', 'umbrella-beach',
+                'passport', 'suitcase', 'luggage-cart', 'globe', 'map', 'map-marked-alt',
+                'compass', 'location-dot', 'location-arrow', 'street-view'
+            ]},
+            music: { name: 'Music', color: '#a855f7', icons: [
+                'music', 'headphones', 'head-side-headphones', 'microphone', 'microphone-alt',
+                'guitar', 'drum', 'drumstick', 'trumpet', 'violin', 'saxophone', 'banjo',
+                'record-vinyl', 'compact-disc', 'tape', 'radio', 'podcast', 'speaker',
+                'play', 'pause', 'stop', 'forward', 'backward', 'step-forward', 'step-backward'
+            ]},
+            health: { name: 'Health', color: '#ef4444', icons: [
+                'heartbeat', 'heart-pulse', 'stethoscope', 'hospital', 'clinic-medical',
+                'syringe', 'capsules', 'pills', 'band-aid', 'tooth', 'eye', 'ear-listen',
+                'brain', 'lungs', 'bone', 'dna', 'virus', 'virus-covid', 'mask',
+                'running', 'walking', 'bicycle', 'apple-alt', 'carrot', 'seedling'
+            ]},
+            education: { name: 'Education', color: '#14b8a6', icons: [
+                'graduation-cap', 'school', 'university', 'chalkboard', 'chalkboard-user',
+                'book', 'book-open', 'book-reader', 'bookmark', 'notebook', 'pen',
+                'pencil', 'pencil-ruler', 'ruler', 'ruler-combined', 'scissors',
+                'glasses', 'microscope', 'flask', 'atom', 'dna', 'abacus'
+            ]},
+            finance: { name: 'Finance', color: '#fbbf24', icons: [
+                'chart-line', 'chart-bar', 'chart-pie', 'trend-up', 'trend-down',
+                'dollar-sign', 'euro-sign', 'pound-sign', 'yen-sign', 'bitcoin',
+                'money-bill', 'money-bill-wave', 'coins', 'wallet', 'credit-card',
+                'hand-holding-usd', 'handshake', 'scale-balanced', 'balance-scale',
+                'calculator', 'receipt', 'invoice', 'tax', 'file-invoice'
+            ]},
+            security: { name: 'Security', color: '#10b981', icons: [
+                'shield', 'shield-haltered', 'shield-heart', 'shield-virus', 'lock',
+                'lock-open', 'key', 'key-skeleton', 'fingerprint', 'id-card',
+                'user-secret', 'eye', 'eye-slash', 'camera', 'camera-security',
+                'bug', 'virus', 'virus-covid', 'mask', 'hand-sparkles'
+            ]},
+            communication: { name: 'Communication', color: '#06b6d4', icons: [
+                'envelope', 'inbox', 'paper-plane', 'message', 'comment-dots',
+                'phone', 'phone-alt', 'mobile-alt', 'tablet', 'laptop',
+                'broadcast-tower', 'satellite', 'satellite-dish', 'wifi',
+                'bluetooth', 'radio', 'walkie-talkie', 'microphone', 'headset'
+            ]},
+            arrows: { name: 'Arrows', color: '#6b7280', icons: [
+                'arrow-left', 'arrow-right', 'arrow-up', 'arrow-down', 'arrow-up-down',
+                'arrow-left-right', 'chevron-left', 'chevron-right', 'chevron-up', 'chevron-down',
+                'circle-left', 'circle-right', 'circle-up', 'circle-down', 'circle-arrow-left',
+                'circle-arrow-right', 'circle-arrow-up', 'circle-arrow-down', 'long-arrow-left',
+                'long-arrow-right', 'long-arrow-up', 'long-arrow-down', 'exchange-alt',
+                'sync', 'sync-alt', 'redo', 'undo', 'rotate-left', 'rotate-right'
+            ]},
+            shapes: { name: 'Shapes', color: '#a855f7', icons: [
+                'circle', 'square', 'square-full', 'triangle', 'pentagon', 'hexagon',
+                'octagon', 'star', 'star-half', 'heart', 'bolt', 'gem', 'diamond',
+                'ring', 'crown', 'infinity', 'plus', 'minus', 'times', 'divide',
+                'equals', 'greater-than', 'less-than', 'percent', 'at', 'hashtag'
+            ]}
+        };
+        
+        // Generate all icons
+        let iconId = 1;
+        for (const [category, data] of Object.entries(categories)) {
+            for (const iconName of data.icons) {
+                iconsDatabase.push({
+                    id: iconId++,
+                    name: iconName,
+                    displayName: iconName.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' '),
+                    category: category,
+                    categoryName: data.name,
+                    icon: iconName,
+                    color: data.color
+                });
+            }
+        }
+        
+        // Add brand icons separately
+        const brandIcons = [
+            'apple', 'android', 'windows', 'linux', 'github', 'gitlab', 'bitbucket',
+            'google', 'google-play', 'google-drive', 'google-chrome', 'firefox',
+            'edge', 'safari', 'opera', 'internet-explorer', 'twitter', 'facebook',
+            'instagram', 'linkedin', 'youtube', 'twitch', 'discord', 'slack', 'telegram',
+            'whatsapp', 'signal', 'snapchat', 'tiktok', 'reddit', 'pinterest', 'tumblr',
+            'flickr', 'dropbox', 'microsoft', 'amazon', 'paypal', 'stripe', 'mastercard',
+            'visa', 'bitcoin', 'ethereum', 'docker', 'kubernetes', 'node', 'python', 'java',
+            'php', 'js', 'css3', 'html5', 'react', 'vuejs', 'angular', 'laravel', 'django'
+        ];
+        
+        brandIcons.forEach(icon => {
+            iconsDatabase.push({
+                id: iconId++,
+                name: icon,
+                displayName: icon.charAt(0).toUpperCase() + icon.slice(1),
+                category: 'brands',
+                categoryName: 'Brands',
+                icon: icon,
+                color: '#10b981'
+            });
+        });
+        
+        // Add extra gaming icons
+        const extraGaming = [
+            'chess', 'checkers', 'backgammon', 'dominoes', 'mahjong', 'poker', 'blackjack',
+            'slot-machine', 'arcade', 'pinball', 'billiards', 'darts', 'bowling', 'pool'
+        ];
+        
+        extraGaming.forEach(icon => {
+            iconsDatabase.push({
+                id: iconId++,
+                name: icon,
+                displayName: icon.charAt(0).toUpperCase() + icon.slice(1),
+                category: 'gaming',
+                categoryName: 'Gaming',
+                icon: icon,
+                color: '#10b981'
+            });
+        });
+        
+        console.log(`✅ Loaded ${iconsDatabase.length} icons`);
+        document.getElementById('stats').innerHTML = `📊 ${iconsDatabase.length} Icons Available`;
+        
+        let filteredIcons = [...iconsDatabase];
+        let currentSelectedIcon = iconsDatabase[0];
+        
+        function renderIconGrid() {
+            const grid = document.getElementById('iconGrid');
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const categoryFilter = document.getElementById('categoryFilter').value;
+            
+            filteredIcons = iconsDatabase.filter(icon => {
+                const matchesSearch = icon.name.toLowerCase().includes(searchTerm) || 
+                                     icon.displayName.toLowerCase().includes(searchTerm);
+                const matchesCategory = categoryFilter === 'all' || icon.category === categoryFilter;
+                return matchesSearch && matchesCategory;
+            });
+            
+            document.getElementById('stats').innerHTML = `📊 ${filteredIcons.length} icons (${iconsDatabase.length} total)`;
+            
+            grid.innerHTML = '';
+            
+            filteredIcons.forEach(icon => {
+                const card = document.createElement('div');
+                card.className = `icon-card ${currentSelectedIcon?.id === icon.id ? 'selected' : ''}`;
+                card.onclick = () => selectIcon(icon);
+                card.innerHTML = `
+                    <div class="icon-preview-small">
+                        <i class="fab fa-${icon.icon}"></i>
+                    </div>
+                    <div class="icon-name">${icon.displayName}</div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+        
+        function selectIcon(icon) {
+            currentSelectedIcon = icon;
+            document.querySelectorAll('.icon-card').forEach(card => card.classList.remove('selected'));
+            const cards = document.querySelectorAll('.icon-card');
+            const index = filteredIcons.findIndex(i => i.id === icon.id);
+            if (cards[index]) cards[index].classList.add('selected');
+            
+            const isBrand = icon.category === 'brands';
+            const iconTag = isBrand ? 'fab' : 'fas';
+            
+            document.getElementById('previewIcon').innerHTML = `<i class="${iconTag} fa-${icon.icon}" style="color: ${currentColor};"></i>`;
+            document.getElementById('previewName').innerText = icon.displayName;
+            document.getElementById('previewCategory').innerText = icon.categoryName;
+        }
+        
+        function downloadIcon() {
+            if (!currentSelectedIcon) return;
+            
+            const canvas = document.createElement('canvas');
+            canvas.width = 512;
+            canvas.height = 512;
+            const ctx = canvas.getContext('2d');
+            
+            // Background
+            const grad = ctx.createLinearGradient(0, 0, 512, 512);
+            grad.addColorStop(0, '#10b981');
+            grad.addColorStop(1, '#059669');
+            ctx.fillStyle = grad;
+            ctx.fillRect(0, 0, 512, 512);
+            
+            // Grid pattern
+            ctx.globalAlpha = 0.1;
+            ctx.strokeStyle = 'white';
+            ctx.lineWidth = 2;
+            for (let i = 0; i < 512; i += 40) {
+                ctx.beginPath();
+                ctx.moveTo(i, 0);
+                ctx.lineTo(i, 512);
+                ctx.stroke();
+                ctx.beginPath();
+                ctx.moveTo(0, i);
+                ctx.lineTo(512, i);
+                ctx.stroke();
+            }
+            ctx.globalAlpha = 1;
+            
+            // Draw icon
+            ctx.fillStyle = currentColor;
+            ctx.font = `350px "Font Awesome 6 Free", "Font Awesome 6 Brands"`;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            
+            const isBrand = currentSelectedIcon.category === 'brands';
+            const iconCode = getIconCode(currentSelectedIcon.icon, isBrand);
+            ctx.fillText(iconCode, 256, 256);
+            
+            // Add text
+            ctx.font = `bold 40px system-ui`;
+            ctx.fillStyle = 'white';
+            ctx.fillText('CRUNK', 256, 450);
+            ctx.font = `24px system-ui`;
+            ctx.fillStyle = 'rgba(255,255,255,0.7)';
+            ctx.fillText('GAMES', 256, 490);
+            
+            // Download
+            const link = document.createElement('a');
+            link.download = `crunk-${currentSelectedIcon.name}.png`;
+            link.href = canvas.toDataURL();
+            link.click();
+        }
+        
+        function getIconCode(iconName, isBrand) {
+            // Map of common icons to their Unicode characters
+            const iconMap = {
+                'gamepad': '', 'trophy': '', 'star': '', 'heart': '',
+                'crown': '', 'gem': '', 'fire': '', 'bolt': '',
+                'rocket': '', 'robot': '', 'shield': '', 'sword': '',
+                'futbol': '', 'basketball': '', 'baseball': '',
+                'laptop': '', 'desktop': '', 'mobile-alt': '',
+                'code': '', 'cloud': '', 'wifi': '', 'bluetooth': '',
+                'apple': '', 'android': '', 'windows': '', 'linux': '',
+                'github': '', 'twitter': '', 'facebook': '', 'instagram': '',
+                'youtube': '', 'twitch': '', 'discord': ''
+            };
+            
+            if (iconMap[iconName]) return iconMap[iconName];
+            return isBrand ? '' : '';
+        }
+        
+        document.getElementById('searchInput').addEventListener('input', renderIconGrid);
+        document.getElementById('categoryFilter').addEventListener('change', renderIconGrid);
+        document.getElementById('downloadBtn').addEventListener('click', downloadIcon);
+        document.getElementById('iconColor').addEventListener('change', (e) => {
+            currentColor = e.target.value;
+            if (currentSelectedIcon) selectIcon(currentSelectedIcon);
+        });
+        
+        // Download all as ZIP (first 100)
+        document.getElementById('downloadAllBtn').addEventListener('click', async () => {
+            const zip = new JSZip();
+            const toDownload = iconsDatabase.slice(0, 100);
+            
+            for (let i = 0; i < toDownload.length; i++) {
+                const icon = toDownload[i];
+                currentSelectedIcon = icon;
+                await new Promise(resolve => setTimeout(resolve, 10));
+                
+                const canvas = document.createElement('canvas');
+                canvas.width = 512;
+                canvas.height = 512;
+                const ctx = canvas.getContext('2d');
+                
+                const grad = ctx.createLinearGradient(0, 0, 512, 512);
+                grad.addColorStop(0, '#10b981');
+                grad.addColorStop(1, '#059669');
+                ctx.fillStyle = grad;
+                ctx.fillRect(0, 0, 512, 512);
+                
+                ctx.fillStyle = '#ffffff';
+                ctx.font = `350px "Font Awesome 6 Free"`;
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(getIconCode(icon.name, icon.category === 'brands'), 256, 256);
+                
+                const dataUrl = canvas.toDataURL();
+                const base64Data = dataUrl.split(',')[1];
+                zip.file(`icon-${icon.name}.png`, base64Data, { base64: true });
+            }
+            
+            const content = await zip.generateAsync({ type: 'blob' });
+            const link = document.createElement('a');
+            link.download = 'crunk-icons-pack.zip';
+            link.href = URL.createObjectURL(content);
+            link.click();
+            URL.revokeObjectURL(link.href);
+        });
+        
+        // Initialize
+        renderIconGrid();
+        selectIcon(iconsDatabase[0]);
+    </script>
+</body>
+</html>
