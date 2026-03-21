@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Crunk Games - Tournaments & Leagues</title>
+    
+    <!-- Boxicons -->
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="tournaments.css">
+    <link rel="stylesheet" href="nav.css">
+    
+    <meta name="description" content="Join football leagues, tournaments and competitions on Crunk Games">
+    <meta name="keywords" content="football leagues, tournaments, eFootball, FC, DLS, competitions">
+</head>
+<body>
+
+<div class="app">
+
+    <!-- TOPBAR -->
+    <header class="topbar">
+        <div class="menu" id="menuBtn">
+            <i class="bx bx-menu"></i>
+        </div>
+        
+        <div class="brand">
+            <h1>🏆 Tournaments</h1>
+        </div>
+        
+        <div class="icons">
+            <!-- VENO COINS DISPLAY -->
+            <div class="veno-coins-container">
+                <div class="veno-coins-display">
+                    <i class="fas fa-coins"></i>
+                    <span id="venoCoinsAmount">0</span>
+                    <span class="coin-label">Veno Coins</span>
+                </div>
+                <button id="claimVenoCoinsBtn" class="claim-veno-btn">
+                    <i class="fas fa-gift"></i> Claim 10
+                </button>
+            </div>
+
+            <!-- NOTIFICATION BELL -->
+            <div class="notification-container">
+                <div class="notification-bell" id="notificationBtn">
+                    <i class="bx bx-bell"></i>
+                    <span class="notification-count" id="notificationCount">3</span>
+                </div>
+                <div class="notification-popup" id="notificationPopup">
+                    <div class="notification-header">
+                        <h3>Notifications</h3>
+                        <button id="markAllRead">Mark all read</button>
+                    </div>
+                    <div class="notification-list" id="notificationList"></div>
+                </div>
+            </div>
+
+            <!-- PROFILE DROPDOWN -->
+            <div class="profile-dropdown" id="profileDropdown">
+                <img id="googleProfilePic" class="profile-pic" src="https://ui-avatars.com/api/?name=User&background=10b981&color=fff&size=128" alt="Profile">
+                <div class="profile-popup" id="profilePopup">
+                    <div class="account-info">
+                        <img id="popupProfilePic" src="https://ui-avatars.com/api/?name=User&background=10b981&color=fff&size=128" alt="Profile">
+                        <div>
+                            <p id="accountName">User Name</p>
+                            <p id="accountEmail">user@example.com</p>
+                        </div>
+                    </div>
+                    <div class="profile-menu">
+                        <a href="#" id="profileView"><i class="bx bx-user"></i> View Profile</a>
+                        <a href="#" id="profileLibrary"><i class="bx bx-library"></i> My Teams</a>
+                        <a href="#" id="profileSettings"><i class="bx bx-cog"></i> Settings</a>
+                    </div>
+                    <button id="logoutBtn"><i class="bx bx-log-out"></i> Logout</button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- SIDEBAR -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h3>Menu</h3>
+            <span class="close-sidebar" id="closeSidebar"><i class="bx bx-x"></i></span>
+        </div>
+        
+        <div class="venaura-section" id="venauraIcon">
+            <div class="venaura-icon">
+                <i class="fas fa-trophy"></i>
+            </div>
+            <div class="venaura-info">
+                <h3>Venaura App</h3>
+                <p>Connect with Venaura</p>
+            </div>
+            <i class="bx bx-right-arrow-alt arrow-icon"></i>
+        </div>
+        
+        <ul class="sidebar-menu">
+            <li id="menuHome"><i class="bx bx-home"></i> Home</li>
+            <li id="menuTournaments" class="active"><i class="bx bx-trophy"></i> Tournaments</li>
+            <li id="menuLeagues"><i class="bx bx-calendar-event"></i> My Leagues</li>
+            <li id="menuTeams"><i class="bx bx-group"></i> My Teams</li>
+            <li id="menuCreateLeague"><i class="bx bx-plus-circle"></i> Create League</li>
+            <li id="menuCreateTeam"><i class="bx bx-plus-circle"></i> Create Team</li>
+            <li id="menuLeaderboard"><i class="bx bx-bar-chart-alt-2"></i> Leaderboard</li>
+            <li id="menuSettings"><i class="bx bx-cog"></i> Settings</li>
+        </ul>
+        
+        <div class="sidebar-footer">
+            <div class="sidebar-theme" id="menuTheme">
+                <span><i class="bx bx-palette"></i> Theme: <span id="themeLabel">Dark</span></span>
+                <div class="theme-toggle">
+                    <i class="bx bx-sun" style="display: none;"></i>
+                    <i class="bx bx-moon"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- SIDEBAR OVERLAY -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- MAIN CONTENT -->
+    <main class="tournaments-main">
+        <!-- Hero Section -->
+        <div class="tournaments-hero">
+            <div class="hero-content">
+                <h1>⚽ Football Leagues & Tournaments</h1>
+                <p>Create your own league, manage teams, and compete for Veno Coins!</p>
+                <div class="hero-buttons">
+                    <button class="btn-primary" id="createLeagueBtn">
+                        <i class="fas fa-plus-circle"></i> Create League
+                    </button>
+                    <button class="btn-secondary" id="joinLeagueBtn">
+                        <i class="fas fa-search"></i> Find Leagues
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="quick-actions">
+            <div class="action-card" id="createTeamCard">
+                <i class="fas fa-users"></i>
+                <h3>Create Team</h3>
+                <p>Build your dream team with logo & squad</p>
+            </div>
+            <div class="action-card" id="joinLeagueCard">
+                <i class="fas fa-door-open"></i>
+                <h3>Join League</h3>
+                <p>Browse and join existing leagues</p>
+            </div>
+            <div class="action-card" id="myLeaguesCard">
+                <i class="fas fa-calendar-check"></i>
+                <h3>My Leagues</h3>
+                <p>View your active leagues</p>
+            </div>
+            <div class="action-card" id="leaderboardCard">
+                <i class="fas fa-trophy"></i>
+                <h3>Leaderboard</h3>
+                <p>Check global rankings</p>
+            </div>
+        </div>
+
+        <!-- Featured Leagues -->
+        <section class="featured-section">
+            <div class="section-header">
+                <h2><i class="fas fa-star"></i> Featured Leagues</h2>
+                <a href="#" id="viewAllLeagues">View All <i class="bx bx-chevron-right"></i></a>
+            </div>
+            <div class="leagues-grid" id="featuredLeagues">
+                <div class="empty-state">Loading leagues...</div>
+            </div>
+        </section>
+
+        <!-- Active Leagues -->
+        <section class="active-section">
+            <div class="section-header">
+                <h2><i class="fas fa-fire"></i> Active Leagues</h2>
+            </div>
+            <div class="leagues-grid" id="activeLeagues">
+                <div class="empty-state">Loading active leagues...</div>
+            </div>
+        </section>
+
+        <!-- My Teams Section -->
+        <section class="teams-section">
+            <div class="section-header">
+                <h2><i class="fas fa-users"></i> My Teams</h2>
+                <a href="#" id="viewAllTeams">View All <i class="bx bx-chevron-right"></i></a>
+            </div>
+            <div class="teams-grid" id="myTeams">
+                <div class="empty-state">Loading your teams...</div>
+            </div>
+        </section>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <div class="footer-content">
+            <p>Venocyber2026 © 2026 | Crunk Games - Tournaments</p>
+            <div class="footer-links">
+                <a href="#">Terms</a>
+                <a href="#">Privacy</a>
+                <a href="#">Help</a>
+            </div>
+        </div>
+    </footer>
+</div>
+<!-- Spin Wheel Modal -->
+<div id="spinModal" class="spin-modal">
+    <div class="spin-modal-content">
+        <div class="spin-modal-header">
+            <h2><i class="fas fa-chart-simple"></i> Spin & Win</h2>
+            <span class="spin-close">&times;</span>
+        </div>
+        <div class="spin-modal-body">
+            <div class="spin-info">
+                <div class="spin-balance">
+                    <i class="fas fa-coins"></i> Your Balance: 
+                    <strong id="spinBalance">0</strong> Veno Coins
+                </div>
+                <div class="spin-cost">
+                    <i class="fas fa-ticket-alt"></i> Cost per spin: <strong>200</strong> Veno Coins
+                </div>
+            </div>
+            
+            <div class="wheel-wrapper">
+                <canvas id="spinWheelCanvas" width="400" height="400"></canvas>
+                <div class="wheel-pointer">▼</div>
+            </div>
+            
+            <button class="spin-wheel-btn" id="spinWheelBtn">
+                <i class="fas fa-chart-simple"></i> SPIN (200 Coins)
+            </button>
+            
+            <div class="prize-list-mini">
+                <div class="prize-item">🏆 5000</div>
+                <div class="prize-item">⭐ 1000</div>
+                <div class="prize-item">🎁 500</div>
+                <div class="prize-item">🎫 200</div>
+                <div class="prize-item">🎖️ 100</div>
+                <div class="prize-item">✨ 50</div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Toast Container -->
+<div id="toastContainer" class="toast-container"></div>
+
+<!-- Scripts -->
+<script src="nav.js"></script>
+<script type="module" src="tournaments.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Toast function
+        window.showToast = function(message, type = 'success') {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.innerHTML = `<i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'}"></i> ${message}`;
+            container.appendChild(toast);
+            
+            setTimeout(() => toast.classList.add('show'), 10);
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        };
+        
+        // Sidebar toggle
+        const menuBtn = document.getElementById('menuBtn');
+        const sidebar = document.getElementById('sidebar');
+        const closeSidebar = document.getElementById('closeSidebar');
+        const overlay = document.getElementById('sidebarOverlay');
+        
+        if (menuBtn && sidebar && overlay) {
+            menuBtn.addEventListener('click', () => {
+                sidebar.classList.add('open');
+                overlay.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            });
+            
+            function closeSidebarFunc() {
+                sidebar.classList.remove('open');
+                overlay.classList.remove('active');
+                document.body.style.overflow = '';
+            }
+            
+            closeSidebar?.addEventListener('click', closeSidebarFunc);
+            overlay.addEventListener('click', closeSidebarFunc);
+            
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && sidebar.classList.contains('open')) {
+                    closeSidebarFunc();
+                }
+            });
+        }
+        
+        // View All Links
+        const viewAllLeagues = document.getElementById('viewAllLeagues');
+        const viewAllTeams = document.getElementById('viewAllTeams');
+        
+        if (viewAllLeagues) {
+            viewAllLeagues.addEventListener('click', (e) => {
+                e.preventDefault();
+                window.location.href = 'all-leagues.html';
+            });
+        }
+        
+        if (viewAllTeams) {
+            viewAllTeams.addEventListener('click', (e) => {
+                e.preventDefault();
+                window.location.href = 'my-teams.html';
+            });
+        }
+    });
+    <!-- Ensure bottom navigation is properly styled -->
+    document.addEventListener('DOMContentLoaded', function() {
+        // Force highlight of tournaments tab on tournaments page
+        const currentPage = window.location.pathname.split('/').pop();
+        if (currentPage === 'tournaments.html') {
+            setTimeout(() => {
+                const navItems = document.querySelectorAll('.nav-item');
+                navItems.forEach(item => {
+                    item.classList.remove('active');
+                    if (item.getAttribute('data-tab') === 'tournaments') {
+                        item.classList.add('active');
+                    }
+                });
+            }, 100);
+        }
+    });
+</script>
+</body>
+</html>

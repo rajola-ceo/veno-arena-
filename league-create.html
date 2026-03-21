@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Create League - Crunk Games</title>
+    
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="home.css">
+    <link rel="stylesheet" href="nav.css">
+    <link rel="stylesheet" href="tournaments.css">
+    
+    <style>
+        .create-league-container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 30px;
+            background: var(--bg-tertiary);
+            border-radius: 24px;
+            border: 1px solid var(--border-color);
+        }
+        
+        .form-group { margin-bottom: 24px; }
+        .form-group label { display: block; margin-bottom: 8px; font-weight: 600; }
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%; padding: 12px 16px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            color: var(--text-primary);
+        }
+        .form-group input:focus, .form-group select:focus {
+            outline: none; border-color: #10b981;
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+        }
+        
+        .prize-distribution {
+            background: var(--bg-secondary);
+            border-radius: 16px;
+            padding: 20px;
+            margin-top: 10px;
+        }
+        
+        .prize-input { display: flex; gap: 15px; align-items: center; margin-bottom: 10px; }
+        .prize-input label { width: 80px; margin-bottom: 0; }
+        .prize-input input { flex: 1; }
+        
+        .btn-create {
+            width: 100%; padding: 14px;
+            background: linear-gradient(135deg, #10b981, #059669);
+            border: none; border-radius: 30px;
+            color: white; font-weight: 600; font-size: 16px;
+            cursor: pointer; transition: all 0.3s ease;
+            margin-top: 20px;
+        }
+        .btn-create:hover { transform: translateY(-2px); box-shadow: 0 5px 20px rgba(16, 185, 129, 0.4); }
+        
+        .format-options {
+            display: flex; gap: 15px; flex-wrap: wrap;
+            margin-top: 10px;
+        }
+        .format-option {
+            padding: 10px 20px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .format-option.active {
+            background: #10b981;
+            border-color: #10b981;
+            color: white;
+        }
+        
+        .error-message { color: #ff5555; font-size: 12px; margin-top: 5px; display: none; }
+    </style>
+</head>
+<body>
+
+<div class="app">
+    <header class="topbar">
+        <div class="menu" id="menuBtn"><i class="bx bx-menu"></i></div>
+        <div class="brand"><h1>🏆 Create New League</h1></div>
+        <div class="icons">
+            <div class="veno-coins-container">
+                <div class="veno-coins-display"><i class="fas fa-coins"></i><span id="venoCoinsAmount">0</span><span class="coin-label">Veno Coins</span></div>
+                <button id="claimVenoCoinsBtn" class="claim-veno-btn"><i class="fas fa-gift"></i> Claim 10</button>
+            </div>
+            <div class="profile-dropdown" id="profileDropdown">
+                <img id="googleProfilePic" class="profile-pic" src="https://ui-avatars.com/api/?name=User&background=34d399&color=fff&size=128" alt="Profile">
+                <div class="profile-popup" id="profilePopup">
+                    <div class="account-info"><img id="popupProfilePic" src="https://ui-avatars.com/api/?name=User&background=34d399&color=fff&size=128"><div><p id="accountName">User Name</p><p id="accountEmail">user@example.com</p></div></div>
+                    <button id="logoutBtn"><i class="bx bx-log-out"></i> Logout</button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header"><h3>Menu</h3><span class="close-sidebar" id="closeSidebar"><i class="bx bx-x"></i></span></div>
+        <div class="venaura-section" id="venauraIcon"><div class="venaura-icon"><i class="fas fa-trophy"></i></div><div class="venaura-info"><h3>Venaura App</h3><p>Connect with Venaura</p></div><i class="bx bx-right-arrow-alt arrow-icon"></i></div>
+        <ul class="sidebar-menu">
+            <li id="menuHome"><i class="bx bx-home"></i> Home</li>
+            <li id="menuTournaments"><i class="bx bx-trophy"></i> Tournaments</li>
+            <li id="menuCreateLeague" class="active"><i class="bx bx-plus-circle"></i> Create League</li>
+        </ul>
+        <div class="sidebar-footer"><div class="sidebar-theme" id="menuTheme"><span><i class="bx bx-palette"></i> Theme: <span id="themeLabel">Dark</span></span><div class="theme-toggle"><i class="bx bx-sun" style="display: none;"></i><i class="bx bx-moon"></i></div></div></div>
+    </div>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <div class="create-league-container">
+        <h2 style="margin-bottom: 20px;">Create Your Football League</h2>
+        
+        <form id="createLeagueForm">
+            <div class="form-group">
+                <label>League Name *</label>
+                <input type="text" id="leagueName" placeholder="e.g., Champions League 2026" required>
+                <div class="error-message" id="leagueNameError">League name is required</div>
+            </div>
+            
+            <div class="form-group">
+                <label>Game Type *</label>
+                <select id="gameType" required>
+                    <option value="eFootball">eFootball</option>
+                    <option value="FC">FC (FIFA/EA Sports FC)</option>
+                    <option value="DLS">Dream League Soccer (DLS)</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label>League Format *</label>
+                <div class="format-options" id="formatOptions">
+                    <div class="format-option active" data-format="league">League (Round Robin)</div>
+                    <div class="format-option" data-format="group">Group Stage + Knockout</div>
+                    <div class="format-option" data-format="cup">Cup (Knockout)</div>
+                </div>
+                <input type="hidden" id="leagueFormat" value="league">
+            </div>
+            
+            <div class="form-group">
+                <label>Max Teams (4-32)</label>
+                <input type="number" id="maxTeams" min="4" max="32" value="16">
+            </div>
+            
+            <div class="form-group">
+                <label>Entry Fee (Veno Coins)</label>
+                <input type="number" id="entryFee" min="0" value="50">
+            </div>
+            
+            <div class="form-group">
+                <label>Prize Distribution</label>
+                <div class="prize-distribution">
+                    <div class="prize-input"><label>1st Place (50%)</label><input type="number" id="firstPrize" readonly></div>
+                    <div class="prize-input"><label>2nd Place (30%)</label><input type="number" id="secondPrize" readonly></div>
+                    <div class="prize-input"><label>3rd Place (20%)</label><input type="number" id="thirdPrize" readonly></div>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label>League Description (Optional)</label>
+                <textarea id="description" rows="3" placeholder="Describe your league rules, schedule, etc."></textarea>
+            </div>
+            
+            <button type="submit" class="btn-create">
+                <i class="fas fa-trophy"></i> Create League
+            </button>
+        </form>
+    </div>
+
+    <div id="toastContainer" class="toast-container"></div>
+</div>
+
+<script>
+    // Calculate prize distribution
+    function updatePrizeDistribution() {
+        const totalTeams = parseInt(document.getElementById('maxTeams').value) || 16;
+        const entryFee = parseInt(document.getElementById('entryFee').value) || 0;
+        const totalPrize = totalTeams * entryFee * 0.8; // 80% goes to prize pool
+        
+        const first = Math.floor(totalPrize * 0.5);
+        const second = Math.floor(totalPrize * 0.3);
+        const third = Math.floor(totalPrize * 0.2);
+        
+        document.getElementById('firstPrize').value = first;
+        document.getElementById('secondPrize').value = second;
+        document.getElementById('thirdPrize').value = third;
+    }
+    
+    document.getElementById('maxTeams')?.addEventListener('change', updatePrizeDistribution);
+    document.getElementById('entryFee')?.addEventListener('change', updatePrizeDistribution);
+    
+    // Format selector
+    document.querySelectorAll('.format-option').forEach(opt => {
+        opt.addEventListener('click', function() {
+            document.querySelectorAll('.format-option').forEach(o => o.classList.remove('active'));
+            this.classList.add('active');
+            document.getElementById('leagueFormat').value = this.dataset.format;
+        });
+    });
+    
+    updatePrizeDistribution();
+    
+    // Form submission
+    document.getElementById('createLeagueForm')?.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const leagueName = document.getElementById('leagueName').value.trim();
+        if (!leagueName) {
+            document.getElementById('leagueNameError').style.display = 'block';
+            return;
+        }
+        document.getElementById('leagueNameError').style.display = 'none';
+        
+        const leagueData = {
+            name: leagueName,
+            gameType: document.getElementById('gameType').value,
+            format: document.getElementById('leagueFormat').value,
+            maxTeams: parseInt(document.getElementById('maxTeams').value),
+            entryFee: parseInt(document.getElementById('entryFee').value),
+            prizePool: parseInt(document.getElementById('firstPrize').value) + parseInt(document.getElementById('secondPrize').value) + parseInt(document.getElementById('thirdPrize').value),
+            prizes: {
+                first: parseInt(document.getElementById('firstPrize').value),
+                second: parseInt(document.getElementById('secondPrize').value),
+                third: parseInt(document.getElementById('thirdPrize').value)
+            },
+            description: document.getElementById('description').value,
+            ownerId: currentUser?.uid,
+            ownerName: currentUser?.displayName,
+            createdAt: new Date().toISOString(),
+            status: 'registration',
+            teams: [],
+            matches: [],
+            standings: []
+        };
+        
+        // Save to localStorage
+        const leagues = JSON.parse(localStorage.getItem('leagues') || '[]');
+        leagueData.id = 'league_' + Date.now();
+        leagues.push(leagueData);
+        localStorage.setItem('leagues', JSON.stringify(leagues));
+        
+        showToast('League created successfully!', 'success');
+        setTimeout(() => {
+            window.location.href = 'tournaments.html';
+        }, 1500);
+    });
+</script>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
+    
+    const firebaseConfig = {
+        apiKey: "AIzaSyBW0Sz7TODfa8tQJTfNUaLhfK9qJhdA1yE",
+        authDomain: "crunck-app.firebaseapp.com",
+        projectId: "crunck-app",
+        storageBucket: "crunck-app.firebasestorage.app",
+        messagingSenderId: "475953302982",
+        appId: "1:475953302982:web:607e08379adb12f985f6c7"
+    };
+    
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    window.auth = auth;
+    
+    let currentUser = null;
+    
+    onAuthStateChanged(auth, (user) => {
+        if (user) {
+            currentUser = user;
+            document.getElementById('googleProfilePic').src = user.photoURL || `https://ui-avatars.com/api/?name=${user.displayName}&background=10b981&color=fff`;
+            document.getElementById('popupProfilePic').src = user.photoURL || `https://ui-avatars.com/api/?name=${user.displayName}&background=10b981&color=fff`;
+            document.getElementById('accountName').innerText = user.displayName;
+            document.getElementById('accountEmail').innerText = user.email;
+        } else {
+            window.location.href = 'index.html';
+        }
+    });
+    
+    window.currentUser = currentUser;
+</script>
+
+<script src="nav.js"></script>
+<script>
+    function showToast(message, type) {
+        const container = document.getElementById('toastContainer');
+        const toast = document.createElement('div');
+        toast.className = `toast ${type}`;
+        toast.innerHTML = `<i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'}"></i> ${message}`;
+        container.appendChild(toast);
+        setTimeout(() => toast.classList.add('show'), 10);
+        setTimeout(() => { toast.classList.remove('show'); setTimeout(() => toast.remove(), 300); }, 3000);
+    }
+    
+    function getVenoCoins() { return parseInt(localStorage.getItem('venoCoins') || '0'); }
+    function updateVenoCoinsDisplay() { document.getElementById('venoCoinsAmount').innerText = getVenoCoins(); }
+    updateVenoCoinsDisplay();
+    
+    const claimBtn = document.getElementById('claimVenoCoinsBtn');
+    if (claimBtn) {
+        const LAST_CLAIM_KEY = 'lastVenoClaim';
+        function canClaim() {
+            const last = localStorage.getItem(LAST_CLAIM_KEY);
+            if (!last) return true;
+            return (Date.now() - parseInt(last)) >= 24 * 60 * 60 * 1000;
+        }
+        claimBtn.addEventListener('click', () => {
+            if (canClaim()) {
+                localStorage.setItem('venoCoins', getVenoCoins() + 10);
+                localStorage.setItem(LAST_CLAIM_KEY, Date.now().toString());
+                updateVenoCoinsDisplay();
+                showToast('🎉 You claimed 10 Veno Coins!', 'success');
+            } else {
+                showToast('Already claimed! Come back tomorrow', 'error');
+            }
+        });
+    }
+</script>
+</body>
+</html>

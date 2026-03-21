@@ -1,0 +1,184 @@
+<!-- Created by rajola - Updated with country codes and Google OAuth -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Login to Crunk Games - Your ultimate gaming platform">
+    
+    <!-- Fonts & Icons -->
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="./login.css">
+    
+    <title>Crunk</title>
+    
+    <!-- Google Identity Services (using your Firebase Client ID) -->
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+</head>
+<body>
+    <!-- Animated Background -->
+    <div class="bg-animation">
+        <div class="circle circle-1"></div>
+        <div class="circle circle-2"></div>
+        <div class="circle circle-3"></div>
+        <div class="circle circle-4"></div>
+    </div>
+
+    <div class="container">
+        <!-- Logo / Brand -->
+        <div class="logo-container">
+            <i class="fas fa-gamepad logo-icon"></i>
+            <h1>Crunk Games</h1>
+            <p class="tagline">Your Ultimate Gaming Destination</p>
+        </div>
+        
+        <!-- Login Form -->
+        <form id="loginForm">
+            <!-- Username Field -->
+            <div class="form-control">
+                <input type="text" id="username" required autocomplete="off">
+                <label>Username</label>
+                <i class="fas fa-user input-icon"></i>
+                <span id="usernameError" class="error-message"></span>
+            </div>
+            
+            <!-- Email Field -->
+            <div class="form-control">
+                <input type="email" id="email" required autocomplete="off">
+                <label>Email</label>
+                <i class="fas fa-envelope input-icon"></i>
+                <span id="emailError" class="error-message"></span>
+            </div>
+            
+            <!-- Phone Number with Country Code -->
+            <div class="form-control">
+                <div class="phone-input-group">
+                    <select id="countryCode" class="country-code" required>
+                        <option value="" disabled selected>🌍 Select Code</option>
+                    </select>
+                    <div class="phone-input-wrapper">
+                        <input type="tel" id="phone" required autocomplete="off">
+                        <i class="fas fa-phone input-icon"></i>
+                    </div>
+                </div>
+                <span id="phoneError" class="error-message"></span>
+            </div>
+            
+            <!-- Submit Button -->
+            <button type="submit" class="btn btn-primary">
+                <i class="fas fa-sign-in-alt"></i>
+                <span>Login / Register</span>
+                <div class="btn-loader" style="display: none;"></div>
+            </button>
+            
+            <!-- Message Display -->
+            <p class="text message" id="message"></p>
+        </form>
+        
+        <!-- Divider -->
+        <div class="divider">
+            <span>Or continue with</span>
+        </div>
+        
+        <!-- Google Login Button (Using Firebase OAuth, not GSI directly) -->
+        <div class="google-login-wrapper">
+            <button onclick="window.handleGoogleLogin()" class="google-btn">
+                <i class="fab fa-google"></i>
+                <span>Continue with Google</span>
+            </button>
+        </div>
+        
+        <!-- Alternative Login Options -->
+        <div class="alt-login">
+            <button class="btn-phone" onclick="showPhoneLogin()">
+                <i class="fas fa-mobile-alt"></i>
+                <span>Phone Login</span>
+            </button>
+        </div>
+        
+        <!-- Footer -->
+        <div class="footer-links">
+            <a href="#">Terms of Service</a>
+            <a href="#">Privacy Policy</a>
+            <a href="#">Help</a>
+        </div>
+    </div>
+    
+    <!-- Phone Login Modal (Hidden by default) -->
+    <div id="phoneModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closePhoneModal()">&times;</span>
+            <h2><i class="fas fa-mobile-alt"></i> Phone Login</h2>
+            <p>Enter your phone number to receive a verification code</p>
+            
+            <div class="modal-form">
+                <div class="form-control">
+                    <div class="phone-input-group">
+                        <select id="modalCountryCode" class="country-code"></select>
+                        <input type="tel" id="modalPhone" placeholder="Phone number">
+                    </div>
+                </div>
+                
+                <div id="recaptcha-container"></div>
+                
+                <button class="btn btn-primary" onclick="sendOTP()">
+                    <i class="fas fa-paper-plane"></i> Send OTP
+                </button>
+                
+                <div class="otp-section" style="display: none;">
+                    <input type="text" id="otpCode" placeholder="Enter 6-digit OTP">
+                    <button class="btn btn-secondary" onclick="verifyOTP()">Verify</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Loader -->
+    <div id="loader" class="loader-overlay">
+        <div class="loader-dots">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+        <p>Loading...</p>
+    </div>
+
+    <!-- Toast Container -->
+    <div id="toastContainer" class="toast-container"></div>
+
+    <!-- Scripts - Only ONE Firebase initialization (in login.js) -->
+    <script type="module" src="./login.js"></script>
+    
+    <!-- Additional script for modal functions -->
+    <script>
+        // Modal functions
+        function showPhoneLogin() {
+            document.getElementById('phoneModal').style.display = 'flex';
+        }
+        
+        function closePhoneModal() {
+            document.getElementById('phoneModal').style.display = 'none';
+        }
+        
+        function sendOTP() {
+            alert('Phone login will be implemented soon!');
+        }
+        
+        function verifyOTP() {
+            alert('OTP verification coming soon!');
+        }
+        
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('phoneModal');
+            if (event.target === modal) {
+                modal.style.display = 'none';
+            }
+        }
+    </script>
+</body>
+</html>

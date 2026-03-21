@@ -1,0 +1,869 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>League Dashboard - Crunk Games</title>
+    
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="home.css">
+    <link rel="stylesheet" href="nav.css">
+    
+    <style>
+        .dashboard-container {
+            max-width: 1400px;
+            margin: 20px auto;
+            padding: 20px;
+        }
+        
+        .dashboard-header {
+            background: linear-gradient(135deg, #1f2937, #111827);
+            border-radius: 24px;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+        
+        .league-title {
+            font-size: 32px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .league-status {
+            padding: 6px 12px;
+            border-radius: 30px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .status-registration { background: #f59e0b; color: white; }
+        .status-live { background: #10b981; color: white; animation: pulse 2s infinite; }
+        .status-completed { background: #6b7280; color: white; }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .stat-card {
+            background: var(--bg-tertiary);
+            border-radius: 16px;
+            padding: 20px;
+            text-align: center;
+            border: 1px solid var(--border-color);
+        }
+        
+        .stat-value {
+            font-size: 32px;
+            font-weight: 700;
+            color: #10b981;
+        }
+        
+        .stat-label {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-top: 5px;
+        }
+        
+        /* Tabs */
+        .dashboard-tabs {
+            display: flex;
+            gap: 10px;
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 25px;
+            overflow-x: auto;
+        }
+        
+        .tab-btn {
+            padding: 12px 24px;
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .tab-btn.active {
+            color: #10b981;
+        }
+        
+        .tab-btn.active::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: #10b981;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        /* Standings Table */
+        .standings-table {
+            width: 100%;
+            background: var(--bg-tertiary);
+            border-radius: 16px;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+        }
+        
+        .standings-table th, .standings-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .standings-table th {
+            background: var(--bg-secondary);
+            font-weight: 600;
+            color: #10b981;
+        }
+        
+        .standings-table tr:hover {
+            background: var(--bg-secondary);
+        }
+        
+        .team-cell {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .team-logo-small {
+            width: 30px;
+            height: 30px;
+            border-radius: 8px;
+            background: var(--bg-secondary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        /* Fixtures Grid */
+        .fixtures-grid {
+            display: grid;
+            gap: 15px;
+        }
+        
+        .match-card {
+            background: var(--bg-tertiary);
+            border-radius: 16px;
+            padding: 15px;
+            border: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+        }
+        
+        .match-card:hover {
+            border-color: #10b981;
+        }
+        
+        .match-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        
+        .match-teams {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            flex: 1;
+        }
+        
+        .team {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .vs {
+            font-weight: 700;
+            color: #10b981;
+        }
+        
+        .match-result {
+            font-size: 20px;
+            font-weight: 700;
+        }
+        
+        .match-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .edit-result-btn {
+            padding: 8px 16px;
+            background: #10b981;
+            border: none;
+            border-radius: 30px;
+            color: white;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.3s ease;
+        }
+        
+        .upload-screenshot-btn {
+            padding: 8px 16px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.3s ease;
+        }
+        
+        .upload-screenshot-btn:hover {
+            border-color: #10b981;
+            color: #10b981;
+        }
+        
+        /* Team Requests */
+        .requests-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .request-card {
+            background: var(--bg-tertiary);
+            border-radius: 16px;
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            border: 1px solid var(--border-color);
+        }
+        
+        .request-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .approve-btn {
+            padding: 8px 20px;
+            background: #10b981;
+            border: none;
+            border-radius: 30px;
+            color: white;
+            cursor: pointer;
+        }
+        
+        .deny-btn {
+            padding: 8px 20px;
+            background: #ff5555;
+            border: none;
+            border-radius: 30px;
+            color: white;
+            cursor: pointer;
+        }
+        
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+        }
+        
+        .modal.active {
+            display: flex;
+        }
+        
+        .modal-content {
+            background: var(--bg-primary);
+            border-radius: 24px;
+            padding: 30px;
+            max-width: 500px;
+            width: 90%;
+            border: 1px solid var(--border-color);
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .close-modal {
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--text-secondary);
+        }
+        
+        .result-input {
+            display: flex;
+            gap: 20px;
+            margin: 20px 0;
+        }
+        
+        .result-input input {
+            width: 80px;
+            padding: 10px;
+            text-align: center;
+            font-size: 24px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            color: white;
+        }
+        
+        .screenshot-preview {
+            margin: 20px 0;
+            text-align: center;
+        }
+        
+        .screenshot-preview img {
+            max-width: 100%;
+            border-radius: 12px;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @media (max-width: 768px) {
+            .match-info {
+                flex-direction: column;
+                text-align: center;
+            }
+            .match-teams {
+                flex-direction: column;
+            }
+            .team {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="app">
+    <header class="topbar">
+        <div class="menu" id="menuBtn"><i class="bx bx-menu"></i></div>
+        <div class="brand"><h1>⚽ League Dashboard</h1></div>
+        <div class="icons">
+            <div class="veno-coins-container">
+                <div class="veno-coins-display"><i class="fas fa-coins"></i><span id="venoCoinsAmount">0</span></div>
+                <button id="claimVenoCoinsBtn" class="claim-veno-btn"><i class="fas fa-gift"></i> Claim 10</button>
+            </div>
+            <div class="profile-dropdown" id="profileDropdown">
+                <img id="googleProfilePic" class="profile-pic" src="https://ui-avatars.com/api/?name=User&background=34d399&color=fff&size=128">
+                <div class="profile-popup" id="profilePopup">
+                    <div class="account-info"><img id="popupProfilePic"><div><p id="accountName"></p><p id="accountEmail"></p></div></div>
+                    <button id="logoutBtn"><i class="bx bx-log-out"></i> Logout</button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header"><h3>Menu</h3><span class="close-sidebar" id="closeSidebar"><i class="bx bx-x"></i></span></div>
+        <ul class="sidebar-menu">
+            <li id="menuHome"><i class="bx bx-home"></i> Home</li>
+            <li id="menuTournaments"><i class="bx bx-trophy"></i> Tournaments</li>
+            <li id="menuDashboard" class="active"><i class="bx bx-dashboard"></i> Dashboard</li>
+        </ul>
+        <div class="sidebar-footer"><div class="sidebar-theme" id="menuTheme"><span><i class="bx bx-palette"></i> Theme: <span id="themeLabel">Dark</span></span></div></div>
+    </div>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <div class="dashboard-container">
+        <div class="dashboard-header">
+            <div class="league-title">
+                <span id="leagueName">Loading...</span>
+                <span class="league-status" id="leagueStatus">Loading...</span>
+            </div>
+            <p id="leagueDescription"></p>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card"><div class="stat-value" id="totalTeams">0</div><div class="stat-label">Teams</div></div>
+            <div class="stat-card"><div class="stat-value" id="totalMatches">0</div><div class="stat-label">Matches Played</div></div>
+            <div class="stat-card"><div class="stat-value" id="totalPrize">0</div><div class="stat-label">Prize Pool (VC)</div></div>
+            <div class="stat-card"><div class="stat-value" id="entryFeeDisplay">0</div><div class="stat-label">Entry Fee (VC)</div></div>
+        </div>
+
+        <div class="dashboard-tabs">
+            <button class="tab-btn active" data-tab="standings">📊 Standings</button>
+            <button class="tab-btn" data-tab="fixtures">📅 Fixtures & Results</button>
+            <button class="tab-btn" data-tab="requests">👥 Team Requests</button>
+            <button class="tab-btn" data-tab="gallery">📸 Match Gallery</button>
+        </div>
+
+        <div id="standings" class="tab-content active">
+            <div class="standings-table-wrapper">
+                <table class="standings-table" id="standingsTable">
+                    <thead>
+                        <tr><th>Pos</th><th>Team</th><th>P</th><th>W</th><th>D</th><th>L</th><th>GF</th><th>GA</th><th>GD</th><th>Pts</th></tr>
+                    </thead>
+                    <tbody id="standingsBody"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <div id="fixtures" class="tab-content">
+            <div class="fixtures-grid" id="fixturesList"></div>
+        </div>
+
+        <div id="requests" class="tab-content">
+            <div class="requests-list" id="requestsList"></div>
+        </div>
+
+        <div id="gallery" class="tab-content">
+            <div class="fixtures-grid" id="galleryList"></div>
+        </div>
+    </div>
+
+    <!-- Edit Result Modal -->
+    <div id="editResultModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Edit Match Result</h3>
+                <span class="close-modal" onclick="closeModal()">&times;</span>
+            </div>
+            <div id="modalMatchInfo"></div>
+            <div class="result-input">
+                <input type="number" id="homeScore" placeholder="0">
+                <span style="font-size: 24px;">-</span>
+                <input type="number" id="awayScore" placeholder="0">
+            </div>
+            <div class="screenshot-preview" id="screenshotPreview"></div>
+            <input type="file" id="matchScreenshot" accept="image/*" style="display: none;">
+            <button class="upload-screenshot-btn" onclick="document.getElementById('matchScreenshot').click()" style="width:100%; margin-bottom:10px;">
+                <i class="fas fa-camera"></i> Upload Screenshot
+            </button>
+            <button class="edit-result-btn" onclick="saveMatchResult()" style="width:100%;">Save Result</button>
+        </div>
+    </div>
+
+    <div id="toastContainer" class="toast-container"></div>
+</div>
+
+<script>
+    let currentLeague = null;
+    let currentMatchId = null;
+    let screenshotData = null;
+    
+    // Get league ID from URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const leagueId = urlParams.get('id');
+    
+    function loadLeagueData() {
+        const leagues = JSON.parse(localStorage.getItem('leagues') || '[]');
+        currentLeague = leagues.find(l => l.id === leagueId);
+        
+        if (!currentLeague) {
+            showToast('League not found', 'error');
+            setTimeout(() => window.location.href = 'tournaments.html', 1500);
+            return;
+        }
+        
+        // Update UI
+        document.getElementById('leagueName').innerText = currentLeague.name;
+        document.getElementById('leagueDescription').innerText = currentLeague.description || 'No description';
+        document.getElementById('leagueStatus').innerText = currentLeague.status === 'registration' ? 'REGISTRATION OPEN' : currentLeague.status === 'live' ? 'LIVE' : 'COMPLETED';
+        document.getElementById('leagueStatus').className = `league-status status-${currentLeague.status}`;
+        document.getElementById('totalTeams').innerText = currentLeague.teams?.length || 0;
+        document.getElementById('totalMatches').innerText = currentLeague.matches?.filter(m => m.result).length || 0;
+        document.getElementById('totalPrize').innerText = currentLeague.prizePool || 0;
+        document.getElementById('entryFeeDisplay').innerText = currentLeague.entryFee || 0;
+        
+        renderStandings();
+        renderFixtures();
+        renderRequests();
+        renderGallery();
+    }
+    
+    function renderStandings() {
+        const tbody = document.getElementById('standingsBody');
+        if (!tbody) return;
+        
+        // Calculate standings from match results
+        const standings = [];
+        const teams = currentLeague.teams || [];
+        
+        teams.forEach(team => {
+            standings.push({
+                teamId: team.id,
+                teamName: team.name,
+                teamLogo: team.logo,
+                played: 0,
+                wins: 0,
+                draws: 0,
+                losses: 0,
+                goalsFor: 0,
+                goalsAgainst: 0,
+                points: 0
+            });
+        });
+        
+        // Calculate from matches
+        (currentLeague.matches || []).forEach(match => {
+            if (match.result) {
+                const homeTeam = standings.find(s => s.teamId === match.homeTeamId);
+                const awayTeam = standings.find(s => s.teamId === match.awayTeamId);
+                
+                if (homeTeam && awayTeam) {
+                    homeTeam.played++;
+                    awayTeam.played++;
+                    homeTeam.goalsFor += match.homeScore;
+                    homeTeam.goalsAgainst += match.awayScore;
+                    awayTeam.goalsFor += match.awayScore;
+                    awayTeam.goalsAgainst += match.homeScore;
+                    
+                    if (match.homeScore > match.awayScore) {
+                        homeTeam.wins++;
+                        homeTeam.points += 3;
+                        awayTeam.losses++;
+                    } else if (match.homeScore < match.awayScore) {
+                        awayTeam.wins++;
+                        awayTeam.points += 3;
+                        homeTeam.losses++;
+                    } else {
+                        homeTeam.draws++;
+                        awayTeam.draws++;
+                        homeTeam.points += 1;
+                        awayTeam.points += 1;
+                    }
+                }
+            }
+        });
+        
+        // Sort by points, then goal difference, then goals for
+        standings.sort((a, b) => {
+            if (a.points !== b.points) return b.points - a.points;
+            const gdA = a.goalsFor - a.goalsAgainst;
+            const gdB = b.goalsFor - b.goalsAgainst;
+            if (gdA !== gdB) return gdB - gdA;
+            return b.goalsFor - a.goalsFor;
+        });
+        
+        tbody.innerHTML = '';
+        standings.forEach((team, index) => {
+            const row = tbody.insertRow();
+            row.innerHTML = `
+                <td>${index + 1}</td>
+                <td class="team-cell">
+                    <div class="team-logo-small">${team.teamLogo ? `<img src="${team.teamLogo}" style="width:100%;height:100%;object-fit:cover;">` : '<i class="fas fa-shield-alt"></i>'}</div>
+                    ${team.teamName}
+                </td>
+                <td>${team.played}</td>
+                <td>${team.wins}</td>
+                <td>${team.draws}</td>
+                <td>${team.losses}</td>
+                <td>${team.goalsFor}</td>
+                <td>${team.goalsAgainst}</td>
+                <td>${team.goalsFor - team.goalsAgainst}</td>
+                <td><strong>${team.points}</strong></td>
+            `;
+        });
+    }
+    
+    function renderFixtures() {
+        const container = document.getElementById('fixturesList');
+        if (!container) return;
+        
+        const matches = currentLeague.matches || [];
+        
+        if (matches.length === 0) {
+            container.innerHTML = '<div class="empty-state">No fixtures scheduled yet. Generate fixtures when teams join.</div>';
+            return;
+        }
+        
+        container.innerHTML = '';
+        matches.forEach(match => {
+            const homeTeam = currentLeague.teams?.find(t => t.id === match.homeTeamId);
+            const awayTeam = currentLeague.teams?.find(t => t.id === match.awayTeamId);
+            
+            const matchCard = document.createElement('div');
+            matchCard.className = 'match-card';
+            matchCard.innerHTML = `
+                <div class="match-info">
+                    <div class="match-teams">
+                        <div class="team">
+                            <div class="team-logo-small">${homeTeam?.logo ? `<img src="${homeTeam.logo}" style="width:100%;height:100%;object-fit:cover;">` : '<i class="fas fa-shield-alt"></i>'}</div>
+                            <strong>${homeTeam?.name || 'TBD'}</strong>
+                        </div>
+                        <div class="vs">VS</div>
+                        <div class="team">
+                            <div class="team-logo-small">${awayTeam?.logo ? `<img src="${awayTeam.logo}" style="width:100%;height:100%;object-fit:cover;">` : '<i class="fas fa-shield-alt"></i>'}</div>
+                            <strong>${awayTeam?.name || 'TBD'}</strong>
+                        </div>
+                    </div>
+                    <div class="match-result">
+                        ${match.result ? `${match.homeScore} - ${match.awayScore}` : 'Not Played Yet'}
+                    </div>
+                    <div class="match-actions">
+                        <button class="edit-result-btn" onclick="openEditModal('${match.id}', '${homeTeam?.name}', '${awayTeam?.name}', ${match.homeScore || 0}, ${match.awayScore || 0})">
+                            <i class="fas fa-edit"></i> Edit Result
+                        </button>
+                        ${match.screenshot ? `<button class="upload-screenshot-btn" onclick="viewScreenshot('${match.screenshot}')"><i class="fas fa-image"></i> View Screenshot</button>` : ''}
+                    </div>
+                </div>
+            `;
+            container.appendChild(matchCard);
+        });
+    }
+    
+    function renderRequests() {
+        const container = document.getElementById('requestsList');
+        if (!container) return;
+        
+        const pendingRequests = currentLeague.pendingRequests || [];
+        
+        if (pendingRequests.length === 0) {
+            container.innerHTML = '<div class="empty-state">No pending team requests</div>';
+            return;
+        }
+        
+        container.innerHTML = '';
+        pendingRequests.forEach(request => {
+            const requestCard = document.createElement('div');
+            requestCard.className = 'request-card';
+            requestCard.innerHTML = `
+                <div class="team-cell">
+                    <div class="team-logo-small">${request.logo ? `<img src="${request.logo}" style="width:100%;height:100%;object-fit:cover;">` : '<i class="fas fa-shield-alt"></i>'}</div>
+                    <div>
+                        <strong>${request.teamName}</strong><br>
+                        <small>Owner: ${request.ownerName}</small>
+                    </div>
+                </div>
+                <div class="request-actions">
+                    <button class="approve-btn" onclick="handleRequest('${request.id}', 'approve')"><i class="fas fa-check"></i> Approve</button>
+                    <button class="deny-btn" onclick="handleRequest('${request.id}', 'deny')"><i class="fas fa-times"></i> Deny</button>
+                </div>
+            `;
+            container.appendChild(requestCard);
+        });
+    }
+    
+    function renderGallery() {
+        const container = document.getElementById('galleryList');
+        if (!container) return;
+        
+        const matchesWithScreenshots = (currentLeague.matches || []).filter(m => m.screenshot);
+        
+        if (matchesWithScreenshots.length === 0) {
+            container.innerHTML = '<div class="empty-state">No match screenshots yet</div>';
+            return;
+        }
+        
+        container.innerHTML = '';
+        matchesWithScreenshots.forEach(match => {
+            const homeTeam = currentLeague.teams?.find(t => t.id === match.homeTeamId);
+            const awayTeam = currentLeague.teams?.find(t => t.id === match.awayTeamId);
+            
+            const galleryItem = document.createElement('div');
+            galleryItem.className = 'match-card';
+            galleryItem.innerHTML = `
+                <div class="match-info">
+                    <div><strong>${homeTeam?.name} ${match.homeScore} - ${match.awayScore} ${awayTeam?.name}</strong></div>
+                    <button class="upload-screenshot-btn" onclick="viewScreenshot('${match.screenshot}')">
+                        <i class="fas fa-image"></i> View Screenshot
+                    </button>
+                </div>
+            `;
+            container.appendChild(galleryItem);
+        });
+    }
+    
+    function openEditModal(matchId, homeTeam, awayTeam, homeScore, awayScore) {
+        currentMatchId = matchId;
+        document.getElementById('modalMatchInfo').innerHTML = `
+            <h4>${homeTeam} vs ${awayTeam}</h4>
+            <p>Enter the final score and upload match screenshot</p>
+        `;
+        document.getElementById('homeScore').value = homeScore;
+        document.getElementById('awayScore').value = awayScore;
+        document.getElementById('screenshotPreview').innerHTML = '';
+        screenshotData = null;
+        document.getElementById('editResultModal').classList.add('active');
+    }
+    
+    function closeModal() {
+        document.getElementById('editResultModal').classList.remove('active');
+    }
+    
+    function viewScreenshot(screenshotUrl) {
+        const modal = document.createElement('div');
+        modal.className = 'modal active';
+        modal.innerHTML = `
+            <div class="modal-content" style="max-width: 600px;">
+                <div class="modal-header">
+                    <h3>Match Screenshot</h3>
+                    <span class="close-modal" onclick="this.closest('.modal').remove()">&times;</span>
+                </div>
+                <img src="${screenshotUrl}" style="width:100%; border-radius:12px;">
+            </div>
+        `;
+        document.body.appendChild(modal);
+    }
+    
+    function saveMatchResult() {
+        const homeScore = parseInt(document.getElementById('homeScore').value) || 0;
+        const awayScore = parseInt(document.getElementById('awayScore').value) || 0;
+        
+        // Update match result
+        const matchIndex = currentLeague.matches.findIndex(m => m.id === currentMatchId);
+        if (matchIndex !== -1) {
+            currentLeague.matches[matchIndex].result = true;
+            currentLeague.matches[matchIndex].homeScore = homeScore;
+            currentLeague.matches[matchIndex].awayScore = awayScore;
+            if (screenshotData) {
+                currentLeague.matches[matchIndex].screenshot = screenshotData;
+            }
+        }
+        
+        // Save to localStorage
+        const leagues = JSON.parse(localStorage.getItem('leagues') || '[]');
+        const leagueIndex = leagues.findIndex(l => l.id === leagueId);
+        if (leagueIndex !== -1) {
+            leagues[leagueIndex] = currentLeague;
+            localStorage.setItem('leagues', JSON.stringify(leagues));
+        }
+        
+        showToast('Match result saved!', 'success');
+        closeModal();
+        renderStandings();
+        renderFixtures();
+        renderGallery();
+    }
+    
+    // Screenshot upload
+    document.getElementById('matchScreenshot')?.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                screenshotData = event.target.result;
+                document.getElementById('screenshotPreview').innerHTML = `<img src="${screenshotData}" style="max-width:100%; border-radius:12px;">`;
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+    
+    function handleRequest(requestId, action) {
+        const request = currentLeague.pendingRequests.find(r => r.id === requestId);
+        if (!request) return;
+        
+        if (action === 'approve') {
+            // Add team to league
+            if (!currentLeague.teams) currentLeague.teams = [];
+            currentLeague.teams.push({
+                id: request.id,
+                name: request.teamName,
+                logo: request.logo,
+                ownerId: request.ownerId,
+                ownerName: request.ownerName
+            });
+        }
+        
+        // Remove from pending requests
+        currentLeague.pendingRequests = currentLeague.pendingRequests.filter(r => r.id !== requestId);
+        
+        // Save to localStorage
+        const leagues = JSON.parse(localStorage.getItem('leagues') || '[]');
+        const leagueIndex = leagues.findIndex(l => l.id === leagueId);
+        if (leagueIndex !== -1) {
+            leagues[leagueIndex] = currentLeague;
+            localStorage.setItem('leagues', JSON.stringify(leagues));
+        }
+        
+        showToast(action === 'approve' ? 'Team approved!' : 'Team denied', 'success');
+        renderRequests();
+        renderStandings();
+    }
+    
+    // Tab switching
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            btn.classList.add('active');
+            document.getElementById(btn.dataset.tab).classList.add('active');
+        });
+    });
+    
+    // Initialize
+    loadLeagueData();
+    
+    function showToast(message, type) {
+        const container = document.getElementById('toastContainer');
+        const toast = document.createElement('div');
+        toast.className = `toast ${type}`;
+        toast.innerHTML = `<i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'}"></i> ${message}`;
+        container.appendChild(toast);
+        setTimeout(() => toast.classList.add('show'), 10);
+        setTimeout(() => { toast.classList.remove('show'); setTimeout(() => toast.remove(), 300); }, 3000);
+    }
+    
+    // Veno Coins
+    function getVenoCoins() { return parseInt(localStorage.getItem('venoCoins') || '0'); }
+    function updateVenoCoinsDisplay() { document.getElementById('venoCoinsAmount').innerText = getVenoCoins(); }
+    updateVenoCoinsDisplay();
+</script>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
+    
+    const firebaseConfig = {
+        apiKey: "AIzaSyBW0Sz7TODfa8tQJTfNUaLhfK9qJhdA1yE",
+        authDomain: "crunck-app.firebaseapp.com",
+        projectId: "crunck-app",
+        storageBucket: "crunck-app.firebasestorage.app",
+        messagingSenderId: "475953302982",
+        appId: "1:475953302982:web:607e08379adb12f985f6c7"
+    };
+    
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    
+    onAuthStateChanged(auth, (user) => {
+        if (user) {
+            document.getElementById('googleProfilePic').src = user.photoURL || `https://ui-avatars.com/api/?name=${user.displayName}&background=10b981&color=fff`;
+            document.getElementById('popupProfilePic').src = user.photoURL || `https://ui-avatars.com/api/?name=${user.displayName}&background=10b981&color=fff`;
+            document.getElementById('accountName').innerText = user.displayName;
+            document.getElementById('accountEmail').innerText = user.email;
+        } else {
+            window.location.href = 'index.html';
+        }
+    });
+</script>
+
+<script src="nav.js"></script>
+</body>
+</html>
