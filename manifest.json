@@ -1,7 +1,7 @@
 {
-  "name": "Crunk Games - Play & Earn",
-  "short_name": "Crunk Games",
-  "description": "Compete in tournaments, create teams, and earn Veno Coins!",
+  "name": "veno-arena",
+  "short_name": "veno-arena",
+  "description": "Play tournaments, create teams, and earn Veno Coins!",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#05070d",
@@ -58,70 +58,34 @@
       "purpose": "any maskable"
     }
   ],
-  "screenshots": [
-    {
-      "src": "/screenshots/home.png",
-      "sizes": "1080x1920",
-      "type": "image/png",
-      "form_factor": "wide",
-      "label": "Home Screen"
-    },
-    {
-      "src": "/screenshots/tournaments.png",
-      "sizes": "1080x1920",
-      "type": "image/png",
-      "form_factor": "wide",
-      "label": "veno=arena"
-    }
-  ],
   "shortcuts": [
     {
-      "name": "veno-arena",
-      "short_name": "Veno-arena",
+      "name": "Tournaments",
+      "short_name": "Tournaments",
       "description": "View active tournaments",
       "url": "/tournaments.html",
-      "icons": [
-        {
-          "src": "/icons/trophy-icon.png",
-          "sizes": "96x96"
-        }
-      ]
+      "icons": [{ "src": "/icons/icon-96x96.png", "sizes": "96x96" }]
     },
     {
       "name": "Create Team",
-      "short_name": "Create Team",
+      "short_name": "Team",
       "description": "Create your dream team",
       "url": "/team-create.html",
-      "icons": [
-        {
-          "src": "/icons/team-icon.png",
-          "sizes": "96x96"
-        }
-      ]
+      "icons": [{ "src": "/icons/icon-96x96.png", "sizes": "96x96" }]
     },
     {
       "name": "Leaderboard",
-      "short_name": "Leaderboard",
+      "short_name": "Rankings",
       "description": "Check global rankings",
       "url": "/leaderboard.html",
-      "icons": [
-        {
-          "src": "/icons/leaderboard-icon.png",
-          "sizes": "96x96"
-        }
-      ]
+      "icons": [{ "src": "/icons/icon-96x96.png", "sizes": "96x96" }]
     },
     {
       "name": "Spin & Win",
       "short_name": "Spin",
       "description": "Spin the wheel for coins",
       "url": "/tournaments.html#spin",
-      "icons": [
-        {
-          "src": "/icons/spin-icon.png",
-          "sizes": "96x96"
-        }
-      ]
+      "icons": [{ "src": "/icons/icon-96x96.png", "sizes": "96x96" }]
     }
   ],
   "categories": ["games", "entertainment", "sports"],
