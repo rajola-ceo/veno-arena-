@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Create Team - Crunk Games</title>
+    
+    <!-- Boxicons -->
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="home.css">
+    <link rel="stylesheet" href="nav.css">
+    <link rel="stylesheet" href="tournaments.css">
+    
+    <style>
+        /* Team Create Specific Styles */
+        .create-team-container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 30px;
+            background: var(--bg-tertiary);
+            border-radius: 24px;
+            border: 1px solid var(--border-color);
+        }
+        
+        .form-group {
+            margin-bottom: 24px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 12px 16px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            color: var(--text-primary);
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+        
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            outline: none;
+            border-color: #10b981;
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+        }
+        
+        .logo-upload {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        
+        .logo-preview {
+            width: 100px;
+            height: 100px;
+            background: var(--bg-secondary);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px dashed var(--border-color);
+            overflow: hidden;
+        }
+        
+        .logo-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .logo-preview i {
+            font-size: 40px;
+            color: var(--text-secondary);
+        }
+        
+        .upload-btn {
+            padding: 10px 20px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 30px;
+            color: var(--text-primary);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .upload-btn:hover {
+            border-color: #10b981;
+            color: #10b981;
+        }
+        
+        .squad-section {
+            background: var(--bg-secondary);
+            border-radius: 16px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+        
+        .squad-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .add-player-btn {
+            padding: 8px 16px;
+            background: #10b981;
+            border: none;
+            border-radius: 30px;
+            color: white;
+            cursor: pointer;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .players-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .player-item {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            background: var(--bg-tertiary);
+            padding: 10px;
+            border-radius: 12px;
+        }
+        
+        .player-position {
+            width: 60px;
+            padding: 8px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 12px;
+        }
+        
+        .player-name {
+            flex: 1;
+            padding: 8px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+        }
+        
+        .player-rating {
+            width: 80px;
+            padding: 8px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+        }
+        
+        .remove-player {
+            background: none;
+            border: none;
+            color: #ff5555;
+            cursor: pointer;
+            font-size: 18px;
+            padding: 5px;
+        }
+        
+        .formation-selector {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 10px;
+        }
+        
+        .formation-option {
+            padding: 8px 16px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .formation-option.active {
+            background: #10b981;
+            border-color: #10b981;
+            color: white;
+        }
+        
+        .btn-create {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #10b981, #059669);
+            border: none;
+            border-radius: 30px;
+            color: white;
+            font-weight: 600;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+        }
+        
+        .btn-create:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(16, 185, 129, 0.4);
+        }
+        
+        .error-message {
+            color: #ff5555;
+            font-size: 12px;
+            margin-top: 5px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+<div class="app">
+    <!-- Topbar (same as tournaments page) -->
+    <header class="topbar">
+        <div class="menu" id="menuBtn">
+            <i class="bx bx-menu"></i>
+        </div>
+        <div class="brand">
+            <h1>⚽ Create Your Team</h1>
+        </div>
+        <div class="icons">
+            <div class="veno-coins-container">
+                <div class="veno-coins-display">
+                    <i class="fas fa-coins"></i>
+                    <span id="venoCoinsAmount">0</span>
+                    <span class="coin-label">Veno Coins</span>
+                </div>
+                <button id="claimVenoCoinsBtn" class="claim-veno-btn">
+                    <i class="fas fa-gift"></i> Claim 10
+                </button>
+            </div>
+            <div class="profile-dropdown" id="profileDropdown">
+                <img id="googleProfilePic" class="profile-pic" src="https://ui-avatars.com/api/?name=User&background=34d399&color=fff&size=128" alt="Profile">
+                <div class="profile-popup" id="profilePopup">
+                    <div class="account-info">
+                        <img id="popupProfilePic" src="https://ui-avatars.com/api/?name=User&background=34d399&color=fff&size=128" alt="Profile">
+                        <div>
+                            <p id="accountName">User Name</p>
+                            <p id="accountEmail">user@example.com</p>
+                        </div>
+                    </div>
+                    <button id="logoutBtn"><i class="bx bx-log-out"></i> Logout</button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Sidebar (same as tournaments page) -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h3>Menu</h3>
+            <span class="close-sidebar" id="closeSidebar"><i class="bx bx-x"></i></span>
+        </div>
+        <div class="venaura-section" id="venauraIcon">
+            <div class="venaura-icon"><i class="fas fa-trophy"></i></div>
+            <div class="venaura-info"><h3>Venaura App</h3><p>Connect with Venaura</p></div>
+            <i class="bx bx-right-arrow-alt arrow-icon"></i>
+        </div>
+        <ul class="sidebar-menu">
+            <li id="menuHome"><i class="bx bx-home"></i> Home</li>
+            <li id="menuTournaments"><i class="bx bx-trophy"></i> Tournaments</li>
+            <li id="menuCreateTeam" class="active"><i class="bx bx-plus-circle"></i> Create Team</li>
+        </ul>
+        <div class="sidebar-footer">
+            <div class="sidebar-theme" id="menuTheme">
+                <span><i class="bx bx-palette"></i> Theme: <span id="themeLabel">Dark</span></span>
+                <div class="theme-toggle"><i class="bx bx-sun" style="display: none;"></i><i class="bx bx-moon"></i></div>
+            </div>
+        </div>
+    </div>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- Main Content -->
+    <div class="create-team-container">
+        <h2 style="margin-bottom: 20px;">Create Your Football Team</h2>
+        
+        <form id="createTeamForm">
+            <!-- Team Logo -->
+            <div class="form-group">
+                <label>Team Logo</label>
+                <div class="logo-upload">
+                    <div class="logo-preview" id="logoPreview">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <input type="file" id="teamLogo" accept="image/*" style="display: none;">
+                    <button type="button" class="upload-btn" id="uploadLogoBtn">
+                        <i class="fas fa-upload"></i> Upload Logo
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Team Name -->
+            <div class="form-group">
+                <label>Team Name *</label>
+                <input type="text" id="teamName" placeholder="e.g., FC Barcelona" required>
+                <div class="error-message" id="teamNameError">Team name is required</div>
+            </div>
+            
+            <!-- Short Name -->
+            <div class="form-group">
+                <label>Short Name (3-5 letters) *</label>
+                <input type="text" id="teamShortName" placeholder="e.g., FCB" maxlength="5" required>
+            </div>
+            
+            <!-- Home Stadium -->
+            <div class="form-group">
+                <label>Home Stadium</label>
+                <input type="text" id="homeStadium" placeholder="e.g., Camp Nou">
+            </div>
+            
+            <!-- Game Type -->
+            <div class="form-group">
+                <label>Game Type *</label>
+                <select id="gameType" required>
+                    <option value="eFootball">eFootball</option>
+                    <option value="FC">FC (FIFA/EA Sports FC)</option>
+                    <option value="DLS">Dream League Soccer (DLS)</option>
+                </select>
+            </div>
+            
+            <!-- Formation -->
+            <div class="form-group">
+                <label>Formation</label>
+                <div class="formation-selector" id="formationSelector">
+                    <div class="formation-option" data-formation="4-3-3">4-3-3</div>
+                    <div class="formation-option active" data-formation="4-4-2">4-4-2</div>
+                    <div class="formation-option" data-formation="3-5-2">3-5-2</div>
+                    <div class="formation-option" data-formation="5-3-2">5-3-2</div>
+                    <div class="formation-option" data-formation="4-2-3-1">4-2-3-1</div>
+                </div>
+                <input type="hidden" id="formation" value="4-4-2">
+            </div>
+            
+            <!-- Squad Section -->
+            <div class="squad-section">
+                <div class="squad-header">
+                    <h3>⚽ Squad (Starting XI)</h3>
+                    <button type="button" class="add-player-btn" id="addPlayerBtn">
+                        <i class="fas fa-plus"></i> Add Player
+                    </button>
+                </div>
+                <div class="players-list" id="playersList">
+                    <!-- Player rows will be added here -->
+                </div>
+                <p style="font-size: 12px; color: var(--text-secondary); margin-top: 10px;">
+                    <i class="fas fa-info-circle"></i> Add your 11 starting players
+                </p>
+            </div>
+            
+            <button type="submit" class="btn-create">
+                <i class="fas fa-check-circle"></i> Create Team
+            </button>
+        </form>
+    </div>
+
+    <!-- Toast Container -->
+    <div id="toastContainer" class="toast-container"></div>
+</div>
+
+<script>
+    // Player positions
+    const positions = ['GK', 'RB', 'CB', 'LB', 'CDM', 'CM', 'CAM', 'RW', 'LW', 'ST', 'CF'];
+    
+    let players = [];
+    let teamLogoData = null;
+    
+    // Initialize with 11 empty players
+    for (let i = 0; i < 11; i++) {
+        players.push({
+            position: positions[i] || 'MID',
+            name: '',
+            rating: 70
+        });
+    }
+    
+    function renderPlayersList() {
+        const container = document.getElementById('playersList');
+        if (!container) return;
+        
+        container.innerHTML = '';
+        
+        players.forEach((player, index) => {
+            const playerDiv = document.createElement('div');
+            playerDiv.className = 'player-item';
+            playerDiv.innerHTML = `
+                <select class="player-position" data-index="${index}" data-field="position">
+                    ${positions.map(pos => `<option value="${pos}" ${player.position === pos ? 'selected' : ''}>${pos}</option>`).join('')}
+                </select>
+                <input type="text" class="player-name" placeholder="Player Name" data-index="${index}" data-field="name" value="${player.name}">
+                <select class="player-rating" data-index="${index}" data-field="rating">
+                    ${Array.from({length: 100}, (_, i) => i + 1).map(r => `<option value="${r}" ${player.rating === r ? 'selected' : ''}>${r}</option>`).join('')}
+                </select>
+                <button class="remove-player" data-index="${index}" ${players.length <= 11 ? 'disabled style="opacity:0.3"' : ''}>
+                    <i class="fas fa-trash"></i>
+                </button>
+            `;
+            container.appendChild(playerDiv);
+        });
+        
+        // Add event listeners
+        document.querySelectorAll('.player-position, .player-name, .player-rating').forEach(el => {
+            el.addEventListener('change', function() {
+                const index = parseInt(this.dataset.index);
+                const field = this.dataset.field;
+                players[index][field] = this.value;
+            });
+        });
+        
+        document.querySelectorAll('.remove-player').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const index = parseInt(this.dataset.index);
+                if (players.length > 11) {
+                    players.splice(index, 1);
+                    renderPlayersList();
+                }
+            });
+        });
+    }
+    
+    // Formation selector
+    document.querySelectorAll('.formation-option').forEach(opt => {
+        opt.addEventListener('click', function() {
+            document.querySelectorAll('.formation-option').forEach(o => o.classList.remove('active'));
+            this.classList.add('active');
+            document.getElementById('formation').value = this.dataset.formation;
+        });
+    });
+    
+    // Add player button
+    document.getElementById('addPlayerBtn')?.addEventListener('click', () => {
+        players.push({
+            position: 'SUB',
+            name: '',
+            rating: 65
+        });
+        renderPlayersList();
+    });
+    
+    // Logo upload
+    document.getElementById('uploadLogoBtn')?.addEventListener('click', () => {
+        document.getElementById('teamLogo').click();
+    });
+    
+    document.getElementById('teamLogo')?.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                teamLogoData = event.target.result;
+                const preview = document.getElementById('logoPreview');
+                preview.innerHTML = `<img src="${teamLogoData}" alt="Team Logo">`;
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+    
+    // Form submission
+    document.getElementById('createTeamForm')?.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const teamName = document.getElementById('teamName').value.trim();
+        if (!teamName) {
+            document.getElementById('teamNameError').style.display = 'block';
+            return;
+        }
+        document.getElementById('teamNameError').style.display = 'none';
+        
+        // Check if at least 11 players have names
+        const namedPlayers = players.filter(p => p.name.trim());
+        if (namedPlayers.length < 11) {
+            showToast('Please add at least 11 players with names', 'error');
+            return;
+        }
+        
+        const teamData = {
+            name: teamName,
+            shortName: document.getElementById('teamShortName').value.trim(),
+            stadium: document.getElementById('homeStadium').value.trim(),
+            gameType: document.getElementById('gameType').value,
+            formation: document.getElementById('formation').value,
+            logo: teamLogoData,
+            players: players.filter(p => p.name.trim()),
+            ownerId: currentUser?.uid,
+            createdAt: new Date().toISOString(),
+            wins: 0,
+            draws: 0,
+            losses: 0,
+            goalsFor: 0,
+            goalsAgainst: 0,
+            points: 0
+        };
+        
+        // Save to localStorage for now (will connect to Firebase later)
+        const teams = JSON.parse(localStorage.getItem('userTeams') || '[]');
+        teamData.id = 'team_' + Date.now();
+        teams.push(teamData);
+        localStorage.setItem('userTeams', JSON.stringify(teams));
+        
+        showToast('Team created successfully!', 'success');
+        setTimeout(() => {
+            window.location.href = 'tournaments.html';
+        }, 1500);
+    });
+    
+    renderPlayersList();
+</script>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
+    
+    const firebaseConfig = {
+        apiKey: "AIzaSyBW0Sz7TODfa8tQJTfNUaLhfK9qJhdA1yE",
+        authDomain: "crunck-app.firebaseapp.com",
+        projectId: "crunck-app",
+        storageBucket: "crunck-app.firebasestorage.app",
+        messagingSenderId: "475953302982",
+        appId: "1:475953302982:web:607e08379adb12f985f6c7"
+    };
+    
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    window.auth = auth;
+    
+    let currentUser = null;
+    
+    onAuthStateChanged(auth, (user) => {
+        if (user) {
+            currentUser = user;
+            document.getElementById('googleProfilePic').src = user.photoURL || `https://ui-avatars.com/api/?name=${user.displayName}&background=10b981&color=fff`;
+            document.getElementById('popupProfilePic').src = user.photoURL || `https://ui-avatars.com/api/?name=${user.displayName}&background=10b981&color=fff`;
+            document.getElementById('accountName').innerText = user.displayName;
+            document.getElementById('accountEmail').innerText = user.email;
+        } else {
+            window.location.href = 'index.html';
+        }
+    });
+    
+    window.currentUser = currentUser;
+</script>
+
+<script src="nav.js"></script>
+<script>
+    function showToast(message, type) {
+        const container = document.getElementById('toastContainer');
+        const toast = document.createElement('div');
+        toast.className = `toast ${type}`;
+        toast.innerHTML = `<i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'}"></i> ${message}`;
+        container.appendChild(toast);
+        setTimeout(() => toast.classList.add('show'), 10);
+        setTimeout(() => { toast.classList.remove('show'); setTimeout(() => toast.remove(), 300); }, 3000);
+    }
+    
+    // Veno Coins
+    function getVenoCoins() { return parseInt(localStorage.getItem('venoCoins') || '0'); }
+    function updateVenoCoinsDisplay() { document.getElementById('venoCoinsAmount').innerText = getVenoCoins(); }
+    updateVenoCoinsDisplay();
+    
+    const claimBtn = document.getElementById('claimVenoCoinsBtn');
+    if (claimBtn) {
+        const LAST_CLAIM_KEY = 'lastVenoClaim';
+        function canClaim() {
+            const last = localStorage.getItem(LAST_CLAIM_KEY);
+            if (!last) return true;
+            return (Date.now() - parseInt(last)) >= 24 * 60 * 60 * 1000;
+        }
+        claimBtn.addEventListener('click', () => {
+            if (canClaim()) {
+                localStorage.setItem('venoCoins', getVenoCoins() + 10);
+                localStorage.setItem(LAST_CLAIM_KEY, Date.now().toString());
+                updateVenoCoinsDisplay();
+                showToast('🎉 You claimed 10 Veno Coins!', 'success');
+            } else {
+                showToast('Already claimed! Come back tomorrow', 'error');
+            }
+        });
+    }
+</script>
+</body>
+</html>
