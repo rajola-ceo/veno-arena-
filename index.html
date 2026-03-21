@@ -178,7 +178,114 @@
             if (event.target === modal) {
                 modal.style.display = 'none';
             }
+        }<!-- PWA Registration -->
+
+    // Register Service Worker
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('/sw.js')
+                .then(registration => {
+                    console.log('✅ Service Worker registered:', registration);
+                    
+                    // Check for updates
+                    registration.addEventListener('updatefound', () => {
+                        const newWorker = registration.installing;
+                        console.log('🔄 New service worker found');
+                        
+                        newWorker.addEventListener('statechange', () => {
+                            if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                                console.log('📱 Update available - refresh to get new version');
+                                showUpdateToast();
+                            }
+                        });
+                    });
+                })
+                .catch(error => {
+                    console.error('❌ Service Worker registration failed:', error);
+                });
+        });
+    }
+    
+    // Show update notification
+    function showUpdateToast() {
+        const toast = document.createElement('div');
+        toast.className = 'pwa-update-toast';
+        toast.innerHTML = `
+            <i class="fas fa-download"></i>
+            <span>New version available!</span>
+            <button onclick="location.reload()">Update</button>
+        `;
+        toast.style.cssText = `
+            position: fixed;
+            bottom: 80px;
+            left: 20px;
+            right: 20px;
+            background: var(--primary, #10b981);
+            color: white;
+            padding: 12px 20px;
+            border-radius: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            z-index: 10000;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+            animation: slideUp 0.3s ease;
+        `;
+        document.body.appendChild(toast);
+        
+        setTimeout(() => {
+            toast.style.animation = 'slideDown 0.3s ease';
+            setTimeout(() => toast.remove(), 300);
+        }, 5000);
+    }
+    
+    // Check if app is installed
+    window.addEventListener('beforeinstallprompt', (e) => {
+        e.preventDefault();
+        window.deferredPrompt = e;
+        
+        // Show install button
+        const installBtn = document.getElementById('installAppBtn');
+        if (installBtn) {
+            installBtn.style.display = 'flex';
+            installBtn.addEventListener('click', () => {
+                window.deferredPrompt.prompt();
+                window.deferredPrompt.userChoice.then(choice => {
+                    if (choice.outcome === 'accepted') {
+                        console.log('✅ User accepted the install prompt');
+                    }
+                    window.deferredPrompt = null;
+                    installBtn.style.display = 'none';
+                });
+            });
         }
+    });
+    
+    // Check if app is already installed
+    window.addEventListener('appinstalled', () => {
+        console.log('📱 App installed successfully');
+        const installBtn = document.getElementById('installAppBtn');
+        if (installBtn) installBtn.style.display = 'none';
+    });
+    
+    // Add animations
+    const style = document.createElement('style');
+    style.textContent = `
+        @keyframes slideUp {
+            from { transform: translateY(100px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        @keyframes slideDown {
+            from { transform: translateY(0); opacity: 1; }
+            to { transform: translateY(100px); opacity: 0; }
+        }
+    `;
+    document.head.appendChild(style);
+
     </script>
+    <!-- Add Install Button to Top Bar (optional) -->
+<button id="installAppBtn" style="display: none; background: none; border: none; color: var(--primary); cursor: pointer;">
+    <i class="fas fa-download"></i>
+</button>
 </body>
 </html>
