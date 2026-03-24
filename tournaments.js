@@ -57,6 +57,11 @@ function createLeagueCard(league) {
                        league.status === 'registration' ? 'REGISTRATION OPEN' : 
                        league.status === 'upcoming' ? 'UPCOMING' : 'COMPLETED';
     
+    // Calculate actual team count (approved teams)
+    const teamCount = league.teams?.length || 0;
+    const maxTeams = league.maxTeams || 16;
+    const isFull = teamCount >= maxTeams;
+    
     // Check if current user is the owner
     const isOwner = currentUser && league.ownerId === currentUser.uid;
     
@@ -73,8 +78,8 @@ function createLeagueCard(league) {
         <div class="league-body">
             <div class="league-stats">
                 <div class="stat">
-                    <div class="stat-value">${league.teams?.length || 0}/${league.maxTeams || 16}</div>
-                    <div class="stat-label">Teams</div>
+                    <div class="stat-value ${isFull ? 'full' : ''}">${teamCount}/${maxTeams}</div>
+                    <div class="stat-label">Teams ${isFull ? '🔴 FULL' : ''}</div>
                 </div>
                 <div class="stat">
                     <div class="stat-value">${league.matches?.filter(m => m.result).length || 0}/${league.matches?.length || 0}</div>
@@ -99,8 +104,8 @@ function createLeagueCard(league) {
         </div>
         <div class="league-footer">
             ${!isOwner ? `
-                <button class="join-btn" onclick="event.stopPropagation(); window.joinLeague('${league.id}')">
-                    <i class="fas fa-sign-in-alt"></i> Join League
+                <button class="join-btn" onclick="event.stopPropagation(); window.joinLeague('${league.id}')" ${isFull ? 'disabled style="opacity:0.5; cursor:not-allowed;"' : ''}>
+                    <i class="fas fa-sign-in-alt"></i> ${isFull ? 'League Full' : 'Join League'}
                 </button>
             ` : `
                 <button class="dashboard-btn" onclick="event.stopPropagation(); window.goToDashboard('${league.id}')">
