@@ -3,130 +3,341 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Profile Settings - Crunk Games</title>
+    <title>Profile Settings - Veno-Arena</title>
     <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="home.css">
     <style>
-        .settings-container {
-            max-width: 600px;
-            margin: 20px auto;
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #10b981;
+            --primary-dark: #059669;
+            --bg-primary: #05070d;
+            --bg-secondary: #0b1222;
+            --bg-tertiary: #111827;
+            --border-color: #1f2937;
+            --text-primary: #e6e6e6;
+            --text-secondary: #9ca3af;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             padding: 20px;
         }
-        
+
+        .settings-container {
+            max-width: 500px;
+            width: 100%;
+            margin: 0 auto;
+        }
+
         .settings-card {
             background: var(--bg-tertiary);
             border-radius: 24px;
             padding: 30px;
             border: 1px solid var(--border-color);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
         }
-        
+
+        h2 {
+            text-align: center;
+            margin-bottom: 10px;
+            color: var(--primary);
+        }
+
+        .subtitle {
+            text-align: center;
+            color: var(--text-secondary);
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+
+        /* Avatar Section */
         .avatar-section {
             text-align: center;
             margin-bottom: 30px;
         }
-        
+
         .avatar-preview {
             width: 120px;
             height: 120px;
             margin: 0 auto 15px;
             border-radius: 50%;
             overflow: hidden;
-            border: 3px solid #10b981;
+            border: 3px solid var(--primary);
             cursor: pointer;
+            background: var(--bg-secondary);
+            position: relative;
+            transition: all 0.3s ease;
         }
-        
+
+        .avatar-preview:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 20px rgba(16, 185, 129, 0.3);
+        }
+
         .avatar-preview img {
             width: 100%;
             height: 100%;
             object-fit: cover;
         }
-        
-        .upload-btn {
-            background: #10b981;
-            border: none;
-            padding: 8px 20px;
-            border-radius: 30px;
-            color: white;
-            cursor: pointer;
+
+        .avatar-preview .placeholder-icon {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            color: var(--primary);
+            background: linear-gradient(135deg, var(--bg-secondary), var(--bg-tertiary));
         }
-        
+
+        .upload-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 10px;
+        }
+
+        .upload-btn {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            padding: 8px 16px;
+            border-radius: 30px;
+            color: var(--text-primary);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 13px;
+        }
+
+        .upload-btn:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+            transform: translateY(-2px);
+        }
+
+        .remove-btn {
+            background: rgba(255, 85, 85, 0.1);
+            border-color: #ff5555;
+            color: #ff5555;
+        }
+
+        .remove-btn:hover {
+            background: #ff5555;
+            color: white;
+            border-color: #ff5555;
+        }
+
+        /* Form Group */
         .form-group {
             margin-bottom: 20px;
         }
-        
+
         .form-group label {
             display: block;
             margin-bottom: 8px;
             font-weight: 600;
+            color: var(--text-primary);
         }
-        
+
         .form-group input {
             width: 100%;
-            padding: 12px;
+            padding: 12px 16px;
             background: var(--bg-secondary);
             border: 1px solid var(--border-color);
             border-radius: 12px;
             color: var(--text-primary);
+            font-size: 16px;
+            transition: all 0.3s ease;
         }
-        
+
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+        }
+
+        .email-display {
+            background: var(--bg-secondary);
+            padding: 12px 16px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .email-display i {
+            color: var(--primary);
+        }
+
+        /* Save Button */
         .save-btn {
             width: 100%;
-            padding: 12px;
-            background: linear-gradient(135deg, #10b981, #059669);
+            padding: 14px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
             border: none;
             border-radius: 30px;
             color: white;
             font-weight: 600;
+            font-size: 16px;
             cursor: pointer;
+            transition: all 0.3s ease;
             margin-top: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
         }
-        
+
+        .save-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(16, 185, 129, 0.4);
+        }
+
+        /* Privacy Note */
         .privacy-note {
             margin-top: 20px;
             padding: 15px;
             background: rgba(16, 185, 129, 0.1);
             border-radius: 12px;
             font-size: 12px;
-            color: #9ca3af;
+            color: var(--text-secondary);
             text-align: center;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            justify-content: center;
+        }
+
+        .privacy-note i {
+            color: var(--primary);
+        }
+
+        /* Toast */
+        .toast-container {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10000;
+        }
+
+        .toast {
+            background: var(--primary);
+            color: var(--bg-primary);
+            padding: 12px 24px;
+            border-radius: 50px;
+            font-weight: 600;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .toast.error {
+            background: #ff5555;
+        }
+
+        /* Responsive */
+        @media (max-width: 480px) {
+            .settings-card {
+                padding: 20px;
+            }
+            
+            .avatar-preview {
+                width: 100px;
+                height: 100px;
+            }
+            
+            .upload-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .upload-btn {
+                width: 100%;
+                justify-content: center;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="app">
-        <div class="settings-container">
-            <div class="settings-card">
-                <h2 style="margin-bottom: 20px;">Profile Settings</h2>
-                <p style="color: #9ca3af; margin-bottom: 20px;">Choose how you appear to other players</p>
-                
-                <div class="avatar-section">
-                    <div class="avatar-preview" id="avatarPreview" onclick="document.getElementById('avatarUpload').click()">
-                        <img id="previewImg" src="">
+    <div class="settings-container">
+        <div class="settings-card">
+            <h2>Profile Settings</h2>
+            <p class="subtitle">Customize how others see you</p>
+            
+            <!-- Avatar Section -->
+            <div class="avatar-section">
+                <div class="avatar-preview" id="avatarPreview" onclick="document.getElementById('avatarUpload').click()">
+                    <div id="avatarPlaceholder" class="placeholder-icon">
+                        <i class="fas fa-camera"></i>
                     </div>
-                    <input type="file" id="avatarUpload" accept="image/*" style="display: none;">
+                    <img id="previewImg" style="display: none;">
+                </div>
+                <div class="upload-buttons">
                     <button class="upload-btn" onclick="document.getElementById('avatarUpload').click()">
-                        <i class="fas fa-camera"></i> Upload Picture
+                        <i class="fas fa-image"></i> Upload from Gallery
+                    </button>
+                    <button class="upload-btn" onclick="capturePhoto()">
+                        <i class="fas fa-camera"></i> Take Photo
+                    </button>
+                    <button class="upload-btn remove-btn" onclick="removeAvatar()">
+                        <i class="fas fa-trash"></i> Remove
                     </button>
                 </div>
-                
-                <div class="form-group">
-                    <label>Display Name</label>
-                    <input type="text" id="displayName" placeholder="Your display name (visible to others)">
+                <input type="file" id="avatarUpload" accept="image/*" style="display: none;">
+                <input type="file" id="cameraUpload" accept="image/*" capture="environment" style="display: none;">
+            </div>
+            
+            <!-- Display Name -->
+            <div class="form-group">
+                <label>Display Name</label>
+                <input type="text" id="displayName" placeholder="Your display name (visible to others)">
+            </div>
+            
+            <!-- Email (read-only) -->
+            <div class="form-group">
+                <label>Email (private)</label>
+                <div class="email-display">
+                    <i class="fas fa-envelope"></i>
+                    <span id="emailDisplay">Loading...</span>
                 </div>
-                
-                <div class="form-group">
-                    <label>Email (private)</label>
-                    <input type="email" id="email" disabled style="opacity: 0.7;">
-                </div>
-                
-                <button class="save-btn" id="saveBtn">
-                    <i class="fas fa-save"></i> Save Changes
-                </button>
-                
-                <div class="privacy-note">
-                    <i class="fas fa-shield-alt"></i> Your display name and profile picture will be visible to other players. Your email remains private.
-                </div>
+            </div>
+            
+            <!-- Save Button -->
+            <button class="save-btn" id="saveBtn">
+                <i class="fas fa-save"></i> Save Changes
+            </button>
+            
+            <div class="privacy-note">
+                <i class="fas fa-shield-alt"></i>
+                Your display name and profile picture will be visible to other players. Your email remains private.
             </div>
         </div>
     </div>
@@ -145,30 +356,103 @@
             }
             currentUser = user;
             
-            document.getElementById('displayName').value = user.displayName || user.username || '';
-            document.getElementById('email').value = user.email || '';
+            // Set display name
+            const displayNameInput = document.getElementById('displayName');
+            if (displayNameInput) {
+                displayNameInput.value = user.customDisplayName || user.displayName || user.username || '';
+            }
             
-            if (user.photoURL && !user.customAvatar) {
-                document.getElementById('previewImg').src = user.photoURL;
-            } else if (user.avatar) {
-                document.getElementById('previewImg').src = user.avatar;
+            // Set email
+            const emailDisplay = document.getElementById('emailDisplay');
+            if (emailDisplay) {
+                emailDisplay.innerText = user.email || '';
+            }
+            
+            // Set avatar
+            const previewImg = document.getElementById('previewImg');
+            const placeholder = document.getElementById('avatarPlaceholder');
+            
+            if (user.customAvatar || user.photoURL) {
+                const avatarUrl = user.customAvatar || user.photoURL;
+                previewImg.src = avatarUrl;
+                previewImg.style.display = 'block';
+                placeholder.style.display = 'none';
+                avatarData = avatarUrl;
             } else {
-                document.getElementById('previewImg').src = `https://ui-avatars.com/api/?name=${encodeURIComponent(user.displayName || user.username || 'User')}&background=10b981&color=fff`;
+                previewImg.style.display = 'none';
+                placeholder.style.display = 'flex';
             }
         }
         
+        // Upload from gallery
         document.getElementById('avatarUpload').addEventListener('change', (e) => {
             const file = e.target.files[0];
             if (file) {
+                // Validate file type
+                if (!file.type.startsWith('image/')) {
+                    showToast('Please select an image file', 'error');
+                    return;
+                }
+                
+                // Validate file size (max 5MB)
+                if (file.size > 5 * 1024 * 1024) {
+                    showToast('Image must be less than 5MB', 'error');
+                    return;
+                }
+                
                 const reader = new FileReader();
                 reader.onload = function(event) {
                     avatarData = event.target.result;
-                    document.getElementById('previewImg').src = avatarData;
+                    const previewImg = document.getElementById('previewImg');
+                    const placeholder = document.getElementById('avatarPlaceholder');
+                    previewImg.src = avatarData;
+                    previewImg.style.display = 'block';
+                    placeholder.style.display = 'none';
+                    showToast('Photo selected! Click Save to apply.', 'success');
                 };
                 reader.readAsDataURL(file);
             }
         });
         
+        // Take photo with camera
+        function capturePhoto() {
+            const cameraInput = document.createElement('input');
+            cameraInput.type = 'file';
+            cameraInput.accept = 'image/*';
+            cameraInput.capture = 'environment';
+            cameraInput.style.display = 'none';
+            
+            cameraInput.addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(event) {
+                        avatarData = event.target.result;
+                        const previewImg = document.getElementById('previewImg');
+                        const placeholder = document.getElementById('avatarPlaceholder');
+                        previewImg.src = avatarData;
+                        previewImg.style.display = 'block';
+                        placeholder.style.display = 'none';
+                        showToast('Photo captured! Click Save to apply.', 'success');
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+            
+            cameraInput.click();
+        }
+        
+        // Remove avatar
+        function removeAvatar() {
+            avatarData = null;
+            const previewImg = document.getElementById('previewImg');
+            const placeholder = document.getElementById('avatarPlaceholder');
+            previewImg.style.display = 'none';
+            placeholder.style.display = 'flex';
+            showToast('Avatar removed. Click Save to apply.', 'info');
+        }
+        
+        // Save profile
         document.getElementById('saveBtn').addEventListener('click', () => {
             const displayName = document.getElementById('displayName').value.trim();
             
@@ -177,41 +461,50 @@
                 return;
             }
             
+            if (displayName.length < 3) {
+                showToast('Display name must be at least 3 characters', 'error');
+                return;
+            }
+            
             // Update user data
             const updatedUser = {
                 ...currentUser,
+                customDisplayName: displayName,
+                customAvatar: avatarData || currentUser.customAvatar,
                 displayName: displayName,
                 username: displayName,
-                customAvatar: true,
-                avatar: avatarData || currentUser.photoURL || currentUser.avatar,
-                photoURL: avatarData || currentUser.photoURL
+                photoURL: avatarData || currentUser.photoURL,
+                hasSetProfile: true
             };
             
             // Save to localStorage
             localStorage.setItem('crunkUser', JSON.stringify(updatedUser));
             
-            // Also update in users list
+            // Update users list
             let users = JSON.parse(localStorage.getItem('users') || '[]');
-            const userIndex = users.findIndex(u => u.uid === currentUser.uid || u.userId === currentUser.userId);
+            const userIndex = users.findIndex(u => u.uid === currentUser.uid || u.uid === currentUser.userId);
             if (userIndex !== -1) {
                 users[userIndex] = {
                     ...users[userIndex],
+                    customDisplayName: displayName,
+                    customAvatar: avatarData || currentUser.customAvatar,
                     displayName: displayName,
                     username: displayName,
-                    photoURL: avatarData || currentUser.photoURL,
-                    avatar: avatarData || currentUser.avatar
+                    photoURL: avatarData || currentUser.photoURL
                 };
-                localStorage.setItem('users', JSON.stringify(users));
             } else {
                 users.push({
                     uid: currentUser.uid || currentUser.userId,
+                    customDisplayName: displayName,
+                    customAvatar: avatarData || currentUser.customAvatar,
                     displayName: displayName,
                     username: displayName,
                     email: currentUser.email,
-                    photoURL: avatarData || currentUser.photoURL
+                    photoURL: avatarData || currentUser.photoURL,
+                    status: 'online'
                 });
-                localStorage.setItem('users', JSON.stringify(users));
             }
+            localStorage.setItem('users', JSON.stringify(users));
             
             showToast('Profile updated successfully!', 'success');
             setTimeout(() => {
@@ -219,20 +512,25 @@
             }, 1500);
         });
         
-        function showToast(message, type) {
+        function showToast(message, type = 'success') {
             const container = document.getElementById('toastContainer');
             const toast = document.createElement('div');
             toast.className = `toast ${type}`;
-            toast.innerHTML = `<i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'}"></i> ${message}`;
+            toast.innerHTML = `<i class="fas ${type === 'success' ? 'fa-check-circle' : type === 'error' ? 'fa-exclamation-circle' : 'fa-info-circle'}"></i> ${message}`;
             container.appendChild(toast);
             setTimeout(() => toast.classList.add('show'), 10);
-            setTimeout(() => { toast.classList.remove('show'); setTimeout(() => toast.remove(), 300); }, 3000);
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
         }
         
+        // Make functions global for onclick
+        window.capturePhoto = capturePhoto;
+        window.removeAvatar = removeAvatar;
+        
+        // Load profile on page load
         loadUserProfile();
-        // After saving profile
-userData.hasSetProfile = true;
-localStorage.setItem("crunkUser", JSON.stringify(userData));
     </script>
 </body>
 </html>
