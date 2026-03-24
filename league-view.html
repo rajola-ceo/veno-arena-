@@ -807,43 +807,68 @@
         document.body.appendChild(modal);
     }
     
-    function joinLeague() {
-        if (!currentUser) {
-            showToast('Please login first', 'error');
-            window.location.href = 'index.html';
-            return;
-        }
-        
-        const userCoins = parseInt(localStorage.getItem('venoCoins') || '0');
-        if (currentLeague.entryFee > userCoins) {
-            showToast(`Need ${currentLeague.entryFee} Veno Coins to join!`, 'error');
-            return;
-        }
-        
-        if (!currentLeague.pendingRequests) currentLeague.pendingRequests = [];
-        currentLeague.pendingRequests.push({
-            id: 'team_' + Date.now(),
-            teamName: currentUser.displayName + "'s Team",
-            ownerId: currentUser.uid,
-            ownerName: currentUser.displayName,
-            logo: currentUser.photoURL
-        });
-        
-        const leagues = JSON.parse(localStorage.getItem('leagues') || '[]');
-        const index = leagues.findIndex(l => l.id === leagueId);
-        if (index !== -1) {
-            leagues[index] = currentLeague;
-            localStorage.setItem('leagues', JSON.stringify(leagues));
-        }
-        
-        showToast('Join request sent to league owner!', 'success');
-        const joinBtn = document.getElementById('joinLeagueBtn');
-        if (joinBtn) {
-            joinBtn.disabled = true;
-            joinBtn.textContent = 'Request Sent';
-        }
+function joinLeague() {
+    if (!currentUser) {
+        showToast('Please login first', 'error');
+        window.location.href = 'index.html';
+        return;
     }
     
+    const userCoins = parseInt(localStorage.getItem('venoCoins') || '0');
+    
+    // Check if user already requested or joined
+    const alreadyRequested = currentLeague.pendingRequests?.some(r => r.ownerId === currentUser.uid);
+    const alreadyJoined = currentLeague.teams?.some(t => t.ownerId === currentUser.uid);
+    
+    if (alreadyJoined) {
+        showToast('You already joined this league!', 'info');
+        return;
+    }
+    
+    if (alreadyRequested) {
+        showToast('You already sent a join request!', 'info');
+        return;
+    }
+    
+    if (currentLeague.entryFee > userCoins) {
+        showToast(`Need ${currentLeague.entryFee} Veno Coins to join!`, 'error');
+        return;
+    }
+    
+    // Deduct coins
+    localStorage.setItem('venoCoins', userCoins - currentLeague.entryFee);
+    document.getElementById('venoCoinsAmount').innerText = getVenoCoins();
+    
+    // Add to pending requests
+    if (!currentLeague.pendingRequests) currentLeague.pendingRequests = [];
+    currentLeague.pendingRequests.push({
+        id: 'req_' + Date.now(),
+        teamName: `${currentUser.displayName}'s Team`,
+        ownerId: currentUser.uid,
+        ownerName: currentUser.displayName,
+        logo: currentUser.photoURL,
+        requestedAt: new Date().toISOString()
+    });
+    
+    // Save to localStorage
+    const leagues = JSON.parse(localStorage.getItem('leagues') || '[]');
+    const index = leagues.findIndex(l => l.id === leagueId);
+    if (index !== -1) {
+        leagues[index] = currentLeague;
+        localStorage.setItem('leagues', JSON.stringify(leagues));
+    }
+    
+    // Show success message with owner name
+    const ownerName = currentLeague.ownerName || 'League Owner';
+    showToast(`Join request sent to ${ownerName}!`, 'success');
+    
+    // Disable join button
+    const joinBtn = document.getElementById('joinLeagueBtn');
+    if (joinBtn) {
+        joinBtn.disabled = true;
+        joinBtn.textContent = 'Request Sent';
+    }
+}
     function showToast(message, type) {
         const container = document.getElementById('toastContainer');
         const toast = document.createElement('div');
