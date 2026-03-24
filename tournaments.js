@@ -701,6 +701,7 @@ if (claimBtn) {
 
 console.log('✅ Tournaments page loaded - All leagues visible to everyone');
 // ================= ALL REGISTERED USERS ==============
+// ================= ALL REGISTERED USERS ==============
 function loadAllUsers() {
     const usersContainer = document.getElementById('allUsersList');
     if (!usersContainer) return;
@@ -713,16 +714,33 @@ function loadAllUsers() {
     
     // Add current user if not already in users list
     if (currentUserData && !allUsers.some(u => u.uid === currentUserData.userId || u.uid === currentUserData.uid)) {
+        // Use custom display name if set, otherwise use Google name
+        const customName = currentUserData.customDisplayName || currentUserData.displayName || currentUserData.username;
+        const customAvatar = currentUserData.customAvatar || currentUserData.photoURL;
+        
         allUsers.push({
             uid: currentUserData.userId || currentUserData.uid,
-            username: currentUserData.displayName || currentUserData.username,
-            displayName: currentUserData.displayName || currentUserData.username,
+            username: customName,
+            displayName: customName,
             email: currentUserData.email,
-            photoURL: currentUserData.photoURL || currentUserData.avatar,
+            photoURL: customAvatar,
+            customAvatar: currentUserData.customAvatar,
+            customDisplayName: currentUserData.customDisplayName,
             status: 'online',
             lastSeen: new Date().toISOString()
         });
         localStorage.setItem('users', JSON.stringify(allUsers));
+    }
+    
+    // Update existing users with custom data from crunkUser
+    if (currentUserData) {
+        const existingUserIndex = allUsers.findIndex(u => u.uid === (currentUserData.userId || currentUserData.uid));
+        if (existingUserIndex !== -1) {
+            allUsers[existingUserIndex].displayName = currentUserData.customDisplayName || currentUserData.displayName;
+            allUsers[existingUserIndex].photoURL = currentUserData.customAvatar || currentUserData.photoURL;
+            allUsers[existingUserIndex].username = currentUserData.customDisplayName || currentUserData.displayName;
+            localStorage.setItem('users', JSON.stringify(allUsers));
+        }
     }
     
     // Also collect users from leagues (teams owners)
@@ -766,13 +784,15 @@ function loadAllUsers() {
     
     uniqueUsers.forEach(user => {
         const isCurrentUser = currentUser && (user.uid === currentUser.uid || user.uid === currentUser.userId);
+        
+        // Use custom display name if available
+        const displayName = user.customDisplayName || user.displayName || user.username || 'Player';
+        // Use custom avatar if available
+        const avatarUrl = user.customAvatar || user.photoURL || `https://ui-avatars.com/api/?name=${encodeURIComponent(displayName)}&background=10b981&color=fff`;
+        
         const userCard = document.createElement('div');
         userCard.className = 'user-card';
         userCard.onclick = () => viewUserProfile(user.uid);
-        
-        // Use custom display name or fallback
-        const displayName = user.displayName || user.username || 'Player';
-        const avatarUrl = user.photoURL || user.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(displayName)}&background=10b981&color=fff`;
         
         userCard.innerHTML = `
             <div class="user-avatar">
@@ -793,12 +813,12 @@ function loadAllUsers() {
         usersContainer.appendChild(userCard);
     });
 }
+
 function viewUserProfile(userId) {
     window.location.href = `user-profile.html?id=${userId}`;
 }
 
 function challengeUser(userId) {
-    // Get user data
     const users = JSON.parse(localStorage.getItem('users') || '[]');
     const targetUser = users.find(u => u.uid === userId);
     const currentUser = JSON.parse(localStorage.getItem('crunkUser'));
@@ -808,23 +828,25 @@ function challengeUser(userId) {
         return;
     }
     
-    if (confirm(`Challenge ${targetUser.displayName || targetUser.username} to a match?\n\nYou can discuss details in the chat!`)) {
-        // Create a match challenge notification
+    const targetName = targetUser.customDisplayName || targetUser.displayName || targetUser.username;
+    const currentName = currentUser.customDisplayName || currentUser.displayName || currentUser.username;
+    
+    if (confirm(`Challenge ${targetName} to a match?\n\nYou can discuss details in the chat!`)) {
         const notifications = JSON.parse(localStorage.getItem('notifications') || '[]');
         notifications.unshift({
             id: Date.now(),
             title: 'Match Challenge!',
-            message: `${currentUser.displayName} has challenged you to a match!`,
+            message: `${currentName} has challenged you to a match!`,
             time: 'Just now',
             read: false,
             icon: '⚔️',
             type: 'challenge',
             from: currentUser.uid,
-            fromName: currentUser.displayName
+            fromName: currentName
         });
         localStorage.setItem('notifications', JSON.stringify(notifications));
         
-        showToast(`Challenge sent to ${targetUser.displayName || targetUser.username}!`, 'success');
+        showToast(`Challenge sent to ${targetName}!`, 'success');
     }
 }
 const menuProfile = document.getElementById('menuProfile');
