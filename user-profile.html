@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>User Profile - Crunk Games</title>
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="home.css">
+    <style>
+        .profile-container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+        }
+        
+        .profile-header {
+            background: linear-gradient(135deg, #1f2937, #111827);
+            border-radius: 24px;
+            padding: 30px;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .profile-avatar {
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 20px;
+            border-radius: 50%;
+            overflow: hidden;
+            border: 3px solid #10b981;
+        }
+        
+        .profile-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .profile-name {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+        
+        .profile-email {
+            color: #9ca3af;
+            margin-bottom: 20px;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .stat-card {
+            background: var(--bg-tertiary);
+            border-radius: 16px;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: #10b981;
+        }
+        
+        .challenge-btn {
+            padding: 12px 30px;
+            background: #10b981;
+            border: none;
+            border-radius: 30px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+        }
+        
+        .back-btn {
+            background: transparent;
+            border: none;
+            color: #10b981;
+            font-size: 16px;
+            cursor: pointer;
+            margin-bottom: 20px;
+        }
+        
+        @media (max-width: 768px) {
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app">
+        <div class="profile-container">
+            <button class="back-btn" onclick="history.back()"><i class="fas fa-arrow-left"></i> Back</button>
+            
+            <div class="profile-header">
+                <div class="profile-avatar">
+                    <img id="profileAvatar" src="">
+                </div>
+                <h1 class="profile-name" id="profileName">Loading...</h1>
+                <div class="profile-email" id="profileEmail"></div>
+                <button class="challenge-btn" id="challengeBtn">
+                    <i class="fas fa-handshake"></i> Challenge to Match
+                </button>
+            </div>
+            
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value" id="leaguesWon">0</div>
+                    <div>Leagues Won</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="matchesPlayed">0</div>
+                    <div>Matches Played</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="teamsCreated">0</div>
+                    <div>Teams Created</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div id="toastContainer" class="toast-container"></div>
+    
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const userId = urlParams.get('id');
+        
+        function loadUserProfile() {
+            const users = JSON.parse(localStorage.getItem('users') || '[]');
+            const user = users.find(u => u.uid === userId);
+            const currentUser = JSON.parse(localStorage.getItem('crunkUser'));
+            
+            if (!user) {
+                showToast('User not found', 'error');
+                setTimeout(() => window.location.href = 'tournaments.html', 1500);
+                return;
+            }
+            
+            document.getElementById('profileAvatar').src = user.photoURL || `https://ui-avatars.com/api/?name=${encodeURIComponent(user.displayName || user.username)}&background=10b981&color=fff`;
+            document.getElementById('profileName').innerText = user.displayName || user.username;
+            document.getElementById('profileEmail').innerText = user.email || '';
+            
+            // Calculate stats from leagues
+            const leagues = JSON.parse(localStorage.getItem('leagues') || '[]');
+            let leaguesWon = 0;
+            let matchesPlayed = 0;
+            let teamsCreated = 0;
+            
+            leagues.forEach(league => {
+                if (league.winner?.ownerId === userId) leaguesWon++;
+                if (league.matches) {
+                    league.matches.forEach(match => {
+                        if (match.homeTeam?.ownerId === userId || match.awayTeam?.ownerId === userId) {
+                            matchesPlayed++;
+                        }
+                    });
+                }
+            });
+            
+            const teams = JSON.parse(localStorage.getItem('userTeams') || '[]');
+            teamsCreated = teams.filter(t => t.ownerId === userId).length;
+            
+            document.getElementById('leaguesWon').innerText = leaguesWon;
+            document.getElementById('matchesPlayed').innerText = matchesPlayed;
+            document.getElementById('teamsCreated').innerText = teamsCreated;
+            
+            // Check if this is the current user
+            if (currentUser && (currentUser.uid === userId || currentUser.userId === userId)) {
+                document.getElementById('challengeBtn').style.display = 'none';
+            } else {
+                document.getElementById('challengeBtn').onclick = () => challengeUser(user);
+            }
+        }
+        
+        function challengeUser(user) {
+            const currentUser = JSON.parse(localStorage.getItem('crunkUser'));
+            
+            if (confirm(`Challenge ${user.displayName || user.username} to a match?`)) {
+                const notifications = JSON.parse(localStorage.getItem('notifications') || '[]');
+                notifications.unshift({
+                    id: Date.now(),
+                    title: 'Match Challenge!',
+                    message: `${currentUser.displayName} has challenged you to a match!`,
+                    time: 'Just now',
+                    read: false,
+                    icon: '⚔️',
+                    from: currentUser.uid,
+                    fromName: currentUser.displayName
+                });
+                localStorage.setItem('notifications', JSON.stringify(notifications));
+                showToast(`Challenge sent to ${user.displayName || user.username}!`, 'success');
+            }
+        }
+        
+        function showToast(message, type) {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.innerHTML = `<i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'}"></i> ${message}`;
+            container.appendChild(toast);
+            setTimeout(() => toast.classList.add('show'), 10);
+            setTimeout(() => { toast.classList.remove('show'); setTimeout(() => toast.remove(), 300); }, 3000);
+        }
+        
+        loadUserProfile();
+    </script>
+</body>
+</html>
