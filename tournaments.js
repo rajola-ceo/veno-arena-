@@ -694,3 +694,127 @@ if (claimBtn) {
 }
 
 console.log('✅ Tournaments page loaded - All leagues visible to everyone');
+// ================= ALL REGISTERED USERS =================
+
+function loadAllUsers() {
+    const usersContainer = document.getElementById('allUsersList');
+    if (!usersContainer) return;
+    
+    // Get all users from localStorage
+    let allUsers = JSON.parse(localStorage.getItem('users') || '[]');
+    
+    // Also get the current user from crunkUser
+    const currentUserData = JSON.parse(localStorage.getItem('crunkUser'));
+    
+    // Add current user if not already in users list
+    if (currentUserData && !allUsers.some(u => u.uid === currentUserData.userId || u.uid === currentUserData.uid)) {
+        allUsers.push({
+            uid: currentUserData.userId || currentUserData.uid,
+            username: currentUserData.displayName || currentUserData.username,
+            displayName: currentUserData.displayName || currentUserData.username,
+            email: currentUserData.email,
+            photoURL: currentUserData.photoURL,
+            status: 'online',
+            lastSeen: new Date().toISOString()
+        });
+        localStorage.setItem('users', JSON.stringify(allUsers));
+    }
+    
+    // Also collect users from leagues (teams owners)
+    const leagues = JSON.parse(localStorage.getItem('leagues') || '[]');
+    leagues.forEach(league => {
+        if (league.teams) {
+            league.teams.forEach(team => {
+                if (team.ownerId && !allUsers.some(u => u.uid === team.ownerId)) {
+                    allUsers.push({
+                        uid: team.ownerId,
+                        username: team.ownerName || team.name,
+                        displayName: team.ownerName || team.name,
+                        photoURL: team.logo || null,
+                        status: 'offline',
+                        lastSeen: league.createdAt
+                    });
+                }
+            });
+        }
+    });
+    
+    // Remove duplicates (keep latest)
+    const uniqueUsers = [];
+    const seen = new Set();
+    for (const user of allUsers) {
+        if (!seen.has(user.uid)) {
+            seen.add(user.uid);
+            uniqueUsers.push(user);
+        }
+    }
+    
+    // Sort by username
+    uniqueUsers.sort((a, b) => (a.displayName || a.username || '').localeCompare(b.displayName || b.username || ''));
+    
+    usersContainer.innerHTML = '';
+    
+    if (uniqueUsers.length === 0) {
+        usersContainer.innerHTML = '<div class="empty-state">No players found</div>';
+        return;
+    }
+    
+    uniqueUsers.forEach(user => {
+        const isCurrentUser = currentUser && (user.uid === currentUser.uid || user.uid === currentUser.userId);
+        const userCard = document.createElement('div');
+        userCard.className = 'user-card';
+        userCard.onclick = () => viewUserProfile(user.uid);
+        userCard.innerHTML = `
+            <div class="user-avatar">
+                <img src="${user.photoURL || `https://ui-avatars.com/api/?name=${encodeURIComponent(user.displayName || user.username || 'User')}&background=10b981&color=fff`}" alt="${user.displayName || user.username}">
+                ${user.status === 'online' ? '<span class="online-dot"></span>' : ''}
+            </div>
+            <div class="user-info">
+                <div class="user-name">${user.displayName || user.username || 'Unknown'}</div>
+                <div class="user-stats">
+                    <span><i class="fas fa-trophy"></i> ${user.leaguesWon || 0}</span>
+                    <span><i class="fas fa-futbol"></i> ${user.matchesPlayed || 0}</span>
+                </div>
+            </div>
+            ${!isCurrentUser ? `<button class="challenge-btn" onclick="event.stopPropagation(); challengeUser('${user.uid}')">
+                <i class="fas fa-handshake"></i> Challenge
+            </button>` : '<span class="you-badge">You</span>'}
+        `;
+        usersContainer.appendChild(userCard);
+    });
+}
+
+function viewUserProfile(userId) {
+    window.location.href = `user-profile.html?id=${userId}`;
+}
+
+function challengeUser(userId) {
+    // Get user data
+    const users = JSON.parse(localStorage.getItem('users') || '[]');
+    const targetUser = users.find(u => u.uid === userId);
+    const currentUser = JSON.parse(localStorage.getItem('crunkUser'));
+    
+    if (!targetUser) {
+        showToast('User not found', 'error');
+        return;
+    }
+    
+    if (confirm(`Challenge ${targetUser.displayName || targetUser.username} to a match?\n\nYou can discuss details in the chat!`)) {
+        // Create a match challenge notification
+        const notifications = JSON.parse(localStorage.getItem('notifications') || '[]');
+        notifications.unshift({
+            id: Date.now(),
+            title: 'Match Challenge!',
+            message: `${currentUser.displayName} has challenged you to a match!`,
+            time: 'Just now',
+            read: false,
+            icon: '⚔️',
+            type: 'challenge',
+            from: currentUser.uid,
+            fromName: currentUser.displayName
+        });
+        localStorage.setItem('notifications', JSON.stringify(notifications));
+        
+        showToast(`Challenge sent to ${targetUser.displayName || targetUser.username}!`, 'success');
+    }
+}
