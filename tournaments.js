@@ -827,3 +827,5 @@ function challengeUser(userId) {
         showToast(`Challenge sent to ${targetUser.displayName || targetUser.username}!`, 'success');
     }
 }
+const menuProfile = document.getElementById('menuProfile');
+if (menuProfile) menuProfile.addEventListener('click', () => window.location.href = 'profile-settings.html');
