@@ -122,9 +122,10 @@
             margin-bottom: 5px;
         }
         
-        .team-stats-view {
+        .team-owner-view {
             font-size: 11px;
             color: var(--text-secondary);
+            margin-top: 5px;
         }
         
         .standings-table {
@@ -243,8 +244,8 @@
         }
         
         .toast {
-            background: var(--primary);
-            color: var(--bg-primary);
+            background: #10b981;
+            color: #05070d;
             padding: 12px 24px;
             border-radius: 50px;
             font-weight: 600;
@@ -345,9 +346,11 @@
         <div class="section-header"><h2><i class="fas fa-chart-line"></i> Standings</h2></div>
         <div class="standings-table-wrapper">
             <table class="standings-table" id="standingsTable">
-                <thead><tr><th>Pos</th><th>Team</th><th>P</th><th>W</th><th>D</th><th>L</th><th>GF</th><th>GA</th><th>GD</th><th>Pts</th></tr></thead>
+                <thead>……
+                    <th>Pos</th><th>Team</th><th>P</th><th>W</th><th>D</th><th>L</th><th>GF</th><th>GA</th><th>GD</th><th>Pts</th>
+                </thead>
                 <tbody id="standingsBody"></tbody>
-            </table>
+            寸
         </div>
         
         <div class="section-header"><h2><i class="fas fa-calendar"></i> Fixtures</h2></div>
@@ -375,20 +378,6 @@
             return user.customDisplayName || user.displayName || user.username || 'Unknown';
         }
         return 'Unknown';
-    }
-    
-    function getUserAvatar(userId) {
-        const currentUser = getCurrentUser();
-        if (currentUser && (currentUser.uid === userId || currentUser.userId === userId)) {
-            return currentUser.customAvatar || currentUser.photoURL || null;
-        }
-        
-        const users = JSON.parse(localStorage.getItem('users') || '[]');
-        const user = users.find(u => u.uid === userId);
-        if (user) {
-            return user.customAvatar || user.photoURL || null;
-        }
-        return null;
     }
     
     // ================= LOAD CUSTOM PROFILE =================
@@ -507,7 +496,7 @@
             teamCard.innerHTML = `
                 <div class="team-logo-view">${team.logo ? `<img src="${team.logo}" style="width:100%;height:100%;object-fit:cover;">` : '<i class="fas fa-shield-alt" style="font-size:30px;"></i>'}</div>
                 <div class="team-name-view">${team.name}</div>
-                <div class="team-stats-view">Owner: ${ownerName}</div>
+                <div class="team-owner-view">Owner: ${ownerName}</div>
             `;
             container.appendChild(teamCard);
         });
@@ -563,12 +552,23 @@
             const ownerName = getUserDisplayName(team.ownerId);
             tbody.innerHTML += `
                 <tr>
-                    <td><strong>${index + 1}</strong></td>
-                    <td class="team-cell"><div class="team-logo-small">${team.teamLogo ? `<img src="${team.teamLogo}" style="width:100%;height:100%;object-fit:cover;">` : '<i class="fas fa-shield-alt"></i>'}</div> ${team.teamName}<div style="font-size: 10px; color: var(--text-secondary);">${ownerName}</div></td>
-                    <td>${team.played}</td><td>${team.wins}</td><td>${team.draws}</td><td>${team.losses}</td>
-                    <td>${team.goalsFor}</td><td>${team.goalsAgainst}</td><td>${team.goalsFor - team.goalsAgainst}</td>
+                    <td><strong>${index + 1}</strong>\\n
+                    <td class="team-cell">
+                        <div class="team-logo-small">${team.teamLogo ? `<img src="${team.teamLogo}" style="width:100%;height:100%;object-fit:cover;">` : '<i class="fas fa-shield-alt"></i>'}</div>
+                        <div>
+                            <strong>${team.teamName}</strong>
+                            <div style="font-size: 11px; color: var(--text-secondary);">${ownerName}</div>
+                        </div>
+                    </td>
+                    <td>${team.played}</td>
+                    <td>${team.wins}</td>
+                    <td>${team.draws}</td>
+                    <td>${team.losses}</td>
+                    <td>${team.goalsFor}</td>
+                    <td>${team.goalsAgainst}</td>
+                    <td>${team.goalsFor - team.goalsAgainst}</td>
                     <td><strong>${team.points}</strong></td>
-                </tr>
+                 </tr>
             `;
         });
     }
@@ -637,7 +637,6 @@
                 name: `${userName}'s Team`,
                 ownerId: currentUser.uid,
                 ownerName: userName,
-                logo: getUserAvatar(currentUser.uid),
                 joinedAt: new Date().toISOString()
             });
             
@@ -787,9 +786,8 @@
         if (user) {
             const customUser = JSON.parse(localStorage.getItem('crunkUser'));
             const displayName = customUser?.customDisplayName || customUser?.displayName || user.displayName || 'Player';
-            const avatarUrl = customUser?.customAvatar || customUser?.photoURL || user.photoURL;
-            document.getElementById('profileAvatarImg').src = avatarUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(displayName)}&background=10b981&color=fff`;
-            document.getElementById('popupProfileImg').src = avatarUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(displayName)}&background=10b981&color=fff`;
+            document.getElementById('profileAvatarImg').src = `https://ui-avatars.com/api/?name=${encodeURIComponent(displayName)}&background=10b981&color=fff&size=128`;
+            document.getElementById('popupProfileImg').src = `https://ui-avatars.com/api/?name=${encodeURIComponent(displayName)}&background=10b981&color=fff&size=128`;
             document.getElementById('profileNameDisplay').innerText = displayName;
             document.getElementById('profileEmailDisplay').innerText = customUser?.email || user.email || '';
         }
