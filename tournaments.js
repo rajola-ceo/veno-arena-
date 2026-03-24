@@ -57,6 +57,9 @@ function createLeagueCard(league) {
                        league.status === 'registration' ? 'REGISTRATION OPEN' : 
                        league.status === 'upcoming' ? 'UPCOMING' : 'COMPLETED';
     
+    // Check if current user is the owner
+    const isOwner = currentUser && league.ownerId === currentUser.uid;
+    
     card.innerHTML = `
         <div class="league-header">
             <span class="league-type ${statusClass}">${statusText}</span>
@@ -65,6 +68,7 @@ function createLeagueCard(league) {
             </div>
             <h3>${league.name || 'Unnamed League'}</h3>
             <div class="league-game">${league.gameType || 'eFootball'}</div>
+            ${isOwner ? '<div class="owner-badge"><i class="fas fa-crown"></i> Your League</div>' : ''}
         </div>
         <div class="league-body">
             <div class="league-stats">
@@ -89,11 +93,20 @@ function createLeagueCard(league) {
                 <span><i class="fas fa-door-open"></i> Entry Fee</span>
                 <span><i class="fas fa-coins"></i> ${league.entryFee || 0} VC</span>
             </div>
+            <div class="league-owner">
+                <i class="fas fa-user"></i> Created by: <strong>${league.ownerName || 'Unknown'}</strong>
+            </div>
         </div>
         <div class="league-footer">
-            <button class="join-btn" onclick="event.stopPropagation(); window.joinLeague('${league.id}')">
-                <i class="fas fa-sign-in-alt"></i> Join League
-            </button>
+            ${!isOwner ? `
+                <button class="join-btn" onclick="event.stopPropagation(); window.joinLeague('${league.id}')">
+                    <i class="fas fa-sign-in-alt"></i> Join League
+                </button>
+            ` : `
+                <button class="dashboard-btn" onclick="event.stopPropagation(); window.goToDashboard('${league.id}')">
+                    <i class="fas fa-chalkboard-user"></i> Dashboard
+                </button>
+            `}
             <button class="details-btn" onclick="event.stopPropagation(); window.viewLeague('${league.id}')">
                 <i class="fas fa-info-circle"></i> Details
             </button>
@@ -126,8 +139,8 @@ function createTeamCardFunction(team) {
     return card;
 }
 
-// ================= LOAD FUNCTIONS =================
-function loadFeaturedLeagues() {
+// ================= LOAD ALL LEAGUES (EVERYONE CAN SEE) =================
+function loadAllLeagues() {
     const leagues = JSON.parse(localStorage.getItem('leagues') || '[]');
     
     if (featuredLeaguesContainer) {
@@ -146,8 +159,9 @@ function loadFeaturedLeagues() {
             return;
         }
         
-        const latestLeagues = leagues.slice(0, 6);
-        latestLeagues.forEach(league => {
+        // Show ALL leagues (not just 6)
+        const sortedLeagues = [...leagues].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+        sortedLeagues.forEach(league => {
             featuredLeaguesContainer.appendChild(createLeagueCard(league));
         });
     }
@@ -166,7 +180,8 @@ function loadActiveLeagues() {
         return;
     }
     
-    activeLeagues.slice(0, 3).forEach(league => {
+    // Show all active leagues
+    activeLeagues.forEach(league => {
         activeLeaguesContainer.appendChild(createLeagueCard(league));
     });
 }
@@ -256,6 +271,10 @@ window.joinLeague = function(leagueId) {
 
 window.viewLeague = function(leagueId) {
     window.location.href = `league-view.html?id=${leagueId}`;
+};
+
+window.goToDashboard = function(leagueId) {
+    window.location.href = `league-dashboard.html?id=${leagueId}`;
 };
 
 function showToast(message, type = 'success') {
@@ -351,7 +370,6 @@ function doSpin() {
         return;
     }
     
-    // Deduct coins
     showToast(`🎰 Spinning... 200 coins deducted!`, "info");
     localStorage.setItem('venoCoins', coins - 200);
     updateVenoCoinsDisplay();
@@ -582,7 +600,7 @@ onAuthStateChanged(auth, (user) => {
 
 // ================= INITIALIZE =================
 document.addEventListener('DOMContentLoaded', () => {
-    loadFeaturedLeagues();
+    loadAllLeagues();  // Now shows ALL leagues created by all users
     loadActiveLeagues();
     updateVenoCoinsDisplay();
     
@@ -675,4 +693,4 @@ if (claimBtn) {
     setInterval(updateClaimButton, 60000);
 }
 
-console.log('✅ Tournaments page loaded');
+console.log('✅ Tournaments page loaded - All leagues visible to everyone');
