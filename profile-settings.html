@@ -230,6 +230,9 @@
         }
         
         loadUserProfile();
+        // After saving profile
+userData.hasSetProfile = true;
+localStorage.setItem("crunkUser", JSON.stringify(userData));
     </script>
 </body>
 </html>
