@@ -318,7 +318,11 @@
         }
     `;
     document.head.appendChild(style);
-
+// After login success
+showMessage("Login successful! Redirecting...", "success");
+setTimeout(() => {
+    window.location.href = "profile-settings.html"; // Redirect to profile settings first
+}, 1000);
     </script>
     <!-- Add Install Button to Top Bar (optional) -->
 <button id="installAppBtn" style="display: none; background: none; border: none; color: var(--primary); cursor: pointer;">
