@@ -11,258 +11,6 @@
     <link rel="stylesheet" href="nav.css">
     
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        :root {
-            --primary: #10b981;
-            --primary-dark: #059669;
-            --bg-primary: #05070d;
-            --bg-secondary: #0b1222;
-            --bg-tertiary: #111827;
-            --border-color: #1f2937;
-            --text-primary: #e6e6e6;
-            --text-secondary: #9ca3af;
-        }
-
-        body {
-            font-family: 'Inter', sans-serif;
-            background: var(--bg-primary);
-            color: var(--text-primary);
-            overflow-x: hidden;
-        }
-
-        .app {
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .topbar {
-            height: 70px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 24px;
-            background: var(--bg-secondary);
-            border-bottom: 1px solid var(--border-color);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-
-        .brand h1 {
-            font-size: 20px;
-            font-weight: 700;
-            color: var(--primary);
-        }
-
-        .menu {
-            font-size: 24px;
-            cursor: pointer;
-            color: var(--primary);
-            transition: all 0.3s ease;
-            padding: 8px;
-            border-radius: 50%;
-        }
-
-        .menu:hover {
-            background: rgba(16, 185, 129, 0.1);
-            transform: scale(1.1);
-        }
-
-        .icons {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-        }
-
-        .veno-coins-container {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            background: rgba(16, 185, 129, 0.1);
-            padding: 8px 16px;
-            border-radius: 40px;
-        }
-
-        .veno-coins-display {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-
-        .veno-coins-display i {
-            color: #fbbf24;
-        }
-
-        .profile-pic {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            object-fit: cover;
-            cursor: pointer;
-            border: 2px solid var(--primary);
-        }
-
-        .sidebar {
-            position: fixed;
-            left: -300px;
-            top: 0;
-            width: 280px;
-            height: 100vh;
-            background: var(--bg-secondary);
-            border-right: 1px solid var(--border-color);
-            transition: all 0.3s ease;
-            z-index: 2000;
-            padding: 20px;
-            overflow-y: auto;
-        }
-
-        .sidebar.open {
-            left: 0;
-        }
-
-        .sidebar-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 20px;
-            padding-bottom: 15px;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .sidebar-header h3 {
-            color: var(--primary);
-            font-size: 20px;
-        }
-
-        .close-sidebar {
-            font-size: 24px;
-            cursor: pointer;
-            color: var(--text-secondary);
-            transition: all 0.3s ease;
-            width: 36px;
-            height: 36px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 50%;
-        }
-
-        .close-sidebar:hover {
-            color: #ff5555;
-            transform: rotate(90deg);
-        }
-
-        .sidebar-menu {
-            list-style: none;
-        }
-
-        .sidebar-menu li {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 12px 16px;
-            border-radius: 12px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            margin-bottom: 5px;
-            color: var(--text-primary);
-        }
-
-        .sidebar-menu li i {
-            width: 24px;
-            color: var(--primary);
-        }
-
-        .sidebar-menu li:hover {
-            background: var(--primary);
-            color: var(--bg-primary);
-            transform: translateX(5px);
-        }
-
-        .sidebar-footer {
-            position: absolute;
-            bottom: 20px;
-            left: 20px;
-            right: 20px;
-            padding-top: 15px;
-            border-top: 1px solid var(--border-color);
-        }
-
-        .sidebar-theme {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 12px;
-            background: var(--bg-tertiary);
-            border-radius: 12px;
-            cursor: pointer;
-        }
-
-        .sidebar-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            z-index: 1999;
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.3s ease;
-        }
-
-        .sidebar-overlay.active {
-            opacity: 1;
-            visibility: visible;
-        }
-
-        .profile-popup {
-            display: none;
-            position: absolute;
-            top: 50px;
-            right: 0;
-            width: 220px;
-            background: var(--bg-tertiary);
-            border-radius: 12px;
-            padding: 15px;
-            z-index: 1001;
-        }
-
-        .profile-popup.active {
-            display: block;
-        }
-
-        .account-info {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 15px;
-            padding-bottom: 12px;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .account-info img {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-        }
-
-        #logoutBtn {
-            width: 100%;
-            padding: 8px;
-            background: #ff5555;
-            border: none;
-            border-radius: 8px;
-            color: white;
-            cursor: pointer;
-        }
-
         .league-view-container {
             max-width: 1200px;
             margin: 20px auto;
@@ -337,15 +85,15 @@
         
         .teams-grid-view {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 20px;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
             margin-top: 15px;
         }
         
         .team-card-view {
             background: var(--bg-tertiary);
-            border-radius: 16px;
-            padding: 20px;
+            border-radius: 12px;
+            padding: 15px;
             text-align: center;
             border: 1px solid var(--border-color);
             transition: all 0.3s ease;
@@ -353,51 +101,30 @@
         }
         
         .team-card-view:hover {
-            transform: translateY(-5px);
+            transform: translateY(-3px);
             border-color: #10b981;
-            box-shadow: 0 10px 25px rgba(16, 185, 129, 0.2);
         }
         
         .team-logo-view {
-            width: 80px;
-            height: 80px;
-            margin: 0 auto 15px;
+            width: 60px;
+            height: 60px;
+            margin: 0 auto 10px;
             background: var(--bg-secondary);
-            border-radius: 50%;
+            border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
             overflow: hidden;
-            border: 2px solid var(--primary);
-        }
-        
-        .team-logo-view img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
         }
         
         .team-name-view {
             font-weight: 600;
-            font-size: 18px;
-            margin-bottom: 8px;
+            margin-bottom: 5px;
         }
         
-        .team-owner-view {
-            font-size: 12px;
+        .team-stats-view {
+            font-size: 11px;
             color: var(--text-secondary);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            margin-top: 5px;
-        }
-        
-        .owner-avatar {
-            width: 24px;
-            height: 24px;
-            border-radius: 50%;
-            object-fit: cover;
         }
         
         .standings-table {
@@ -417,7 +144,7 @@
         
         .standings-table th {
             background: var(--bg-secondary);
-            color: var(--primary);
+            color: #10b981;
         }
         
         .team-cell {
@@ -429,7 +156,7 @@
         .team-logo-small {
             width: 30px;
             height: 30px;
-            border-radius: 50%;
+            border-radius: 8px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -451,7 +178,7 @@
         }
         
         .match-card:hover {
-            border-color: var(--primary);
+            border-color: #10b981;
         }
         
         .match-info {
@@ -472,12 +199,12 @@
         .team {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
         }
         
         .vs {
             font-weight: 700;
-            color: var(--primary);
+            color: #10b981;
         }
         
         .match-result {
@@ -497,8 +224,8 @@
         }
         
         .upload-screenshot-btn:hover {
-            border-color: var(--primary);
-            color: var(--primary);
+            border-color: #10b981;
+            color: #10b981;
         }
         
         .empty-state {
@@ -516,8 +243,8 @@
         }
         
         .toast {
-            background: var(--primary);
-            color: var(--bg-primary);
+            background: #10b981;
+            color: #05070d;
             padding: 12px 24px;
             border-radius: 50px;
             font-weight: 600;
@@ -532,10 +259,6 @@
         }
         
         @media (max-width: 768px) {
-            .topbar {
-                padding: 0 16px;
-            }
-            
             .league-name {
                 font-size: 24px;
             }
@@ -557,10 +280,6 @@
             .standings-table th,
             .standings-table td {
                 padding: 8px;
-            }
-            
-            .teams-grid-view {
-                grid-template-columns: 1fr;
             }
         }
         
@@ -587,11 +306,14 @@
                 <div class="veno-coins-display">
                     <i class="fas fa-coins"></i>
                     <span id="venoCoinsAmount">0</span>
+                    <span class="coin-label">Veno Coins</span>
                 </div>
-                <button id="claimVenoCoinsBtn" class="claim-veno-btn"><i class="fas fa-gift"></i> Claim 10</button>
+                <button id="claimVenoCoinsBtn" class="claim-veno-btn">
+                    <i class="fas fa-gift"></i> Claim 10
+                </button>
             </div>
             <div class="profile-dropdown" id="profileDropdown">
-                <img id="profileAvatarImg" class="profile-pic" src="https://ui-avatars.com/api/?name=User&background=10b981&color=fff&size=128">
+                <img id="profileAvatarImg" class="profile-pic" src="https://ui-avatars.com/api/?name=User&background=10b981&color=fff&size=128" alt="Profile">
                 <div class="profile-popup" id="profilePopup">
                     <div class="account-info">
                         <img id="popupProfileImg">
@@ -614,7 +336,6 @@
         <ul class="sidebar-menu">
             <li id="menuHome"><i class="bx bx-home"></i> Home</li>
             <li id="menuTournaments"><i class="bx bx-trophy"></i> Tournaments</li>
-            <li id="menuLeagues"><i class="bx bx-calendar-event"></i> My Leagues</li>
         </ul>
         <div class="sidebar-footer">
             <div class="sidebar-theme" id="menuTheme">
@@ -658,9 +379,46 @@
 </div>
 
 <script>
+    // ================= GET CUSTOM USER DATA (NO GOOGLE) =================
+    function getCurrentUser() {
+        return JSON.parse(localStorage.getItem('crunkUser'));
+    }
+    
+    function getUserDisplayName(userId) {
+        // First check if it's the current user
+        const currentUser = getCurrentUser();
+        if (currentUser && (currentUser.uid === userId || currentUser.userId === userId)) {
+            return currentUser.customDisplayName || currentUser.displayName || currentUser.username || 'Player';
+        }
+        
+        // Check in users list
+        const users = JSON.parse(localStorage.getItem('users') || '[]');
+        const user = users.find(u => u.uid === userId);
+        if (user) {
+            return user.customDisplayName || user.displayName || user.username || 'Unknown';
+        }
+        return 'Unknown';
+    }
+    
+    function getUserAvatar(userId) {
+        // First check if it's the current user
+        const currentUser = getCurrentUser();
+        if (currentUser && (currentUser.uid === userId || currentUser.userId === userId)) {
+            return currentUser.customAvatar || currentUser.photoURL || null;
+        }
+        
+        // Check in users list
+        const users = JSON.parse(localStorage.getItem('users') || '[]');
+        const user = users.find(u => u.uid === userId);
+        if (user) {
+            return user.customAvatar || user.photoURL || null;
+        }
+        return null;
+    }
+    
     // ================= LOAD CUSTOM PROFILE =================
     function loadCustomProfile() {
-        const user = JSON.parse(localStorage.getItem('crunkUser'));
+        const user = getCurrentUser();
         if (!user) return;
         
         const customName = user.customDisplayName || user.displayName || user.username || 'Player';
@@ -688,13 +446,39 @@
         }
     }
     
-    // ================= INDIVIDUAL COINS =================
+    // ================= INDIVIDUAL COINS (Same as home page) =================
     function getUserCoins() {
-        const user = JSON.parse(localStorage.getItem('crunkUser'));
+        const user = getCurrentUser();
         if (!user) return 0;
         let allUserCoins = JSON.parse(localStorage.getItem('userCoins') || '{}');
-        if (allUserCoins[user.userId || user.uid] === undefined) allUserCoins[user.userId || user.uid] = 100;
-        return allUserCoins[user.userId || user.uid];
+        const userId = user.userId || user.uid;
+        if (allUserCoins[userId] === undefined) allUserCoins[userId] = 100;
+        return allUserCoins[userId];
+    }
+    
+    function addUserCoins(amount) {
+        const user = getCurrentUser();
+        if (!user) return;
+        let allUserCoins = JSON.parse(localStorage.getItem('userCoins') || '{}');
+        const userId = user.userId || user.uid;
+        allUserCoins[userId] = (allUserCoins[userId] || 100) + amount;
+        localStorage.setItem('userCoins', JSON.stringify(allUserCoins));
+        updateVenoCoinsDisplay();
+    }
+    
+    function deductUserCoins(amount) {
+        const user = getCurrentUser();
+        if (!user) return false;
+        let allUserCoins = JSON.parse(localStorage.getItem('userCoins') || '{}');
+        const userId = user.userId || user.uid;
+        const currentCoins = allUserCoins[userId] || 100;
+        if (currentCoins >= amount) {
+            allUserCoins[userId] = currentCoins - amount;
+            localStorage.setItem('userCoins', JSON.stringify(allUserCoins));
+            updateVenoCoinsDisplay();
+            return true;
+        }
+        return false;
     }
     
     function updateVenoCoinsDisplay() {
@@ -707,24 +491,6 @@
     const leagueId = urlParams.get('id');
     let currentLeague = null;
     let currentUser = null;
-    let allUsers = JSON.parse(localStorage.getItem('users') || '[]');
-    
-    // Helper to get user's custom display name and avatar
-    function getUserDisplayName(userId) {
-        const user = allUsers.find(u => u.uid === userId);
-        if (user) {
-            return user.customDisplayName || user.displayName || user.username || 'Unknown';
-        }
-        return 'Unknown';
-    }
-    
-    function getUserAvatar(userId) {
-        const user = allUsers.find(u => u.uid === userId);
-        if (user) {
-            return user.customAvatar || user.photoURL || null;
-        }
-        return null;
-    }
     
     function loadLeagueData() {
         const leagues = JSON.parse(localStorage.getItem('leagues') || '[]');
@@ -732,11 +498,14 @@
         
         if (!currentLeague) {
             showToast('League not found', 'error');
-            setTimeout(() => window.location.href = 'home.html', 1500);
+            setTimeout(() => window.location.href = 'tournaments.html', 1500);
             return;
         }
         
         document.getElementById('leagueName').innerText = currentLeague.name;
+        
+        // Get league creator's display name (NO Google)
+        const creatorName = getUserDisplayName(currentLeague.ownerId);
         
         const metaHtml = `
             <div class="meta-item"><i class="fas fa-gamepad"></i> ${currentLeague.gameType}</div>
@@ -744,7 +513,7 @@
             <div class="meta-item"><i class="fas fa-trophy"></i> Prize: ${currentLeague.prizePool || 0} VC</div>
             <div class="meta-item"><i class="fas fa-coins"></i> Entry: ${currentLeague.entryFee || 0} VC</div>
             <div class="meta-item"><i class="fas fa-chart-line"></i> Format: ${currentLeague.format === 'league' ? 'Round Robin' : currentLeague.format === 'group' ? 'Group + Knockout' : 'Cup'}</div>
-            <div class="meta-item"><i class="fas fa-user"></i> Created by: <strong>${getUserDisplayName(currentLeague.ownerId)}</strong></div>
+            <div class="meta-item"><i class="fas fa-user"></i> Created by: <strong>${creatorName}</strong></div>
         `;
         document.getElementById('leagueMeta').innerHTML = metaHtml;
         
@@ -770,20 +539,16 @@
         container.innerHTML = '';
         teams.forEach(team => {
             const ownerName = getUserDisplayName(team.ownerId);
-            const ownerAvatar = getUserAvatar(team.ownerId);
             
             const teamCard = document.createElement('div');
             teamCard.className = 'team-card-view';
             teamCard.onclick = () => window.location.href = `team-view.html?id=${team.id}`;
             teamCard.innerHTML = `
                 <div class="team-logo-view">
-                    ${team.logo ? `<img src="${team.logo}" alt="${team.name}">` : '<i class="fas fa-shield-alt" style="font-size:40px;"></i>'}
+                    ${team.logo ? `<img src="${team.logo}" style="width:100%;height:100%;object-fit:cover;">` : '<i class="fas fa-shield-alt" style="font-size:30px;"></i>'}
                 </div>
                 <div class="team-name-view">${team.name}</div>
-                <div class="team-owner-view">
-                    ${ownerAvatar ? `<img src="${ownerAvatar}" class="owner-avatar">` : '<i class="fas fa-user"></i>'}
-                    <span>${ownerName}</span>
-                </div>
+                <div class="team-stats-view">Owner: ${ownerName}</div>
             `;
             container.appendChild(teamCard);
         });
@@ -839,23 +604,23 @@
             const ownerName = getUserDisplayName(team.ownerId);
             tbody.innerHTML += `
                 <tr>
-                    <td><strong>${index + 1}</strong>\\n
+                    <td><strong>${index + 1}</strong>  </td>
                     <td class="team-cell">
                         <div class="team-logo-small">${team.teamLogo ? `<img src="${team.teamLogo}" style="width:100%;height:100%;object-fit:cover;">` : '<i class="fas fa-shield-alt"></i>'}</div>
                         <div>
-                            <strong>${team.teamName}</strong>
+                            ${team.teamName}
                             <div style="font-size: 10px; color: var(--text-secondary);">${ownerName}</div>
                         </div>
-                    </td>
-                    <td>${team.played}</td>
-                    <td>${team.wins}</td>
-                    <td>${team.draws}</td>
-                    <td>${team.losses}</td>
-                    <td>${team.goalsFor}</td>
-                    <td>${team.goalsAgainst}</td>
-                    <td>${team.goalsFor - team.goalsAgainst}</td>
-                    <td><strong>${team.points}</strong></td>
-                </tr>
+                      </td>
+                      <td>${team.played}</td>
+                      <td>${team.wins}</td>
+                      <td>${team.draws}</td>
+                      <td>${team.losses}</td>
+                      <td>${team.goalsFor}</td>
+                      <td>${team.goalsAgainst}</td>
+                      <td>${team.goalsFor - team.goalsAgainst}</td>
+                      <td><strong>${team.points}</strong></td>
+                  </tr>
             `;
         });
     }
@@ -873,33 +638,27 @@
         matches.forEach(match => {
             const homeTeam = currentLeague.teams?.find(t => t.id === match.homeTeamId);
             const awayTeam = currentLeague.teams?.find(t => t.id === match.awayTeamId);
-            const matchDiv = document.createElement('div');
-            matchDiv.className = 'match-card';
-            matchDiv.innerHTML = `
-                <div class="match-info">
-                    <div class="match-teams">
-                        <div class="team">
-                            <div class="team-logo-small">${homeTeam?.logo ? `<img src="${homeTeam.logo}" style="width:30px;height:30px;">` : '<i class="fas fa-shield-alt"></i>'}</div>
-                            <strong>${homeTeam?.name || 'TBD'}</strong>
+            container.innerHTML += `
+                <div class="match-card">
+                    <div class="match-info">
+                        <div class="match-teams">
+                            <div class="team"><strong>${homeTeam?.name || 'TBD'}</strong></div>
+                            <div class="vs">VS</div>
+                            <div class="team"><strong>${awayTeam?.name || 'TBD'}</strong></div>
                         </div>
-                        <div class="vs">VS</div>
-                        <div class="team">
-                            <div class="team-logo-small">${awayTeam?.logo ? `<img src="${awayTeam.logo}" style="width:30px;height:30px;">` : '<i class="fas fa-shield-alt"></i>'}</div>
-                            <strong>${awayTeam?.name || 'TBD'}</strong>
-                        </div>
+                        <div class="match-result">${match.result ? `${match.homeScore} - ${match.awayScore}` : 'Not Played'}</div>
+                        ${match.screenshot ? `<button class="upload-screenshot-btn" onclick="viewScreenshot('${match.screenshot}')"><i class="fas fa-image"></i> View Screenshot</button>` : ''}
                     </div>
-                    <div class="match-result">${match.result ? `${match.homeScore} - ${match.awayScore}` : 'Not Played'}</div>
-                    ${match.screenshot ? `<button class="upload-screenshot-btn" onclick="viewScreenshot('${match.screenshot}')"><i class="fas fa-image"></i> View Screenshot</button>` : ''}
                 </div>
             `;
-            container.appendChild(matchDiv);
         });
     }
     
     function viewScreenshot(url) {
         const modal = document.createElement('div');
+        modal.className = 'modal active';
         modal.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.9);display:flex;align-items:center;justify-content:center;z-index:10000;';
-        modal.innerHTML = `<div style="background:var(--bg-primary);border-radius:24px;padding:20px;max-width:90%;"><span style="float:right;font-size:24px;cursor:pointer;" onclick="this.closest('div').parentElement.remove()">&times;</span><img src="${url}" style="max-width:100%;border-radius:12px;margin-top:20px;"></div>`;
+        modal.innerHTML = `<div style="background:var(--bg-primary);border-radius:24px;padding:20px;max-width:90%;"><span style="float:right;font-size:24px;cursor:pointer;" onclick="this.closest('.modal').remove()">&times;</span><img src="${url}" style="max-width:100%;border-radius:12px;margin-top:20px;"></div>`;
         document.body.appendChild(modal);
     }
     
@@ -912,7 +671,7 @@
         
         const userCoins = getUserCoins();
         if (currentLeague.entryFee > userCoins) {
-            showToast(`Need ${currentLeague.entryFee} Veno Coins to join!`, 'error');
+            showToast(`Need ${currentLeague.entryFee} Veno Coins to join! You have ${userCoins}`, 'error');
             return;
         }
         
@@ -921,26 +680,18 @@
             return;
         }
         
-        const teamCount = currentLeague.teams?.length || 0;
-        if (teamCount >= currentLeague.maxTeams) {
-            showToast('League is full!', 'error');
-            return;
-        }
-        
         if (confirm(`Join ${currentLeague.name}?\n\nEntry Fee: ${currentLeague.entryFee} Veno Coins\nPrize Pool: ${currentLeague.prizePool} Veno Coins`)) {
             // Deduct coins
-            let allUserCoins = JSON.parse(localStorage.getItem('userCoins') || '{}');
-            allUserCoins[currentUser.uid] = userCoins - currentLeague.entryFee;
-            localStorage.setItem('userCoins', JSON.stringify(allUserCoins));
-            updateVenoCoinsDisplay();
+            deductUserCoins(currentLeague.entryFee);
             
-            // Auto-join team
+            // Add team
             if (!currentLeague.teams) currentLeague.teams = [];
+            const userName = getUserDisplayName(currentUser.uid);
             currentLeague.teams.push({
                 id: 'team_' + Date.now(),
-                name: `${getUserDisplayName(currentUser.uid)}'s Team`,
+                name: `${userName}'s Team`,
                 ownerId: currentUser.uid,
-                ownerName: getUserDisplayName(currentUser.uid),
+                ownerName: userName,
                 logo: getUserAvatar(currentUser.uid),
                 joinedAt: new Date().toISOString()
             });
@@ -987,25 +738,27 @@
                 document.body.style.overflow = 'hidden';
             });
             
-            const closeFunc = () => {
+            function closeSidebarFunc() {
                 sidebar.classList.remove('open');
                 if (overlay) overlay.classList.remove('active');
                 document.body.style.overflow = '';
-            };
-            if (closeSidebar) closeSidebar.addEventListener('click', closeFunc);
-            if (overlay) overlay.addEventListener('click', closeFunc);
+            }
+            
+            closeSidebar?.addEventListener('click', closeSidebarFunc);
+            overlay?.addEventListener('click', closeSidebarFunc);
+            
             document.addEventListener('keydown', (e) => {
-                if (e.key === 'Escape' && sidebar.classList.contains('open')) closeFunc();
+                if (e.key === 'Escape' && sidebar.classList.contains('open')) {
+                    closeSidebarFunc();
+                }
             });
         }
         
         // Sidebar navigation
         const menuHome = document.getElementById('menuHome');
         const menuTournaments = document.getElementById('menuTournaments');
-        const menuLeagues = document.getElementById('menuLeagues');
         if (menuHome) menuHome.addEventListener('click', () => window.location.href = 'home.html');
-        if (menuTournaments) menuTournaments.addEventListener('click', () => window.location.href = 'home.html');
-        if (menuLeagues) menuLeagues.addEventListener('click', () => window.location.href = 'my-leagues.html');
+        if (menuTournaments) menuTournaments.addEventListener('click', () => window.location.href = 'tournaments.html');
         
         // Profile dropdown
         const profileDropdown = document.getElementById('profileDropdown');
@@ -1049,35 +802,50 @@
         loadLeagueData();
         updateVenoCoinsDisplay();
         
-        // Update users list
         const storedUser = JSON.parse(localStorage.getItem('crunkUser'));
         if (storedUser) currentUser = storedUser;
     });
     
-    // Veno Coins Claim
+    // ================= VENO COINS CLAIM (Same as home page) =================
     const claimBtn = document.getElementById('claimVenoCoinsBtn');
     if (claimBtn) {
         const LAST_CLAIM_KEY = 'lastVenoClaim';
+        
         function canClaim() {
-            const last = localStorage.getItem(LAST_CLAIM_KEY);
-            if (!last) return true;
-            return (Date.now() - parseInt(last)) >= 24 * 60 * 60 * 1000;
+            const lastClaim = localStorage.getItem(LAST_CLAIM_KEY);
+            if (!lastClaim) return true;
+            return (Date.now() - parseInt(lastClaim)) >= 24 * 60 * 60 * 1000;
         }
+        
+        function updateClaimButton() {
+            if (canClaim()) {
+                claimBtn.disabled = false;
+                claimBtn.innerHTML = '<i class="fas fa-gift"></i> Claim 10';
+                claimBtn.style.opacity = '1';
+            } else {
+                claimBtn.disabled = true;
+                const timeLeft = 24 * 60 * 60 * 1000 - (Date.now() - parseInt(localStorage.getItem(LAST_CLAIM_KEY)));
+                const hoursLeft = Math.floor(timeLeft / (60 * 60 * 1000));
+                const minutesLeft = Math.floor((timeLeft % (60 * 60 * 1000)) / (60 * 1000));
+                claimBtn.innerHTML = `<i class="fas fa-clock"></i> ${hoursLeft}h ${minutesLeft}m left`;
+                claimBtn.style.opacity = '0.6';
+            }
+        }
+        
         claimBtn.addEventListener('click', () => {
             if (canClaim()) {
-                let allUserCoins = JSON.parse(localStorage.getItem('userCoins') || '{}');
-                const userId = currentUser?.uid;
-                if (userId) {
-                    allUserCoins[userId] = (allUserCoins[userId] || 100) + 10;
-                    localStorage.setItem('userCoins', JSON.stringify(allUserCoins));
-                    localStorage.setItem(LAST_CLAIM_KEY, Date.now().toString());
-                    updateVenoCoinsDisplay();
-                    showToast('🎉 You claimed 10 Veno Coins!', 'success');
-                }
+                addUserCoins(10);
+                localStorage.setItem(LAST_CLAIM_KEY, Date.now().toString());
+                updateVenoCoinsDisplay();
+                updateClaimButton();
+                showToast('🎉 You claimed 10 Veno Coins!', 'success');
             } else {
                 showToast('Already claimed! Come back tomorrow', 'error');
             }
         });
+        
+        updateClaimButton();
+        setInterval(updateClaimButton, 60000);
     }
 </script>
 
@@ -1099,16 +867,14 @@
     
     onAuthStateChanged(auth, (user) => {
         if (user) {
-            window.currentUser = user;
             const customUser = JSON.parse(localStorage.getItem('crunkUser'));
-            const displayName = customUser?.customDisplayName || user.displayName;
-            const avatarUrl = customUser?.customAvatar || user.photoURL;
+            const displayName = customUser?.customDisplayName || customUser?.displayName || user.displayName || 'Player';
+            const avatarUrl = customUser?.customAvatar || customUser?.photoURL || user.photoURL;
             
-            document.getElementById('profileAvatarImg').src = avatarUrl || `https://ui-avatars.com/api/?name=${displayName}&background=10b981&color=fff`;
-            document.getElementById('popupProfileImg').src = avatarUrl || `https://ui-avatars.com/api/?name=${displayName}&background=10b981&color=fff`;
+            document.getElementById('profileAvatarImg').src = avatarUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(displayName)}&background=10b981&color=fff`;
+            document.getElementById('popupProfileImg').src = avatarUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(displayName)}&background=10b981&color=fff`;
             document.getElementById('profileNameDisplay').innerText = displayName;
-            document.getElementById('profileEmailDisplay').innerText = user.email;
-            updateVenoCoinsDisplay();
+            document.getElementById('profileEmailDisplay').innerText = customUser?.email || user.email || '';
         }
     });
 </script>
