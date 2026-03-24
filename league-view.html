@@ -125,7 +125,6 @@
         .team-owner-view {
             font-size: 11px;
             color: var(--text-secondary);
-            margin-top: 5px;
         }
         
         .standings-table {
@@ -263,21 +262,17 @@
             .league-name {
                 font-size: 24px;
             }
-            
             .match-info {
                 flex-direction: column;
                 text-align: center;
             }
-            
             .match-teams {
                 flex-direction: column;
                 gap: 10px;
             }
-            
             .standings-table {
                 font-size: 12px;
             }
-            
             .standings-table th,
             .standings-table td {
                 padding: 8px;
@@ -288,7 +283,6 @@
             .league-meta {
                 gap: 10px;
             }
-            
             .meta-item {
                 font-size: 12px;
                 padding: 4px 10px;
@@ -346,11 +340,9 @@
         <div class="section-header"><h2><i class="fas fa-chart-line"></i> Standings</h2></div>
         <div class="standings-table-wrapper">
             <table class="standings-table" id="standingsTable">
-                <thead>……
-                    <th>Pos</th><th>Team</th><th>P</th><th>W</th><th>D</th><th>L</th><th>GF</th><th>GA</th><th>GD</th><th>Pts</th>
-                </thead>
+                <thead><tr><th>Pos</th><th>Team</th><th>P</th><th>W</th><th>D</th><th>L</th><th>GF</th><th>GA</th><th>GD</th><th>Pts</th></tr></thead>
                 <tbody id="standingsBody"></tbody>
-            寸
+            </table>
         </div>
         
         <div class="section-header"><h2><i class="fas fa-calendar"></i> Fixtures</h2></div>
@@ -361,7 +353,7 @@
 </div>
 
 <script>
-    // ================= GET CUSTOM USER DATA (NO GOOGLE) =================
+    // ================= GET USER DATA =================
     function getCurrentUser() {
         return JSON.parse(localStorage.getItem('crunkUser'));
     }
@@ -380,26 +372,24 @@
         return 'Unknown';
     }
     
-    // ================= LOAD CUSTOM PROFILE =================
+    // ================= LOAD PROFILE =================
     function loadCustomProfile() {
         const user = getCurrentUser();
         if (!user) return;
         
         const customName = user.customDisplayName || user.displayName || user.username || 'Player';
-        const customAvatar = user.customAvatar || user.photoURL;
-        
         const profileAvatar = document.getElementById('profileAvatarImg');
         const popupAvatar = document.getElementById('popupProfileImg');
         const profileNameSpan = document.getElementById('profileNameDisplay');
         const profileEmailSpan = document.getElementById('profileEmailDisplay');
         
-        if (profileAvatar) profileAvatar.src = customAvatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(customName)}&background=10b981&color=fff&size=128`;
-        if (popupAvatar) popupAvatar.src = customAvatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(customName)}&background=10b981&color=fff&size=128`;
+        if (profileAvatar) profileAvatar.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(customName)}&background=10b981&color=fff&size=128`;
+        if (popupAvatar) popupAvatar.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(customName)}&background=10b981&color=fff&size=128`;
         if (profileNameSpan) profileNameSpan.innerText = customName;
         if (profileEmailSpan) profileEmailSpan.innerText = user.email || '';
     }
     
-    // ================= INDIVIDUAL COINS =================
+    // ================= COINS =================
     function getUserCoins() {
         const user = getCurrentUser();
         if (!user) return 0;
@@ -439,7 +429,7 @@
         if (coinsSpan) coinsSpan.textContent = getUserCoins();
     }
     
-    // ================= LEAGUE LOGIC =================
+    // ================= LEAGUE =================
     const urlParams = new URLSearchParams(window.location.search);
     const leagueId = urlParams.get('id');
     let currentLeague = null;
@@ -459,7 +449,7 @@
         
         const creatorName = getUserDisplayName(currentLeague.ownerId);
         
-        const metaHtml = `
+        document.getElementById('leagueMeta').innerHTML = `
             <div class="meta-item"><i class="fas fa-gamepad"></i> ${currentLeague.gameType}</div>
             <div class="meta-item"><i class="fas fa-users"></i> ${currentLeague.teams?.length || 0}/${currentLeague.maxTeams} Teams</div>
             <div class="meta-item"><i class="fas fa-trophy"></i> Prize: ${currentLeague.prizePool || 0} VC</div>
@@ -467,7 +457,6 @@
             <div class="meta-item"><i class="fas fa-chart-line"></i> Format: ${currentLeague.format === 'league' ? 'Round Robin' : currentLeague.format === 'group' ? 'Group + Knockout' : 'Cup'}</div>
             <div class="meta-item"><i class="fas fa-user"></i> Created by: <strong>${creatorName}</strong></div>
         `;
-        document.getElementById('leagueMeta').innerHTML = metaHtml;
         
         renderTeams();
         renderStandings();
@@ -490,15 +479,15 @@
         container.innerHTML = '';
         teams.forEach(team => {
             const ownerName = getUserDisplayName(team.ownerId);
-            const teamCard = document.createElement('div');
-            teamCard.className = 'team-card-view';
-            teamCard.onclick = () => window.location.href = `team-view.html?id=${team.id}`;
-            teamCard.innerHTML = `
+            const card = document.createElement('div');
+            card.className = 'team-card-view';
+            card.onclick = () => window.location.href = `team-view.html?id=${team.id}`;
+            card.innerHTML = `
                 <div class="team-logo-view">${team.logo ? `<img src="${team.logo}" style="width:100%;height:100%;object-fit:cover;">` : '<i class="fas fa-shield-alt" style="font-size:30px;"></i>'}</div>
                 <div class="team-name-view">${team.name}</div>
                 <div class="team-owner-view">Owner: ${ownerName}</div>
             `;
-            container.appendChild(teamCard);
+            container.appendChild(card);
         });
     }
     
@@ -552,23 +541,12 @@
             const ownerName = getUserDisplayName(team.ownerId);
             tbody.innerHTML += `
                 <tr>
-                    <td><strong>${index + 1}</strong>\\n
-                    <td class="team-cell">
-                        <div class="team-logo-small">${team.teamLogo ? `<img src="${team.teamLogo}" style="width:100%;height:100%;object-fit:cover;">` : '<i class="fas fa-shield-alt"></i>'}</div>
-                        <div>
-                            <strong>${team.teamName}</strong>
-                            <div style="font-size: 11px; color: var(--text-secondary);">${ownerName}</div>
-                        </div>
-                    </td>
-                    <td>${team.played}</td>
-                    <td>${team.wins}</td>
-                    <td>${team.draws}</td>
-                    <td>${team.losses}</td>
-                    <td>${team.goalsFor}</td>
-                    <td>${team.goalsAgainst}</td>
-                    <td>${team.goalsFor - team.goalsAgainst}</td>
+                    <td><strong>${index + 1}</strong></td>
+                    <td class="team-cell"><div class="team-logo-small">${team.teamLogo ? `<img src="${team.teamLogo}" style="width:100%;height:100%;object-fit:cover;">` : '<i class="fas fa-shield-alt"></i>'}</div> ${team.teamName}<div style="font-size: 10px; color: var(--text-secondary);">${ownerName}</div></td>
+                    <td>${team.played}</td><td>${team.wins}</td><td>${team.draws}</td><td>${team.losses}</td>
+                    <td>${team.goalsFor}</td><td>${team.goalsAgainst}</td><td>${team.goalsFor - team.goalsAgainst}</td>
                     <td><strong>${team.points}</strong></td>
-                 </tr>
+                </tr>
             `;
         });
     }
@@ -733,7 +711,7 @@
         if (storedUser) currentUser = storedUser;
     });
     
-    // ================= VENO COINS CLAIM =================
+    // ================= CLAIM COINS =================
     const claimBtn = document.getElementById('claimVenoCoinsBtn');
     if (claimBtn) {
         const LAST_CLAIM_KEY = 'lastVenoClaim';
