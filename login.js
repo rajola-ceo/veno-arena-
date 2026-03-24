@@ -663,3 +663,14 @@ if (phoneInput) {
 }
 
 console.log("✅ Login system initialized with correct Firebase project");
+// After successful login (in the form submit handler)
+showMessage("Registration successful! Redirecting to setup profile...", "success");
+setTimeout(() => {
+    window.location.href = "profile-settings.html";
+}, 1500);
+
+// After Google login success
+showMessage("Google login successful! Redirecting to setup profile...", "success");
+setTimeout(() => {
+    window.location.href = "profile-settings.html";
+}, 1000);
