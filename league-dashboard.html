@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>League Dashboard - Crunk Games</title>
+    <title>League Dashboard - Veno-Arena</title>
     
     <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -41,7 +41,6 @@
             flex-direction: column;
         }
 
-        /* Top Bar */
         .topbar {
             height: 70px;
             display: flex;
@@ -109,7 +108,6 @@
             border: 2px solid var(--primary);
         }
 
-        /* Sidebar */
         .sidebar {
             position: fixed;
             left: -300px;
@@ -228,7 +226,6 @@
             visibility: visible;
         }
 
-        /* Profile Popup */
         .profile-popup {
             display: none;
             position: absolute;
@@ -270,7 +267,6 @@
             cursor: pointer;
         }
 
-        /* Dashboard Container */
         .dashboard-container {
             max-width: 1400px;
             margin: 20px auto;
@@ -304,6 +300,42 @@
         .status-live { background: #10b981; color: white; animation: pulse 2s infinite; }
         .status-completed { background: #6b7280; color: white; }
         
+        .action-buttons {
+            margin-top: 20px;
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .start-tournament-btn, .generate-fixtures-btn, .complete-league-btn {
+            padding: 12px 24px;
+            border-radius: 30px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+        }
+        
+        .start-tournament-btn {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+        }
+        
+        .start-tournament-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .generate-fixtures-btn {
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            color: white;
+        }
+        
+        .complete-league-btn {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            color: white;
+        }
+        
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -331,7 +363,6 @@
             margin-top: 5px;
         }
         
-        /* Tabs */
         .dashboard-tabs {
             display: flex;
             gap: 10px;
@@ -374,7 +405,6 @@
             animation: fadeIn 0.3s ease;
         }
         
-        /* Standings Table */
         .standings-table {
             width: 100%;
             background: var(--bg-tertiary);
@@ -395,10 +425,6 @@
             color: #10b981;
         }
         
-        .standings-table tr:hover {
-            background: var(--bg-secondary);
-        }
-        
         .team-cell {
             display: flex;
             align-items: center;
@@ -415,7 +441,6 @@
             justify-content: center;
         }
         
-        /* Fixtures Grid */
         .fixtures-grid {
             display: grid;
             gap: 15px;
@@ -495,7 +520,6 @@
             color: #10b981;
         }
         
-        /* Team Requests */
         .requests-list {
             display: flex;
             flex-direction: column;
@@ -537,7 +561,6 @@
             cursor: pointer;
         }
         
-        /* Modal */
         .modal {
             display: none;
             position: fixed;
@@ -581,6 +604,7 @@
             display: flex;
             gap: 20px;
             margin: 20px 0;
+            justify-content: center;
         }
         
         .result-input input {
@@ -645,22 +669,11 @@
         }
         
         @media (max-width: 768px) {
-            .match-info {
-                flex-direction: column;
-                text-align: center;
-            }
-            .match-teams {
-                flex-direction: column;
-            }
-            .team {
-                flex-direction: column;
-            }
-            .stats-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-            .league-title {
-                font-size: 24px;
-            }
+            .match-info { flex-direction: column; text-align: center; }
+            .match-teams { flex-direction: column; }
+            .team { flex-direction: column; }
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+            .league-title { font-size: 24px; }
         }
     </style>
 </head>
@@ -672,17 +685,23 @@
         <div class="brand"><h1>⚽ League Dashboard</h1></div>
         <div class="icons">
             <div class="veno-coins-container">
-                <div class="veno-coins-display"><i class="fas fa-coins"></i><span id="venoCoinsAmount">0</span></div>
-                <button id="claimVenoCoinsBtn" class="claim-veno-btn"><i class="fas fa-gift"></i> Claim 10</button>
+                <div class="veno-coins-display">
+                    <i class="fas fa-coins"></i>
+                    <span id="venoCoinsAmount">0</span>
+                    <span class="coin-label">Veno Coins</span>
+                </div>
+                <button id="claimVenoCoinsBtn" class="claim-veno-btn">
+                    <i class="fas fa-gift"></i> Claim 10
+                </button>
             </div>
             <div class="profile-dropdown" id="profileDropdown">
-                <img id="googleProfilePic" class="profile-pic" src="https://ui-avatars.com/api/?name=User&background=10b981&color=fff&size=128">
+                <img id="profileAvatarImg" class="profile-pic" src="https://ui-avatars.com/api/?name=User&background=10b981&color=fff&size=128">
                 <div class="profile-popup" id="profilePopup">
                     <div class="account-info">
-                        <img id="popupProfilePic">
+                        <img id="popupProfileImg">
                         <div>
-                            <p id="accountName"></p>
-                            <p id="accountEmail"></p>
+                            <p id="profileNameDisplay">User Name</p>
+                            <p id="profileEmailDisplay">user@example.com</p>
                         </div>
                     </div>
                     <button id="logoutBtn"><i class="bx bx-log-out"></i> Logout</button>
@@ -716,6 +735,7 @@
                 <span class="league-status" id="leagueStatus">Loading...</span>
             </div>
             <p id="leagueDescription"></p>
+            <div class="action-buttons" id="actionButtons"></div>
         </div>
 
         <div class="stats-grid">
@@ -735,11 +755,11 @@
         <div id="standings" class="tab-content active">
             <div class="standings-table-wrapper">
                 <table class="standings-table" id="standingsTable">
-                    <thead>
-                        <tr><th>Pos</th><th>Team</th><th>P</th><th>W</th><th>D</th><th>L</th><th>GF</th><th>GA</th><th>GD</th><th>Pts</th>……
+                    <thead>……
+                        <th>Pos</th><th>Team</th><th>P</th><th>W</th><th>D</th><th>L</th><th>GF</th><th>GA</th><th>GD</th><th>Pts</th>
                     </thead>
                     <tbody id="standingsBody"></tbody>
-                 </table>
+                </table>
             </div>
         </div>
 
@@ -756,7 +776,6 @@
         </div>
     </div>
 
-    <!-- Edit Result Modal -->
     <div id="editResultModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
@@ -782,84 +801,55 @@
 </div>
 
 <script>
-    // ================= HAMBURGER MENU =================
-    document.addEventListener('DOMContentLoaded', function() {
-        const menuBtn = document.getElementById('menuBtn');
-        const sidebar = document.getElementById('sidebar');
-        const closeSidebar = document.getElementById('closeSidebar');
-        const overlay = document.getElementById('sidebarOverlay');
-        
-        if (menuBtn && sidebar) {
-            menuBtn.addEventListener('click', () => {
-                sidebar.classList.add('open');
-                if (overlay) overlay.classList.add('active');
-                document.body.style.overflow = 'hidden';
-            });
-            
-            const closeFunc = () => {
-                sidebar.classList.remove('open');
-                if (overlay) overlay.classList.remove('active');
-                document.body.style.overflow = '';
-            };
-            
-            if (closeSidebar) closeSidebar.addEventListener('click', closeFunc);
-            if (overlay) overlay.addEventListener('click', closeFunc);
-            
-            document.addEventListener('keydown', (e) => {
-                if (e.key === 'Escape' && sidebar.classList.contains('open')) closeFunc();
-            });
-        }
-        
-        // Sidebar Navigation
-        const menuHome = document.getElementById('menuHome');
-        const menuTournaments = document.getElementById('menuTournaments');
-        
-        if (menuHome) menuHome.addEventListener('click', () => window.location.href = 'home.html');
-        if (menuTournaments) menuTournaments.addEventListener('click', () => window.location.href = 'tournaments.html');
-        
-        // Profile Dropdown
-        const profileDropdown = document.getElementById('profileDropdown');
-        const profilePopup = document.getElementById('profilePopup');
-        if (profileDropdown && profilePopup) {
-            profileDropdown.addEventListener('click', (e) => {
-                e.stopPropagation();
-                profilePopup.classList.toggle('active');
-            });
-            document.addEventListener('click', () => profilePopup.classList.remove('active'));
-        }
-        
-        // Logout
-        const logoutBtn = document.getElementById('logoutBtn');
-        if (logoutBtn) {
-            logoutBtn.addEventListener('click', () => {
-                localStorage.removeItem('crunkUser');
-                window.location.href = 'index.html';
-            });
-        }
-        
-        // Theme Toggle
-        const menuTheme = document.getElementById('menuTheme');
-        const themeLabel = document.getElementById('themeLabel');
-        if (menuTheme) {
-            menuTheme.addEventListener('click', () => {
-                document.body.classList.toggle('light-theme');
-                const isLight = document.body.classList.contains('light-theme');
-                themeLabel.innerText = isLight ? 'Light' : 'Dark';
-                localStorage.setItem('theme', isLight ? 'light' : 'dark');
-            });
-        }
-        
-        const savedTheme = localStorage.getItem('theme');
-        if (savedTheme === 'light') {
-            document.body.classList.add('light-theme');
-            if (themeLabel) themeLabel.innerText = 'Light';
-        }
-    });
+    // ================= INDIVIDUAL COINS SYSTEM =================
+    function getUserCoins(userId = null) {
+        const targetId = userId || (currentUser?.uid || currentUser?.userId);
+        if (!targetId) return 0;
+        let allUserCoins = JSON.parse(localStorage.getItem('userCoins') || '{}');
+        if (allUserCoins[targetId] === undefined) allUserCoins[targetId] = 100;
+        return allUserCoins[targetId];
+    }
     
-    // ================= LEAGUE DASHBOARD LOGIC =================
+    function addUserCoins(amount, userId) {
+        let allUserCoins = JSON.parse(localStorage.getItem('userCoins') || '{}');
+        allUserCoins[userId] = (allUserCoins[userId] || 100) + amount;
+        localStorage.setItem('userCoins', JSON.stringify(allUserCoins));
+    }
+    
+    function updateVenoCoinsDisplay() {
+        const coinsSpan = document.getElementById('venoCoinsAmount');
+        if (coinsSpan) coinsSpan.textContent = getUserCoins();
+    }
+    
+    // ================= LOAD CUSTOM PROFILE =================
+    function loadCustomProfile() {
+        const user = JSON.parse(localStorage.getItem('crunkUser'));
+        if (!user) return;
+        
+        const customName = user.customDisplayName || user.displayName || user.username || 'Player';
+        const customAvatar = user.customAvatar || user.photoURL;
+        
+        const profileAvatar = document.getElementById('profileAvatarImg');
+        const popupAvatar = document.getElementById('popupProfileImg');
+        const profileNameSpan = document.getElementById('profileNameDisplay');
+        const profileEmailSpan = document.getElementById('profileEmailDisplay');
+        
+        if (profileAvatar) profileAvatar.src = customAvatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(customName)}&background=10b981&color=fff&size=128`;
+        if (popupAvatar) popupAvatar.src = customAvatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(customName)}&background=10b981&color=fff&size=128`;
+        if (profileNameSpan) profileNameSpan.innerText = customName;
+        if (profileEmailSpan) profileEmailSpan.innerText = user.email || '';
+        
+        const sidebarName = document.getElementById('sidebarUserName');
+        const sidebarAvatar = document.getElementById('sidebarProfilePic');
+        if (sidebarName) sidebarName.innerText = customName;
+        if (sidebarAvatar) sidebarAvatar.src = customAvatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(customName)}&background=10b981&color=fff&size=128`;
+    }
+    
+    // ================= LEAGUE MANAGEMENT =================
     let currentLeague = null;
     let currentMatchId = null;
     let screenshotData = null;
+    let currentUser = null;
     
     const urlParams = new URLSearchParams(window.location.search);
     const leagueId = urlParams.get('id');
@@ -870,14 +860,13 @@
         
         if (!currentLeague) {
             showToast('League not found', 'error');
-            setTimeout(() => window.location.href = 'tournaments.html', 1500);
+            setTimeout(() => window.location.href = 'home.html', 1500);
             return;
         }
         
         document.getElementById('leagueName').innerText = currentLeague.name;
         document.getElementById('leagueDescription').innerText = currentLeague.description || 'No description';
-        document.getElementById('leagueStatus').innerText = currentLeague.status === 'registration' ? 'REGISTRATION OPEN' : currentLeague.status === 'live' ? 'LIVE' : 'COMPLETED';
-        document.getElementById('leagueStatus').className = `league-status status-${currentLeague.status}`;
+        updateLeagueStatus();
         document.getElementById('totalTeams').innerText = currentLeague.teams?.length || 0;
         document.getElementById('totalMatches').innerText = currentLeague.matches?.filter(m => m.result).length || 0;
         document.getElementById('totalPrize').innerText = currentLeague.prizePool || 0;
@@ -887,20 +876,137 @@
         renderFixtures();
         renderRequests();
         renderGallery();
+        renderActionButtons();
     }
     
-    function renderStandings() {
-        const tbody = document.getElementById('standingsBody');
-        if (!tbody) return;
+    function updateLeagueStatus() {
+        const statusSpan = document.getElementById('leagueStatus');
+        statusSpan.innerText = currentLeague.status === 'registration' ? 'REGISTRATION OPEN' : 
+                               currentLeague.status === 'live' ? 'LIVE' : 'COMPLETED';
+        statusSpan.className = `league-status status-${currentLeague.status}`;
+    }
+    
+    function renderActionButtons() {
+        const container = document.getElementById('actionButtons');
+        container.innerHTML = '';
         
+        if (currentLeague.status === 'registration') {
+            const teamsCount = currentLeague.teams?.length || 0;
+            const maxTeams = currentLeague.maxTeams || 16;
+            const isFull = teamsCount >= maxTeams;
+            
+            container.innerHTML = `
+                <button class="start-tournament-btn" id="startTournamentBtn" ${!isFull ? 'disabled' : ''}>
+                    <i class="fas fa-play"></i> ${isFull ? 'Start Tournament' : `Need ${maxTeams - teamsCount} more teams (${teamsCount}/${maxTeams})`}
+                </button>
+            `;
+            document.getElementById('startTournamentBtn')?.addEventListener('click', startTournament);
+        } 
+        else if (currentLeague.status === 'live') {
+            const allMatchesPlayed = currentLeague.matches?.every(m => m.result) || false;
+            const hasFixtures = currentLeague.matches?.length > 0;
+            
+            container.innerHTML = `
+                <button class="generate-fixtures-btn" id="generateFixturesBtn" ${hasFixtures ? 'disabled style="opacity:0.5"' : ''}>
+                    <i class="fas fa-random"></i> ${hasFixtures ? 'Fixtures Already Generated' : 'Generate Fixtures'}
+                </button>
+                <button class="complete-league-btn" id="completeLeagueBtn" ${!allMatchesPlayed ? 'disabled' : ''}>
+                    <i class="fas fa-trophy"></i> ${allMatchesPlayed ? 'Complete League & Distribute Prizes' : 'Complete all matches first'}
+                </button>
+            `;
+            if (!hasFixtures) {
+                document.getElementById('generateFixturesBtn')?.addEventListener('click', generateFixtures);
+            }
+            document.getElementById('completeLeagueBtn')?.addEventListener('click', completeLeague);
+        }
+    }
+    
+    function startTournament() {
+        if (confirm('Start the tournament? This will lock team registrations.')) {
+            currentLeague.status = 'live';
+            saveLeague();
+            updateLeagueStatus();
+            renderActionButtons();
+            showToast('Tournament started! Now generate fixtures.', 'success');
+        }
+    }
+    
+    function generateFixtures() {
+        const teams = currentLeague.teams || [];
+        if (teams.length < 2) {
+            showToast('Need at least 2 teams to generate fixtures', 'error');
+            return;
+        }
+        
+        const matches = [];
+        for (let i = 0; i < teams.length; i++) {
+            for (let j = i + 1; j < teams.length; j++) {
+                matches.push({
+                    id: 'match_' + Date.now() + '_' + i + '_' + j,
+                    homeTeamId: teams[i].id,
+                    awayTeamId: teams[j].id,
+                    result: false,
+                    homeScore: 0,
+                    awayScore: 0,
+                    week: Math.floor(Math.random() * 5) + 1
+                });
+            }
+        }
+        
+        for (let i = matches.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [matches[i], matches[j]] = [matches[j], matches[i]];
+        }
+        
+        currentLeague.matches = matches;
+        saveLeague();
+        renderFixtures();
+        renderActionButtons();
+        showToast(`${matches.length} fixtures generated!`, 'success');
+    }
+    
+    function completeLeague() {
+        if (!confirm('Complete league and distribute prizes? This action cannot be undone.')) return;
+        
+        const standings = calculateStandings();
+        if (standings.length === 0) {
+            showToast('No teams to distribute prizes to', 'error');
+            return;
+        }
+        
+        const prizes = currentLeague.prizes || {
+            first: Math.floor(currentLeague.prizePool * 0.5),
+            second: Math.floor(currentLeague.prizePool * 0.3),
+            third: Math.floor(currentLeague.prizePool * 0.2)
+        };
+        
+        for (let i = 0; i < Math.min(3, standings.length); i++) {
+            const team = standings[i];
+            const prizeAmount = i === 0 ? prizes.first : i === 1 ? prizes.second : prizes.third;
+            addUserCoins(prizeAmount, team.ownerId);
+            if (i === 0) currentLeague.winner = team;
+        }
+        
+        currentLeague.status = 'completed';
+        currentLeague.completedAt = new Date().toISOString();
+        saveLeague();
+        
+        updateLeagueStatus();
+        renderActionButtons();
+        renderStandings();
+        showToast('League completed! Prizes distributed!', 'success');
+    }
+    
+    function calculateStandings() {
         const standings = [];
         const teams = currentLeague.teams || [];
         
         teams.forEach(team => {
             standings.push({
-                teamId: team.id,
-                teamName: team.name,
-                teamLogo: team.logo,
+                id: team.id,
+                name: team.name,
+                logo: team.logo,
+                ownerId: team.ownerId,
                 played: 0, wins: 0, draws: 0, losses: 0,
                 goalsFor: 0, goalsAgainst: 0, points: 0
             });
@@ -908,16 +1014,21 @@
         
         (currentLeague.matches || []).forEach(match => {
             if (match.result) {
-                const homeTeam = standings.find(s => s.teamId === match.homeTeamId);
-                const awayTeam = standings.find(s => s.teamId === match.awayTeamId);
+                const homeTeam = standings.find(s => s.id === match.homeTeamId);
+                const awayTeam = standings.find(s => s.id === match.awayTeamId);
                 if (homeTeam && awayTeam) {
                     homeTeam.played++; awayTeam.played++;
-                    homeTeam.goalsFor += match.homeScore; homeTeam.goalsAgainst += match.awayScore;
-                    awayTeam.goalsFor += match.awayScore; awayTeam.goalsAgainst += match.homeScore;
+                    homeTeam.goalsFor += match.homeScore;
+                    homeTeam.goalsAgainst += match.awayScore;
+                    awayTeam.goalsFor += match.awayScore;
+                    awayTeam.goalsAgainst += match.homeScore;
+                    
                     if (match.homeScore > match.awayScore) {
-                        homeTeam.wins++; homeTeam.points += 3; awayTeam.losses++;
+                        homeTeam.wins++; homeTeam.points += 3;
+                        awayTeam.losses++;
                     } else if (match.homeScore < match.awayScore) {
-                        awayTeam.wins++; awayTeam.points += 3; homeTeam.losses++;
+                        awayTeam.wins++; awayTeam.points += 3;
+                        homeTeam.losses++;
                     } else {
                         homeTeam.draws++; awayTeam.draws++;
                         homeTeam.points += 1; awayTeam.points += 1;
@@ -933,27 +1044,33 @@
             return gdB - gdA;
         });
         
+        return standings;
+    }
+    
+    function renderStandings() {
+        const tbody = document.getElementById('standingsBody');
+        const standings = calculateStandings();
+        
         tbody.innerHTML = '';
         standings.forEach((team, index) => {
-            const row = tbody.insertRow();
-            row.innerHTML = `
-                <td><strong>${index + 1}</strong></td>
-                <td class="team-cell"><div class="team-logo-small">${team.teamLogo ? `<img src="${team.teamLogo}" style="width:100%;height:100%;object-fit:cover;">` : '<i class="fas fa-shield-alt"></i>'}</div> ${team.teamName}</td>
-                <td>${team.played}</td><td>${team.wins}</td><td>${team.draws}</td><td>${team.losses}</td>
-                <td>${team.goalsFor}</td><td>${team.goalsAgainst}</td><td>${team.goalsFor - team.goalsAgainst}</td>
-                <td><strong>${team.points}</strong></td>
+            tbody.innerHTML += `
+                <tr>
+                    <td><strong>${index + 1}</strong></td>
+                    <td class="team-cell"><div class="team-logo-small">${team.logo ? `<img src="${team.logo}" style="width:30px;height:30px;">` : '<i class="fas fa-shield-alt"></i>'}</div> ${team.name}</td>
+                    <td>${team.played}</td><td>${team.wins}</td><td>${team.draws}</td><td>${team.losses}</td>
+                    <td>${team.goalsFor}</td><td>${team.goalsAgainst}</td><td>${team.goalsFor - team.goalsAgainst}</td>
+                    <td><strong>${team.points}</strong></td>
+                </tr>
             `;
         });
     }
     
     function renderFixtures() {
         const container = document.getElementById('fixturesList');
-        if (!container) return;
-        
         const matches = currentLeague.matches || [];
         
         if (matches.length === 0) {
-            container.innerHTML = '<div class="empty-state">No fixtures scheduled yet.</div>';
+            container.innerHTML = '<div class="empty-state">No fixtures yet. Start tournament to generate fixtures.</div>';
             return;
         }
         
@@ -974,7 +1091,7 @@
                     <div class="match-result">${match.result ? `${match.homeScore} - ${match.awayScore}` : 'Not Played'}</div>
                     <div class="match-actions">
                         <button class="edit-result-btn" onclick="openEditModal('${match.id}', '${homeTeam?.name}', '${awayTeam?.name}', ${match.homeScore || 0}, ${match.awayScore || 0})">
-                            <i class="fas fa-edit"></i> Edit Result
+                            <i class="fas fa-edit"></i> ${match.result ? 'Edit Result' : 'Enter Result'}
                         </button>
                         ${match.screenshot ? `<button class="upload-screenshot-btn" onclick="viewScreenshot('${match.screenshot}')"><i class="fas fa-image"></i> View Screenshot</button>` : ''}
                     </div>
@@ -1074,18 +1191,13 @@
             if (screenshotData) currentLeague.matches[matchIndex].screenshot = screenshotData;
         }
         
-        const leagues = JSON.parse(localStorage.getItem('leagues') || '[]');
-        const leagueIndex = leagues.findIndex(l => l.id === leagueId);
-        if (leagueIndex !== -1) {
-            leagues[leagueIndex] = currentLeague;
-            localStorage.setItem('leagues', JSON.stringify(leagues));
-        }
-        
-        showToast('Match result saved!', 'success');
+        saveLeague();
         closeModal();
         renderStandings();
         renderFixtures();
         renderGallery();
+        renderActionButtons();
+        showToast('Match result saved!', 'success');
     }
     
     document.getElementById('matchScreenshot')?.addEventListener('change', (e) => {
@@ -1116,19 +1228,22 @@
         }
         
         currentLeague.pendingRequests = currentLeague.pendingRequests.filter(r => r.id !== requestId);
-        
-        const leagues = JSON.parse(localStorage.getItem('leagues') || '[]');
-        const leagueIndex = leagues.findIndex(l => l.id === leagueId);
-        if (leagueIndex !== -1) {
-            leagues[leagueIndex] = currentLeague;
-            localStorage.setItem('leagues', JSON.stringify(leagues));
-        }
-        
+        saveLeague();
         showToast(action === 'approve' ? 'Team approved!' : 'Team denied', 'success');
         renderRequests();
         renderStandings();
     }
     
+    function saveLeague() {
+        const leagues = JSON.parse(localStorage.getItem('leagues') || '[]');
+        const index = leagues.findIndex(l => l.id === leagueId);
+        if (index !== -1) {
+            leagues[index] = currentLeague;
+            localStorage.setItem('leagues', JSON.stringify(leagues));
+        }
+    }
+    
+    // ================= EVENT LISTENERS =================
     document.querySelectorAll('.tab-btn').forEach(btn => {
         btn.addEventListener('click', () => {
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
@@ -1148,11 +1263,108 @@
         setTimeout(() => { toast.classList.remove('show'); setTimeout(() => toast.remove(), 300); }, 3000);
     }
     
-    function getVenoCoins() { return parseInt(localStorage.getItem('venoCoins') || '0'); }
-    function updateVenoCoinsDisplay() { document.getElementById('venoCoinsAmount').innerText = getVenoCoins(); }
-    updateVenoCoinsDisplay();
+    // ================= HAMBURGER MENU =================
+    document.addEventListener('DOMContentLoaded', function() {
+        const menuBtn = document.getElementById('menuBtn');
+        const sidebar = document.getElementById('sidebar');
+        const closeSidebar = document.getElementById('closeSidebar');
+        const overlay = document.getElementById('sidebarOverlay');
+        
+        if (menuBtn && sidebar) {
+            menuBtn.addEventListener('click', () => {
+                sidebar.classList.add('open');
+                if (overlay) overlay.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            });
+            
+            const closeFunc = () => {
+                sidebar.classList.remove('open');
+                if (overlay) overlay.classList.remove('active');
+                document.body.style.overflow = '';
+            };
+            if (closeSidebar) closeSidebar.addEventListener('click', closeFunc);
+            if (overlay) overlay.addEventListener('click', closeFunc);
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && sidebar.classList.contains('open')) closeFunc();
+            });
+        }
+        
+        const menuHome = document.getElementById('menuHome');
+        const menuTournaments = document.getElementById('menuTournaments');
+        if (menuHome) menuHome.addEventListener('click', () => window.location.href = 'home.html');
+        if (menuTournaments) menuTournaments.addEventListener('click', () => window.location.href = 'home.html');
+        
+        const profileDropdown = document.getElementById('profileDropdown');
+        const profilePopup = document.getElementById('profilePopup');
+        if (profileDropdown && profilePopup) {
+            profileDropdown.addEventListener('click', (e) => {
+                e.stopPropagation();
+                profilePopup.classList.toggle('active');
+            });
+            document.addEventListener('click', () => profilePopup.classList.remove('active'));
+        }
+        
+        const logoutBtn = document.getElementById('logoutBtn');
+        if (logoutBtn) {
+            logoutBtn.addEventListener('click', () => {
+                localStorage.removeItem('crunkUser');
+                window.location.href = 'index.html';
+            });
+        }
+        
+        const menuTheme = document.getElementById('menuTheme');
+        const themeLabel = document.getElementById('themeLabel');
+        if (menuTheme) {
+            menuTheme.addEventListener('click', () => {
+                document.body.classList.toggle('light-theme');
+                const isLight = document.body.classList.contains('light-theme');
+                themeLabel.innerText = isLight ? 'Light' : 'Dark';
+                localStorage.setItem('theme', isLight ? 'light' : 'dark');
+            });
+        }
+        
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'light') {
+            document.body.classList.add('light-theme');
+            if (themeLabel) themeLabel.innerText = 'Light';
+        }
+        
+        loadCustomProfile();
+        loadLeagueData();
+        updateVenoCoinsDisplay();
+    });
     
-    loadLeagueData();
+    // Veno Coins Claim
+    const claimBtn = document.getElementById('claimVenoCoinsBtn');
+    if (claimBtn) {
+        const LAST_CLAIM_KEY = 'lastVenoClaim';
+        function canClaim() {
+            const last = localStorage.getItem(LAST_CLAIM_KEY);
+            if (!last) return true;
+            return (Date.now() - parseInt(last)) >= 24 * 60 * 60 * 1000;
+        }
+        claimBtn.addEventListener('click', () => {
+            if (canClaim()) {
+                addUserCoins(10, currentUser?.uid);
+                localStorage.setItem(LAST_CLAIM_KEY, Date.now().toString());
+                updateVenoCoinsDisplay();
+                showToast('🎉 You claimed 10 Veno Coins!', 'success');
+            } else {
+                showToast('Already claimed! Come back tomorrow', 'error');
+            }
+        });
+        setInterval(() => {
+            if (canClaim()) {
+                claimBtn.disabled = false;
+                claimBtn.innerHTML = '<i class="fas fa-gift"></i> Claim 10';
+            } else {
+                claimBtn.disabled = true;
+                const timeLeft = 24 * 60 * 60 * 1000 - (Date.now() - parseInt(localStorage.getItem(LAST_CLAIM_KEY)));
+                const hoursLeft = Math.floor(timeLeft / (60 * 60 * 1000));
+                claimBtn.innerHTML = `<i class="fas fa-clock"></i> ${hoursLeft}h left`;
+            }
+        }, 60000);
+    }
 </script>
 
 <script type="module">
@@ -1173,10 +1385,16 @@
     
     onAuthStateChanged(auth, (user) => {
         if (user) {
-            document.getElementById('googleProfilePic').src = user.photoURL || `https://ui-avatars.com/api/?name=${user.displayName}&background=10b981&color=fff`;
-            document.getElementById('popupProfilePic').src = user.photoURL || `https://ui-avatars.com/api/?name=${user.displayName}&background=10b981&color=fff`;
-            document.getElementById('accountName').innerText = user.displayName;
-            document.getElementById('accountEmail').innerText = user.email;
+            window.currentUser = user;
+            const customUser = JSON.parse(localStorage.getItem('crunkUser'));
+            const displayName = customUser?.customDisplayName || user.displayName;
+            const avatarUrl = customUser?.customAvatar || user.photoURL;
+            
+            document.getElementById('profileAvatarImg').src = avatarUrl || `https://ui-avatars.com/api/?name=${displayName}&background=10b981&color=fff`;
+            document.getElementById('popupProfileImg').src = avatarUrl || `https://ui-avatars.com/api/?name=${displayName}&background=10b981&color=fff`;
+            document.getElementById('profileNameDisplay').innerText = displayName;
+            document.getElementById('profileEmailDisplay').innerText = user.email;
+            updateVenoCoinsDisplay();
         } else {
             window.location.href = 'index.html';
         }
