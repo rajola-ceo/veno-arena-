@@ -1,60 +1,145 @@
-<!-- Created by rajola - Updated with country codes and Google OAuth -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Login to veno-arena - Your ultimate gaming platform">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="description" content="Login to Veno-Arena - Your Ultimate Gaming Platform">
     
     <!-- Fonts & Icons -->
     <link rel="preconnect" href="https://fonts.gstatic.com">
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <!-- Custom CSS -->
     <link rel="stylesheet" href="./login.css">
     
-    <title>Veno-arena-login</title>
+    <title>Veno-Arena - Login</title>
     
-    <!-- Google Identity Services (using your Firebase Client ID) -->
-    <script src="https://accounts.google.com/gsi/client" async defer></script>
     <!-- PWA Meta Tags -->
-    <!-- PWA Meta Tags - Required for icon to show when sharing -->
-<link rel="manifest" href="/manifest.json">
-<meta name="theme-color" content="#10b981">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Crunk Games">
-<meta name="mobile-web-app-capable" content="yes">
-<meta name="msapplication-TileColor" content="#10b981">
-<meta name="msapplication-TileImage" content="/icons/icon-144x144.png">
-
-<!-- Favicon and Icons - CRITICAL for link sharing -->
-<link rel="icon" type="image/png" sizes="32x32" href="/icons/icon-32x32.png">
-<link rel="icon" type="image/png" sizes="16x16" href="/icons/icon-16x16.png">
-<link rel="apple-touch-icon" sizes="180x180" href="/icons/icon-180x180.png">
-<link rel="apple-touch-icon" sizes="152x152" href="/icons/icon-152x152.png">
-<link rel="apple-touch-icon" sizes="144x144" href="/icons/icon-144x144.png">
-<link rel="apple-touch-icon" sizes="120x120" href="/icons/icon-120x120.png">
-<link rel="apple-touch-icon" sizes="114x114" href="/icons/icon-114x114.png">
-<link rel="apple-touch-icon" sizes="76x76" href="/icons/icon-76x76.png">
-<link rel="apple-touch-icon" sizes="72x72" href="/icons/icon-72x72.png">
-<link rel="apple-touch-icon" sizes="60x60" href="/icons/icon-60x60.png">
-<link rel="apple-touch-icon" sizes="57x57" href="/icons/icon-57x57.png">
-
-<!-- For social sharing (WhatsApp, Facebook, Twitter, Telegram) -->
-<meta property="og:title" content="Crunk Games">
-<meta property="og:description" content="Play tournaments, create teams, and earn Veno Coins!">
-<meta property="og:image" content="https://your-domain.com/icon-512x512.png">
-<meta property="og:image:width" content="512">
-<meta property="og:image:height" content="512">
-<meta property="og:type" content="website">
-<meta property="og:url" content="https://your-domain.com">
-
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Crunk Games">
-<meta name="twitter:description" content="Play tournaments, create teams, and earn Veno Coins!">
-<meta name="twitter:image" content="https://your-domain.com/icon-512x512.png">
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#10b981">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Veno-Arena">
+    <meta name="mobile-web-app-capable" content="yes">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" sizes="32x32" href="/icons/icon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/icons/icon-16x16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/icons/icon-180x180.png">
+    
+    <!-- Social Sharing -->
+    <meta property="og:title" content="Veno-Arena">
+    <meta property="og:description" content="Play tournaments, create teams, and earn Veno Coins!">
+    <meta property="og:image" content="https://rajola-ceo.github.io/icon-512x512.png">
+    <meta property="og:type" content="website">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Veno-Arena">
+    
+    <style>
+        /* Additional styles for login page */
+        .btn-loader {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #fff;
+            border-top-color: transparent;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin-left: 8px;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .google-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            width: 100%;
+            padding: 12px;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 30px;
+            font-size: 16px;
+            font-weight: 500;
+            color: #444;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 10px 0;
+        }
+        
+        .google-btn:hover {
+            background: #f5f5f5;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        
+        .google-btn i {
+            color: #4285f4;
+            font-size: 18px;
+        }
+        
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: #10b981;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 50px;
+            font-weight: 600;
+            z-index: 10000;
+            transition: transform 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+        }
+        
+        .toast.error {
+            background: #ff5555;
+        }
+        
+        .toast.info {
+            background: #3b82f6;
+        }
+        
+        .message {
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 10px;
+            font-size: 14px;
+            display: none;
+        }
+        
+        .message.success {
+            display: block;
+            background: rgba(16, 185, 129, 0.1);
+            color: #10b981;
+            border: 1px solid #10b981;
+        }
+        
+        .message.error {
+            display: block;
+            background: rgba(255, 85, 85, 0.1);
+            color: #ff5555;
+            border: 1px solid #ff5555;
+        }
+        
+        .message.info {
+            display: block;
+            background: rgba(59, 130, 246, 0.1);
+            color: #3b82f6;
+            border: 1px solid #3b82f6;
+        }
+    </style>
 </head>
 <body>
     <!-- Animated Background -->
@@ -69,7 +154,7 @@
         <!-- Logo / Brand -->
         <div class="logo-container">
             <i class="fas fa-gamepad logo-icon"></i>
-            <h1>veno-arena</h1>
+            <h1>Veno-Arena</h1>
             <p class="tagline">Your Ultimate Gaming Destination</p>
         </div>
         
@@ -113,7 +198,7 @@
             </button>
             
             <!-- Message Display -->
-            <p class="text message" id="message"></p>
+            <div class="message" id="message"></div>
         </form>
         
         <!-- Divider -->
@@ -121,7 +206,7 @@
             <span>Or continue with</span>
         </div>
         
-        <!-- Google Login Button (Using Firebase OAuth, not GSI directly) -->
+        <!-- Google Login Button -->
         <div class="google-login-wrapper">
             <button onclick="window.handleGoogleLogin()" class="google-btn">
                 <i class="fab fa-google"></i>
@@ -145,7 +230,7 @@
         </div>
     </div>
     
-    <!-- Phone Login Modal (Hidden by default) -->
+    <!-- Phone Login Modal -->
     <div id="phoneModal" class="modal">
         <div class="modal-content">
             <span class="close-modal" onclick="closePhoneModal()">&times;</span>
@@ -187,12 +272,11 @@
     <!-- Toast Container -->
     <div id="toastContainer" class="toast-container"></div>
 
-    <!-- Scripts - Only ONE Firebase initialization (in login.js) -->
+    <!-- Scripts -->
     <script type="module" src="./login.js"></script>
     
-    <!-- Additional script for modal functions -->
+    <!-- Modal functions -->
     <script>
-        // Modal functions
         function showPhoneLogin() {
             document.getElementById('phoneModal').style.display = 'flex';
         }
@@ -209,124 +293,65 @@
             alert('OTP verification coming soon!');
         }
         
-        // Close modal when clicking outside
         window.onclick = function(event) {
             const modal = document.getElementById('phoneModal');
             if (event.target === modal) {
                 modal.style.display = 'none';
             }
-        }<!-- PWA Registration -->
-
-    // Register Service Worker
-    if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-            navigator.serviceWorker.register('/sw.js')
-                .then(registration => {
-                    console.log('✅ Service Worker registered:', registration);
-                    
-                    // Check for updates
-                    registration.addEventListener('updatefound', () => {
-                        const newWorker = registration.installing;
-                        console.log('🔄 New service worker found');
-                        
-                        newWorker.addEventListener('statechange', () => {
-                            if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                                console.log('📱 Update available - refresh to get new version');
-                                showUpdateToast();
-                            }
-                        });
+        }
+        
+        // Toast function for inline use
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.innerHTML = `<i class="fas ${type === 'success' ? 'fa-check-circle' : type === 'error' ? 'fa-exclamation-circle' : 'fa-info-circle'}"></i> ${message}`;
+            container.appendChild(toast);
+            setTimeout(() => toast.classList.add('show'), 10);
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+        
+        window.showToast = showToast;
+        
+        // PWA Service Worker Registration
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .then(registration => {
+                        console.log('✅ Service Worker registered:', registration);
+                    })
+                    .catch(error => {
+                        console.error('❌ Service Worker registration failed:', error);
                     });
-                })
-                .catch(error => {
-                    console.error('❌ Service Worker registration failed:', error);
-                });
-        });
-    }
-    
-    // Show update notification
-    function showUpdateToast() {
-        const toast = document.createElement('div');
-        toast.className = 'pwa-update-toast';
-        toast.innerHTML = `
-            <i class="fas fa-download"></i>
-            <span>New version available!</span>
-            <button onclick="location.reload()">Update</button>
-        `;
-        toast.style.cssText = `
-            position: fixed;
-            bottom: 80px;
-            left: 20px;
-            right: 20px;
-            background: var(--primary, #10b981);
-            color: white;
-            padding: 12px 20px;
-            border-radius: 50px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            z-index: 10000;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.3);
-            animation: slideUp 0.3s ease;
-        `;
-        document.body.appendChild(toast);
-        
-        setTimeout(() => {
-            toast.style.animation = 'slideDown 0.3s ease';
-            setTimeout(() => toast.remove(), 300);
-        }, 5000);
-    }
-    
-    // Check if app is installed
-    window.addEventListener('beforeinstallprompt', (e) => {
-        e.preventDefault();
-        window.deferredPrompt = e;
-        
-        // Show install button
-        const installBtn = document.getElementById('installAppBtn');
-        if (installBtn) {
-            installBtn.style.display = 'flex';
-            installBtn.addEventListener('click', () => {
-                window.deferredPrompt.prompt();
-                window.deferredPrompt.userChoice.then(choice => {
-                    if (choice.outcome === 'accepted') {
-                        console.log('✅ User accepted the install prompt');
-                    }
-                    window.deferredPrompt = null;
-                    installBtn.style.display = 'none';
-                });
             });
         }
-    });
-    
-    // Check if app is already installed
-    window.addEventListener('appinstalled', () => {
-        console.log('📱 App installed successfully');
-        const installBtn = document.getElementById('installAppBtn');
-        if (installBtn) installBtn.style.display = 'none';
-    });
-    
-    // Add animations
-    const style = document.createElement('style');
-    style.textContent = `
-        @keyframes slideUp {
-            from { transform: translateY(100px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
-        }
-        @keyframes slideDown {
-            from { transform: translateY(0); opacity: 1; }
-            to { transform: translateY(100px); opacity: 0; }
-        }
-    `;
-    document.head.appendChild(style);
-// After login success
-showMessage("Login successful! Redirecting...", "success");
-setTimeout(() => {
-    window.location.href = "profile-settings.html"; // Redirect to profile settings first
-}, 1000);
+        
+        // Install prompt
+        let deferredPrompt;
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            
+            const installBtn = document.getElementById('installAppBtn');
+            if (installBtn) {
+                installBtn.style.display = 'flex';
+                installBtn.onclick = () => {
+                    deferredPrompt.prompt();
+                    deferredPrompt.userChoice.then(() => {
+                        deferredPrompt = null;
+                        installBtn.style.display = 'none';
+                    });
+                };
+            }
+        });
     </script>
-    <!-- Add Install Button to Top Bar (optional) -->
-<button id="installAppBtn" style="display: none; background: none; border: none; color: var(--primary); cursor: pointer;">
-    <i class="fas fa-download"></i>
-</button>
+    
+    <!-- Install Button -->
+    <button id="installAppBtn" style="display: none; position: fixed; top: 20px; right: 20px; background: #10b981; border: none; color: white; padding: 10px 20px; border-radius: 30px; cursor: pointer; z-index: 1000;">
+        <i class="fas fa-download"></i> Install App
+    </button>
 </body>
 </html>
