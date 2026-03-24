@@ -602,6 +602,7 @@ onAuthStateChanged(auth, (user) => {
 document.addEventListener('DOMContentLoaded', () => {
     loadAllLeagues();  // Now shows ALL leagues created by all users
     loadActiveLeagues();
+    loadAllUsers();
     updateVenoCoinsDisplay();
     
     // Initialize spin modal
