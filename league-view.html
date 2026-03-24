@@ -243,8 +243,8 @@
         }
         
         .toast {
-            background: #10b981;
-            color: #05070d;
+            background: var(--primary);
+            color: var(--bg-primary);
             padding: 12px 24px;
             border-radius: 50px;
             font-weight: 600;
@@ -303,23 +303,17 @@
         <div class="brand"><h1>🏆 League View</h1></div>
         <div class="icons">
             <div class="veno-coins-container">
-                <div class="veno-coins-display">
-                    <i class="fas fa-coins"></i>
-                    <span id="venoCoinsAmount">0</span>
-                    <span class="coin-label">Veno Coins</span>
-                </div>
-                <button id="claimVenoCoinsBtn" class="claim-veno-btn">
-                    <i class="fas fa-gift"></i> Claim 10
-                </button>
+                <div class="veno-coins-display"><i class="fas fa-coins"></i><span id="venoCoinsAmount">0</span></div>
+                <button id="claimVenoCoinsBtn" class="claim-veno-btn"><i class="fas fa-gift"></i> Claim 10</button>
             </div>
             <div class="profile-dropdown" id="profileDropdown">
-                <img id="profileAvatarImg" class="profile-pic" src="https://ui-avatars.com/api/?name=User&background=10b981&color=fff&size=128" alt="Profile">
+                <img id="profileAvatarImg" class="profile-pic" src="https://ui-avatars.com/api/?name=User&background=10b981&color=fff&size=128">
                 <div class="profile-popup" id="profilePopup">
                     <div class="account-info">
                         <img id="popupProfileImg">
                         <div>
-                            <p id="profileNameDisplay">User Name</p>
-                            <p id="profileEmailDisplay">user@example.com</p>
+                            <p id="profileNameDisplay"></p>
+                            <p id="profileEmailDisplay"></p>
                         </div>
                     </div>
                     <button id="logoutBtn"><i class="bx bx-log-out"></i> Logout</button>
@@ -329,19 +323,12 @@
     </header>
 
     <div class="sidebar" id="sidebar">
-        <div class="sidebar-header">
-            <h3>Menu</h3>
-            <span class="close-sidebar" id="closeSidebar"><i class="bx bx-x"></i></span>
-        </div>
+        <div class="sidebar-header"><h3>Menu</h3><span class="close-sidebar" id="closeSidebar"><i class="bx bx-x"></i></span></div>
         <ul class="sidebar-menu">
             <li id="menuHome"><i class="bx bx-home"></i> Home</li>
             <li id="menuTournaments"><i class="bx bx-trophy"></i> Tournaments</li>
         </ul>
-        <div class="sidebar-footer">
-            <div class="sidebar-theme" id="menuTheme">
-                <span><i class="bx bx-palette"></i> Theme: <span id="themeLabel">Dark</span></span>
-            </div>
-        </div>
+        <div class="sidebar-footer"><div class="sidebar-theme" id="menuTheme"><span><i class="bx bx-palette"></i> Theme: <span id="themeLabel">Dark</span></span></div></div>
     </div>
     <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
@@ -352,26 +339,18 @@
             <button class="join-league-btn" id="joinLeagueBtn">Join League</button>
         </div>
         
-        <div class="section-header">
-            <h2><i class="fas fa-users"></i> Participating Teams</h2>
-        </div>
+        <div class="section-header"><h2><i class="fas fa-users"></i> Participating Teams</h2></div>
         <div class="teams-grid-view" id="teamsGrid"></div>
         
-        <div class="section-header">
-            <h2><i class="fas fa-chart-line"></i> Standings</h2>
-        </div>
+        <div class="section-header"><h2><i class="fas fa-chart-line"></i> Standings</h2></div>
         <div class="standings-table-wrapper">
             <table class="standings-table" id="standingsTable">
-                <thead>
-                    <tr><th>Pos</th><th>Team</th><th>P</th><th>W</th><th>D</th><th>L</th><th>GF</th><th>GA</th><th>GD</th><th>Pts</th>……
-                </thead>
+                <thead><tr><th>Pos</th><th>Team</th><th>P</th><th>W</th><th>D</th><th>L</th><th>GF</th><th>GA</th><th>GD</th><th>Pts</th></tr></thead>
                 <tbody id="standingsBody"></tbody>
-            寸
+            </table>
         </div>
         
-        <div class="section-header">
-            <h2><i class="fas fa-calendar"></i> Fixtures</h2>
-        </div>
+        <div class="section-header"><h2><i class="fas fa-calendar"></i> Fixtures</h2></div>
         <div class="fixtures-grid" id="fixturesList"></div>
     </div>
 
@@ -385,13 +364,11 @@
     }
     
     function getUserDisplayName(userId) {
-        // First check if it's the current user
         const currentUser = getCurrentUser();
         if (currentUser && (currentUser.uid === userId || currentUser.userId === userId)) {
             return currentUser.customDisplayName || currentUser.displayName || currentUser.username || 'Player';
         }
         
-        // Check in users list
         const users = JSON.parse(localStorage.getItem('users') || '[]');
         const user = users.find(u => u.uid === userId);
         if (user) {
@@ -401,13 +378,11 @@
     }
     
     function getUserAvatar(userId) {
-        // First check if it's the current user
         const currentUser = getCurrentUser();
         if (currentUser && (currentUser.uid === userId || currentUser.userId === userId)) {
             return currentUser.customAvatar || currentUser.photoURL || null;
         }
         
-        // Check in users list
         const users = JSON.parse(localStorage.getItem('users') || '[]');
         const user = users.find(u => u.uid === userId);
         if (user) {
@@ -429,24 +404,13 @@
         const profileNameSpan = document.getElementById('profileNameDisplay');
         const profileEmailSpan = document.getElementById('profileEmailDisplay');
         
-        if (profileAvatar) {
-            profileAvatar.src = customAvatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(customName)}&background=10b981&color=fff&size=128`;
-        }
-        if (popupAvatar) {
-            popupAvatar.src = customAvatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(customName)}&background=10b981&color=fff&size=128`;
-        }
+        if (profileAvatar) profileAvatar.src = customAvatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(customName)}&background=10b981&color=fff&size=128`;
+        if (popupAvatar) popupAvatar.src = customAvatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(customName)}&background=10b981&color=fff&size=128`;
         if (profileNameSpan) profileNameSpan.innerText = customName;
         if (profileEmailSpan) profileEmailSpan.innerText = user.email || '';
-        
-        const sidebarName = document.getElementById('sidebarUserName');
-        const sidebarAvatar = document.getElementById('sidebarProfilePic');
-        if (sidebarName) sidebarName.innerText = customName;
-        if (sidebarAvatar) {
-            sidebarAvatar.src = customAvatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(customName)}&background=10b981&color=fff&size=128`;
-        }
     }
     
-    // ================= INDIVIDUAL COINS (Same as home page) =================
+    // ================= INDIVIDUAL COINS =================
     function getUserCoins() {
         const user = getCurrentUser();
         if (!user) return 0;
@@ -498,13 +462,12 @@
         
         if (!currentLeague) {
             showToast('League not found', 'error');
-            setTimeout(() => window.location.href = 'tournaments.html', 1500);
+            setTimeout(() => window.location.href = 'home.html', 1500);
             return;
         }
         
         document.getElementById('leagueName').innerText = currentLeague.name;
         
-        // Get league creator's display name (NO Google)
         const creatorName = getUserDisplayName(currentLeague.ownerId);
         
         const metaHtml = `
@@ -521,7 +484,6 @@
         renderStandings();
         renderFixtures();
         
-        // Check if user already joined
         if (currentUser && currentLeague.teams?.some(t => t.ownerId === currentUser.uid)) {
             document.getElementById('joinLeagueBtn').style.display = 'none';
         }
@@ -539,14 +501,11 @@
         container.innerHTML = '';
         teams.forEach(team => {
             const ownerName = getUserDisplayName(team.ownerId);
-            
             const teamCard = document.createElement('div');
             teamCard.className = 'team-card-view';
             teamCard.onclick = () => window.location.href = `team-view.html?id=${team.id}`;
             teamCard.innerHTML = `
-                <div class="team-logo-view">
-                    ${team.logo ? `<img src="${team.logo}" style="width:100%;height:100%;object-fit:cover;">` : '<i class="fas fa-shield-alt" style="font-size:30px;"></i>'}
-                </div>
+                <div class="team-logo-view">${team.logo ? `<img src="${team.logo}" style="width:100%;height:100%;object-fit:cover;">` : '<i class="fas fa-shield-alt" style="font-size:30px;"></i>'}</div>
                 <div class="team-name-view">${team.name}</div>
                 <div class="team-stats-view">Owner: ${ownerName}</div>
             `;
@@ -604,23 +563,12 @@
             const ownerName = getUserDisplayName(team.ownerId);
             tbody.innerHTML += `
                 <tr>
-                    <td><strong>${index + 1}</strong>  </td>
-                    <td class="team-cell">
-                        <div class="team-logo-small">${team.teamLogo ? `<img src="${team.teamLogo}" style="width:100%;height:100%;object-fit:cover;">` : '<i class="fas fa-shield-alt"></i>'}</div>
-                        <div>
-                            ${team.teamName}
-                            <div style="font-size: 10px; color: var(--text-secondary);">${ownerName}</div>
-                        </div>
-                      </td>
-                      <td>${team.played}</td>
-                      <td>${team.wins}</td>
-                      <td>${team.draws}</td>
-                      <td>${team.losses}</td>
-                      <td>${team.goalsFor}</td>
-                      <td>${team.goalsAgainst}</td>
-                      <td>${team.goalsFor - team.goalsAgainst}</td>
-                      <td><strong>${team.points}</strong></td>
-                  </tr>
+                    <td><strong>${index + 1}</strong></td>
+                    <td class="team-cell"><div class="team-logo-small">${team.teamLogo ? `<img src="${team.teamLogo}" style="width:100%;height:100%;object-fit:cover;">` : '<i class="fas fa-shield-alt"></i>'}</div> ${team.teamName}<div style="font-size: 10px; color: var(--text-secondary);">${ownerName}</div></td>
+                    <td>${team.played}</td><td>${team.wins}</td><td>${team.draws}</td><td>${team.losses}</td>
+                    <td>${team.goalsFor}</td><td>${team.goalsAgainst}</td><td>${team.goalsFor - team.goalsAgainst}</td>
+                    <td><strong>${team.points}</strong></td>
+                </tr>
             `;
         });
     }
@@ -656,9 +604,8 @@
     
     function viewScreenshot(url) {
         const modal = document.createElement('div');
-        modal.className = 'modal active';
         modal.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.9);display:flex;align-items:center;justify-content:center;z-index:10000;';
-        modal.innerHTML = `<div style="background:var(--bg-primary);border-radius:24px;padding:20px;max-width:90%;"><span style="float:right;font-size:24px;cursor:pointer;" onclick="this.closest('.modal').remove()">&times;</span><img src="${url}" style="max-width:100%;border-radius:12px;margin-top:20px;"></div>`;
+        modal.innerHTML = `<div style="background:var(--bg-primary);border-radius:24px;padding:20px;max-width:90%;"><span style="float:right;font-size:24px;cursor:pointer;" onclick="this.closest('div').parentElement.remove()">&times;</span><img src="${url}" style="max-width:100%;border-radius:12px;margin-top:20px;"></div>`;
         document.body.appendChild(modal);
     }
     
@@ -681,10 +628,8 @@
         }
         
         if (confirm(`Join ${currentLeague.name}?\n\nEntry Fee: ${currentLeague.entryFee} Veno Coins\nPrize Pool: ${currentLeague.prizePool} Veno Coins`)) {
-            // Deduct coins
             deductUserCoins(currentLeague.entryFee);
             
-            // Add team
             if (!currentLeague.teams) currentLeague.teams = [];
             const userName = getUserDisplayName(currentUser.uid);
             currentLeague.teams.push({
@@ -725,7 +670,6 @@
     
     // ================= INITIALIZE =================
     document.addEventListener('DOMContentLoaded', function() {
-        // Hamburger menu
         const menuBtn = document.getElementById('menuBtn');
         const sidebar = document.getElementById('sidebar');
         const closeSidebar = document.getElementById('closeSidebar');
@@ -738,29 +682,23 @@
                 document.body.style.overflow = 'hidden';
             });
             
-            function closeSidebarFunc() {
+            const closeFunc = () => {
                 sidebar.classList.remove('open');
                 if (overlay) overlay.classList.remove('active');
                 document.body.style.overflow = '';
-            }
-            
-            closeSidebar?.addEventListener('click', closeSidebarFunc);
-            overlay?.addEventListener('click', closeSidebarFunc);
-            
+            };
+            if (closeSidebar) closeSidebar.addEventListener('click', closeFunc);
+            if (overlay) overlay.addEventListener('click', closeFunc);
             document.addEventListener('keydown', (e) => {
-                if (e.key === 'Escape' && sidebar.classList.contains('open')) {
-                    closeSidebarFunc();
-                }
+                if (e.key === 'Escape' && sidebar.classList.contains('open')) closeFunc();
             });
         }
         
-        // Sidebar navigation
         const menuHome = document.getElementById('menuHome');
         const menuTournaments = document.getElementById('menuTournaments');
         if (menuHome) menuHome.addEventListener('click', () => window.location.href = 'home.html');
-        if (menuTournaments) menuTournaments.addEventListener('click', () => window.location.href = 'tournaments.html');
+        if (menuTournaments) menuTournaments.addEventListener('click', () => window.location.href = 'home.html');
         
-        // Profile dropdown
         const profileDropdown = document.getElementById('profileDropdown');
         const profilePopup = document.getElementById('profilePopup');
         if (profileDropdown && profilePopup) {
@@ -771,16 +709,9 @@
             document.addEventListener('click', () => profilePopup.classList.remove('active'));
         }
         
-        // Logout
         const logoutBtn = document.getElementById('logoutBtn');
-        if (logoutBtn) {
-            logoutBtn.addEventListener('click', () => {
-                localStorage.removeItem('crunkUser');
-                window.location.href = 'index.html';
-            });
-        }
+        if (logoutBtn) logoutBtn.addEventListener('click', () => { localStorage.removeItem('crunkUser'); window.location.href = 'index.html'; });
         
-        // Theme toggle
         const menuTheme = document.getElementById('menuTheme');
         const themeLabel = document.getElementById('themeLabel');
         if (menuTheme) {
@@ -793,10 +724,7 @@
         }
         
         const savedTheme = localStorage.getItem('theme');
-        if (savedTheme === 'light') {
-            document.body.classList.add('light-theme');
-            if (themeLabel) themeLabel.innerText = 'Light';
-        }
+        if (savedTheme === 'light') { document.body.classList.add('light-theme'); if (themeLabel) themeLabel.innerText = 'Light'; }
         
         loadCustomProfile();
         loadLeagueData();
@@ -806,46 +734,36 @@
         if (storedUser) currentUser = storedUser;
     });
     
-    // ================= VENO COINS CLAIM (Same as home page) =================
+    // ================= VENO COINS CLAIM =================
     const claimBtn = document.getElementById('claimVenoCoinsBtn');
     if (claimBtn) {
         const LAST_CLAIM_KEY = 'lastVenoClaim';
-        
         function canClaim() {
-            const lastClaim = localStorage.getItem(LAST_CLAIM_KEY);
-            if (!lastClaim) return true;
-            return (Date.now() - parseInt(lastClaim)) >= 24 * 60 * 60 * 1000;
+            const last = localStorage.getItem(LAST_CLAIM_KEY);
+            if (!last) return true;
+            return (Date.now() - parseInt(last)) >= 24 * 60 * 60 * 1000;
         }
-        
-        function updateClaimButton() {
-            if (canClaim()) {
-                claimBtn.disabled = false;
-                claimBtn.innerHTML = '<i class="fas fa-gift"></i> Claim 10';
-                claimBtn.style.opacity = '1';
-            } else {
-                claimBtn.disabled = true;
-                const timeLeft = 24 * 60 * 60 * 1000 - (Date.now() - parseInt(localStorage.getItem(LAST_CLAIM_KEY)));
-                const hoursLeft = Math.floor(timeLeft / (60 * 60 * 1000));
-                const minutesLeft = Math.floor((timeLeft % (60 * 60 * 1000)) / (60 * 1000));
-                claimBtn.innerHTML = `<i class="fas fa-clock"></i> ${hoursLeft}h ${minutesLeft}m left`;
-                claimBtn.style.opacity = '0.6';
-            }
-        }
-        
         claimBtn.addEventListener('click', () => {
             if (canClaim()) {
                 addUserCoins(10);
                 localStorage.setItem(LAST_CLAIM_KEY, Date.now().toString());
                 updateVenoCoinsDisplay();
-                updateClaimButton();
                 showToast('🎉 You claimed 10 Veno Coins!', 'success');
             } else {
                 showToast('Already claimed! Come back tomorrow', 'error');
             }
         });
-        
-        updateClaimButton();
-        setInterval(updateClaimButton, 60000);
+        setInterval(() => {
+            if (canClaim()) {
+                claimBtn.disabled = false;
+                claimBtn.innerHTML = '<i class="fas fa-gift"></i> Claim 10';
+            } else {
+                claimBtn.disabled = true;
+                const timeLeft = 24 * 60 * 60 * 1000 - (Date.now() - parseInt(localStorage.getItem(LAST_CLAIM_KEY)));
+                const hoursLeft = Math.floor(timeLeft / (60 * 60 * 1000));
+                claimBtn.innerHTML = `<i class="fas fa-clock"></i> ${hoursLeft}h left`;
+            }
+        }, 60000);
     }
 </script>
 
@@ -870,7 +788,6 @@
             const customUser = JSON.parse(localStorage.getItem('crunkUser'));
             const displayName = customUser?.customDisplayName || customUser?.displayName || user.displayName || 'Player';
             const avatarUrl = customUser?.customAvatar || customUser?.photoURL || user.photoURL;
-            
             document.getElementById('profileAvatarImg').src = avatarUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(displayName)}&background=10b981&color=fff`;
             document.getElementById('popupProfileImg').src = avatarUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(displayName)}&background=10b981&color=fff`;
             document.getElementById('profileNameDisplay').innerText = displayName;
