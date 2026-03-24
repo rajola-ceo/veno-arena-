@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>veno-arena - Tournaments & Leagues</title>
+    <title>Veno-Arena - Tournaments & Leagues</title>
     
     <!-- Boxicons -->
     <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
@@ -15,44 +15,28 @@
     <link rel="stylesheet" href="tournaments.css">
     <link rel="stylesheet" href="nav.css">
     
-    <meta name="description" content="Join football leagues, tournaments and competitions on Crunk Games">
+    <meta name="description" content="Join football leagues, tournaments and competitions on Veno-Arena">
     <meta name="keywords" content="football leagues, tournaments, eFootball, FC, DLS, competitions">
-    <!-- PWA Meta Tags - Required for icon to show when sharing -->
-<link rel="manifest" href="/manifest.json">
-<meta name="theme-color" content="#10b981">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Crunk Games">
-<meta name="mobile-web-app-capable" content="yes">
-<meta name="msapplication-TileColor" content="#10b981">
-<meta name="msapplication-TileImage" content="/icons/icon-144x144.png">
-
-<!-- Favicon and Icons - CRITICAL for link sharing -->
-<link rel="icon" type="image/png" sizes="32x32" href="/icons/icon-32x32.png">
-<link rel="icon" type="image/png" sizes="16x16" href="/icons/icon-16x16.png">
-<link rel="apple-touch-icon" sizes="180x180" href="/icons/icon-180x180.png">
-<link rel="apple-touch-icon" sizes="152x152" href="/icons/icon-152x152.png">
-<link rel="apple-touch-icon" sizes="144x144" href="/icons/icon-144x144.png">
-<link rel="apple-touch-icon" sizes="120x120" href="/icons/icon-120x120.png">
-<link rel="apple-touch-icon" sizes="114x114" href="/icons/icon-114x114.png">
-<link rel="apple-touch-icon" sizes="76x76" href="/icons/icon-76x76.png">
-<link rel="apple-touch-icon" sizes="72x72" href="/icons/icon-72x72.png">
-<link rel="apple-touch-icon" sizes="60x60" href="/icons/icon-60x60.png">
-<link rel="apple-touch-icon" sizes="57x57" href="/icons/icon-57x57.png">
-
-<!-- For social sharing (WhatsApp, Facebook, Twitter, Telegram) -->
-<meta property="og:title" content="Crunk Games">
-<meta property="og:description" content="Play tournaments, create teams, and earn Veno Coins!">
-<meta property="og:image" content="https://your-domain.com/icon-512x512.png">
-<meta property="og:image:width" content="512">
-<meta property="og:image:height" content="512">
-<meta property="og:type" content="website">
-<meta property="og:url" content="https://your-domain.com">
-
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Crunk Games">
-<meta name="twitter:description" content="Play tournaments, create teams, and earn Veno Coins!">
-<meta name="twitter:image" content="https://your-domain.com/icon-512x512.png">
+    
+    <!-- PWA Meta Tags -->
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#10b981">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Veno-Arena">
+    <meta name="mobile-web-app-capable" content="yes">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" sizes="32x32" href="/icons/icon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/icons/icon-16x16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/icons/icon-180x180.png">
+    
+    <!-- Social Sharing -->
+    <meta property="og:title" content="Veno-Arena">
+    <meta property="og:description" content="Play tournaments, create teams, and earn Veno Coins!">
+    <meta property="og:image" content="https://rajola-ceo.github.io/icon-512x512.png">
+    <meta property="og:type" content="website">
+    <meta name="twitter:card" content="summary_large_image">
 </head>
 <body>
 
@@ -65,7 +49,7 @@
         </div>
         
         <div class="brand">
-            <h1>🏆 Tournaments</h1>
+            <h1>🏆 Veno-Arena</h1>
         </div>
         
         <div class="icons">
@@ -96,15 +80,15 @@
                 </div>
             </div>
 
-            <!-- PROFILE DROPDOWN -->
+            <!-- PROFILE DROPDOWN - UPDATED IDs -->
             <div class="profile-dropdown" id="profileDropdown">
-                <img id="googleProfilePic" class="profile-pic" src="https://ui-avatars.com/api/?name=User&background=10b981&color=fff&size=128" alt="Profile">
+                <img id="profileAvatarImg" class="profile-pic" src="https://ui-avatars.com/api/?name=User&background=10b981&color=fff&size=128" alt="Profile">
                 <div class="profile-popup" id="profilePopup">
                     <div class="account-info">
-                        <img id="popupProfilePic" src="https://ui-avatars.com/api/?name=User&background=10b981&color=fff&size=128" alt="Profile">
+                        <img id="popupProfileImg" src="https://ui-avatars.com/api/?name=User&background=10b981&color=fff&size=128" alt="Profile">
                         <div>
-                            <p id="accountName">User Name</p>
-                            <p id="accountEmail">user@example.com</p>
+                            <p id="profileNameDisplay">User Name</p>
+                            <p id="profileEmailDisplay">user@example.com</p>
                         </div>
                     </div>
                     <div class="profile-menu">
@@ -235,22 +219,23 @@
                 <div class="empty-state">Loading your teams...</div>
             </div>
         </section>
+        
         <!-- All Users Section -->
-<section class="users-section">
-    <div class="section-header">
-        <h2><i class="fas fa-users"></i> All Players</h2>
-        <a href="#" id="viewAllUsers">View All <i class="bx bx-chevron-right"></i></a>
-    </div>
-    <div class="users-grid" id="allUsersList">
-        <div class="empty-state">Loading players...</div>
-    </div>
-</section>
+        <section class="users-section">
+            <div class="section-header">
+                <h2><i class="fas fa-users"></i> All Players</h2>
+                <a href="#" id="viewAllUsers">View All <i class="bx bx-chevron-right"></i></a>
+            </div>
+            <div class="users-grid" id="allUsersList">
+                <div class="empty-state">Loading players...</div>
+            </div>
+        </section>
     </main>
 
     <!-- FOOTER -->
     <footer class="footer">
         <div class="footer-content">
-            <p>Venocyber2026 © 2026 | Crunk Games - Tournaments</p>
+            <p>Venocyber2026 © 2026 | Veno-Arena</p>
             <div class="footer-links">
                 <a href="#">Terms</a>
                 <a href="#">Privacy</a>
@@ -259,6 +244,7 @@
         </div>
     </footer>
 </div>
+
 <!-- Spin Wheel Modal -->
 <div id="spinModal" class="spin-modal">
     <div class="spin-modal-content">
@@ -297,7 +283,7 @@
         </div>
     </div>
 </div>
-<!-- Toast Container -->
+
 <!-- Toast Container -->
 <div id="toastContainer" class="toast-container"></div>
 
@@ -306,90 +292,47 @@
 <script type="module" src="tournaments.js"></script>
 
 <script>
-    // ===============================
-    // HAMBURGER MENU / SIDEBAR FUNCTIONALITY
-    // ===============================
-    
+    // Hamburger Menu
     document.addEventListener('DOMContentLoaded', function() {
-        // Get elements
         const menuBtn = document.getElementById('menuBtn');
         const sidebar = document.getElementById('sidebar');
         const closeSidebar = document.getElementById('closeSidebar');
         const overlay = document.getElementById('sidebarOverlay');
         
-        // Check if elements exist
-        if (!menuBtn) {
-            console.log('Menu button not found');
-            return;
+        if (menuBtn && sidebar) {
+            menuBtn.addEventListener('click', () => {
+                sidebar.classList.add('open');
+                if (overlay) overlay.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            });
+            
+            const closeFunc = () => {
+                sidebar.classList.remove('open');
+                if (overlay) overlay.classList.remove('active');
+                document.body.style.overflow = '';
+            };
+            
+            if (closeSidebar) closeSidebar.addEventListener('click', closeFunc);
+            if (overlay) overlay.addEventListener('click', closeFunc);
+            
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && sidebar.classList.contains('open')) closeFunc();
+            });
         }
         
-        // Function to open sidebar
-        function openSidebar() {
-            if (sidebar) sidebar.classList.add('open');
-            if (overlay) overlay.classList.add('active');
-            document.body.style.overflow = 'hidden';
-            console.log('Sidebar opened');
-        }
-        
-        // Function to close sidebar
-        function closeSidebarFunc() {
-            if (sidebar) sidebar.classList.remove('open');
-            if (overlay) overlay.classList.remove('active');
-            document.body.style.overflow = '';
-            console.log('Sidebar closed');
-        }
-        
-        // Open sidebar when clicking hamburger menu
-        menuBtn.addEventListener('click', openSidebar);
-        
-        // Close sidebar when clicking X button
-        if (closeSidebar) {
-            closeSidebar.addEventListener('click', closeSidebarFunc);
-        }
-        
-        // Close sidebar when clicking overlay
-        if (overlay) {
-            overlay.addEventListener('click', closeSidebarFunc);
-        }
-        
-        // Close sidebar when pressing ESC key
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape' && sidebar && sidebar.classList.contains('open')) {
-                closeSidebarFunc();
-            }
-        });
-        
-        // Update user info in sidebar
-        function updateSidebarUser() {
-            const user = JSON.parse(localStorage.getItem('crunkUser'));
-            if (user) {
-                const sidebarProfilePic = document.getElementById('sidebarProfilePic');
-                const sidebarUserName = document.getElementById('sidebarUserName');
-                const sidebarUserEmail = document.getElementById('sidebarUserEmail');
-                
-                if (sidebarProfilePic) {
-                    sidebarProfilePic.src = user.photoURL || `https://ui-avatars.com/api/?name=${user.displayName || user.username}&background=10b981&color=fff&size=128`;
-                }
-                if (sidebarUserName) sidebarUserName.innerText = user.displayName || user.username || 'User';
-                if (sidebarUserEmail) sidebarUserEmail.innerText = user.email || '';
-            }
-        }
-        
-        updateSidebarUser();
-        
-        console.log('✅ Hamburger menu initialized');
+        // Profile Settings Link
+        const menuProfile = document.getElementById('menuProfile');
+        if (menuProfile) menuProfile.addEventListener('click', () => window.location.href = 'profile-settings.html');
     });
     
     // Toast function
     window.showToast = function(message, type = 'success') {
         const container = document.getElementById('toastContainer');
         if (!container) return;
-        
         const toast = document.createElement('div');
         toast.className = `toast ${type}`;
         toast.innerHTML = `<i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'}"></i> ${message}`;
         container.appendChild(toast);
-        
         setTimeout(() => toast.classList.add('show'), 10);
         setTimeout(() => {
             toast.classList.remove('show');
@@ -397,104 +340,15 @@
         }, 3000);
     };
     
-    // Sidebar toggle for other pages
-    const menuBtn = document.getElementById('menuBtn');
-    const sidebar = document.getElementById('sidebar');
-    const closeSidebar = document.getElementById('closeSidebar');
-    const overlay = document.getElementById('sidebarOverlay');
-    
-    if (menuBtn && sidebar && overlay) {
-        menuBtn.addEventListener('click', () => {
-            sidebar.classList.add('open');
-            overlay.classList.add('active');
-            document.body.style.overflow = 'hidden';
-        });
-        
-        function closeSidebarFunc() {
-            sidebar.classList.remove('open');
-            overlay.classList.remove('active');
-            document.body.style.overflow = '';
-        }
-        
-        closeSidebar?.addEventListener('click', closeSidebarFunc);
-        overlay.addEventListener('click', closeSidebarFunc);
-        
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape' && sidebar.classList.contains('open')) {
-                closeSidebarFunc();
-            }
-        });
-    }
-    
-    // View All Links
-    const viewAllLeagues = document.getElementById('viewAllLeagues');
-    const viewAllTeams = document.getElementById('viewAllTeams');
-    
-    if (viewAllLeagues) {
-        viewAllLeagues.addEventListener('click', (e) => {
-            e.preventDefault();
-            window.location.href = 'all-leagues.html';
-        });
-    }
-    
-    if (viewAllTeams) {
-        viewAllTeams.addEventListener('click', (e) => {
-            e.preventDefault();
-            window.location.href = 'my-teams.html';
-        });
-    }
-    
-    // Force highlight of tournaments tab
-    const currentPage = window.location.pathname.split('/').pop();
-    if (currentPage === 'tournaments.html') {
-        setTimeout(() => {
-            const navItems = document.querySelectorAll('.nav-item');
-            navItems.forEach(item => {
-                item.classList.remove('active');
-                if (item.getAttribute('data-tab') === 'tournaments') {
-                    item.classList.add('active');
-                }
-            });
-        }, 100);
-    }
-    
-    // PWA Service Worker Registration
+    // PWA Service Worker
     if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
             navigator.serviceWorker.register('/sw.js')
-                .then(registration => {
-                    console.log('✅ Service Worker registered:', registration);
-                })
-                .catch(error => {
-                    console.error('❌ Service Worker registration failed:', error);
-                });
+                .then(reg => console.log('✅ Service Worker registered'))
+                .catch(err => console.error('❌ Service Worker failed:', err));
         });
     }
-    
-    // Show install prompt
-    let deferredPrompt;
-    window.addEventListener('beforeinstallprompt', (e) => {
-        e.preventDefault();
-        deferredPrompt = e;
-        
-        const installBtn = document.getElementById('installBtn');
-        if (installBtn) {
-            installBtn.style.display = 'flex';
-            installBtn.onclick = () => {
-                deferredPrompt.prompt();
-                deferredPrompt.userChoice.then(() => {
-                    deferredPrompt = null;
-                    installBtn.style.display = 'none';
-                });
-            };
-        }
-    });
 </script>
-
-<!-- Optional Install Button (add to top bar) -->
-<button id="installBtn" style="display: none; background: none; border: none; color: #10b981; cursor: pointer;">
-    <i class="fas fa-download"></i> Install App
-</button>
 
 </body>
 </html>
