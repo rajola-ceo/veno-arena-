@@ -9,9 +9,292 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="home.css">
     <link rel="stylesheet" href="nav.css">
-    <link rel="stylesheet" href="tournaments.css">
     
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #10b981;
+            --primary-dark: #059669;
+            --bg-primary: #05070d;
+            --bg-secondary: #0b1222;
+            --bg-tertiary: #111827;
+            --border-color: #1f2937;
+            --text-primary: #e6e6e6;
+            --text-secondary: #9ca3af;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            overflow-x: hidden;
+        }
+
+        .app {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Top Bar */
+        .topbar {
+            height: 70px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 24px;
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .brand h1 {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .menu {
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--primary);
+            transition: all 0.3s ease;
+            padding: 8px;
+            border-radius: 50%;
+        }
+
+        .menu:hover {
+            background: rgba(16, 185, 129, 0.1);
+            transform: scale(1.1);
+        }
+
+        .icons {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .veno-coins-container {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(16, 185, 129, 0.1);
+            padding: 8px 16px;
+            border-radius: 40px;
+        }
+
+        .veno-coins-display {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .veno-coins-display i {
+            color: #fbbf24;
+        }
+
+        .profile-pic {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            cursor: pointer;
+            border: 2px solid var(--primary);
+        }
+
+        /* Sidebar */
+        .sidebar {
+            position: fixed;
+            left: -300px;
+            top: 0;
+            width: 280px;
+            height: 100vh;
+            background: var(--bg-secondary);
+            border-right: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+            z-index: 2000;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .sidebar.open {
+            left: 0;
+        }
+
+        .sidebar-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .sidebar-header h3 {
+            color: var(--primary);
+            font-size: 20px;
+        }
+
+        .close-sidebar {
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--text-secondary);
+            transition: all 0.3s ease;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+        }
+
+        .close-sidebar:hover {
+            color: #ff5555;
+            transform: rotate(90deg);
+        }
+
+        .venaura-section {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 15px;
+            margin-bottom: 20px;
+            background: var(--bg-tertiary);
+            border-radius: 16px;
+            cursor: pointer;
+        }
+
+        .venaura-icon {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+        }
+
+        .sidebar-menu li {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 5px;
+            color: var(--text-primary);
+        }
+
+        .sidebar-menu li i {
+            width: 24px;
+            color: var(--primary);
+        }
+
+        .sidebar-menu li:hover {
+            background: var(--primary);
+            color: var(--bg-primary);
+            transform: translateX(5px);
+        }
+
+        .sidebar-menu li.active {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--primary);
+        }
+
+        .sidebar-footer {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            right: 20px;
+            padding-top: 15px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .sidebar-theme {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px;
+            background: var(--bg-tertiary);
+            border-radius: 12px;
+            cursor: pointer;
+        }
+
+        .sidebar-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1999;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* Profile Popup */
+        .profile-popup {
+            display: none;
+            position: absolute;
+            top: 50px;
+            right: 0;
+            width: 220px;
+            background: var(--bg-tertiary);
+            border-radius: 12px;
+            padding: 15px;
+            z-index: 1001;
+        }
+
+        .profile-popup.active {
+            display: block;
+        }
+
+        .account-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 15px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .account-info img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+        }
+
+        #logoutBtn {
+            width: 100%;
+            padding: 8px;
+            background: #ff5555;
+            border: none;
+            border-radius: 8px;
+            color: white;
+            cursor: pointer;
+        }
+
+        /* Create League Container */
         .create-league-container {
             max-width: 800px;
             margin: 20px auto;
@@ -44,7 +327,7 @@
         
         .prize-input { display: flex; gap: 15px; align-items: center; margin-bottom: 10px; }
         .prize-input label { width: 80px; margin-bottom: 0; }
-        .prize-input input { flex: 1; }
+        .prize-input input { flex: 1; background: var(--bg-tertiary); }
         
         .btn-create {
             width: 100%; padding: 14px;
@@ -75,43 +358,45 @@
         }
         
         .error-message { color: #ff5555; font-size: 12px; margin-top: 5px; display: none; }
+        
+        .toast-container {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10000;
+        }
+        
+        .toast {
+            background: var(--primary);
+            color: var(--bg-primary);
+            padding: 12px 24px;
+            border-radius: 50px;
+            font-weight: 600;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.3s ease;
+        }
+        
+        .toast.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        @media (max-width: 768px) {
+            .create-league-container {
+                margin: 15px;
+                padding: 20px;
+            }
+            .prize-input {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .prize-input label {
+                width: auto;
+            }
+        }
     </style>
-    <!-- PWA Meta Tags - Required for icon to show when sharing -->
-<link rel="manifest" href="/manifest.json">
-<meta name="theme-color" content="#10b981">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Crunk Games">
-<meta name="mobile-web-app-capable" content="yes">
-<meta name="msapplication-TileColor" content="#10b981">
-<meta name="msapplication-TileImage" content="/icons/icon-144x144.png">
-
-<!-- Favicon and Icons - CRITICAL for link sharing -->
-<link rel="icon" type="image/png" sizes="32x32" href="/icons/icon-32x32.png">
-<link rel="icon" type="image/png" sizes="16x16" href="/icons/icon-16x16.png">
-<link rel="apple-touch-icon" sizes="180x180" href="/icons/icon-180x180.png">
-<link rel="apple-touch-icon" sizes="152x152" href="/icons/icon-152x152.png">
-<link rel="apple-touch-icon" sizes="144x144" href="/icons/icon-144x144.png">
-<link rel="apple-touch-icon" sizes="120x120" href="/icons/icon-120x120.png">
-<link rel="apple-touch-icon" sizes="114x114" href="/icons/icon-114x114.png">
-<link rel="apple-touch-icon" sizes="76x76" href="/icons/icon-76x76.png">
-<link rel="apple-touch-icon" sizes="72x72" href="/icons/icon-72x72.png">
-<link rel="apple-touch-icon" sizes="60x60" href="/icons/icon-60x60.png">
-<link rel="apple-touch-icon" sizes="57x57" href="/icons/icon-57x57.png">
-
-<!-- For social sharing (WhatsApp, Facebook, Twitter, Telegram) -->
-<meta property="og:title" content="Crunk Games">
-<meta property="og:description" content="Play tournaments, create teams, and earn Veno Coins!">
-<meta property="og:image" content="https://your-domain.com/icon-512x512.png">
-<meta property="og:image:width" content="512">
-<meta property="og:image:height" content="512">
-<meta property="og:type" content="website">
-<meta property="og:url" content="https://your-domain.com">
-
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Crunk Games">
-<meta name="twitter:description" content="Play tournaments, create teams, and earn Veno Coins!">
-<meta name="twitter:image" content="https://your-domain.com/icon-512x512.png">
 </head>
 <body>
 
@@ -121,13 +406,19 @@
         <div class="brand"><h1>🏆 Create New League</h1></div>
         <div class="icons">
             <div class="veno-coins-container">
-                <div class="veno-coins-display"><i class="fas fa-coins"></i><span id="venoCoinsAmount">0</span><span class="coin-label">Veno Coins</span></div>
+                <div class="veno-coins-display"><i class="fas fa-coins"></i><span id="venoCoinsAmount">0</span></div>
                 <button id="claimVenoCoinsBtn" class="claim-veno-btn"><i class="fas fa-gift"></i> Claim 10</button>
             </div>
             <div class="profile-dropdown" id="profileDropdown">
-                <img id="googleProfilePic" class="profile-pic" src="https://ui-avatars.com/api/?name=User&background=34d399&color=fff&size=128" alt="Profile">
+                <img id="googleProfilePic" class="profile-pic" src="https://ui-avatars.com/api/?name=User&background=10b981&color=fff&size=128">
                 <div class="profile-popup" id="profilePopup">
-                    <div class="account-info"><img id="popupProfilePic" src="https://ui-avatars.com/api/?name=User&background=34d399&color=fff&size=128"><div><p id="accountName">User Name</p><p id="accountEmail">user@example.com</p></div></div>
+                    <div class="account-info">
+                        <img id="popupProfilePic">
+                        <div>
+                            <p id="accountName"></p>
+                            <p id="accountEmail"></p>
+                        </div>
+                    </div>
                     <button id="logoutBtn"><i class="bx bx-log-out"></i> Logout</button>
                 </div>
             </div>
@@ -135,14 +426,29 @@
     </header>
 
     <div class="sidebar" id="sidebar">
-        <div class="sidebar-header"><h3>Menu</h3><span class="close-sidebar" id="closeSidebar"><i class="bx bx-x"></i></span></div>
-        <div class="venaura-section" id="venauraIcon"><div class="venaura-icon"><i class="fas fa-trophy"></i></div><div class="venaura-info"><h3>Venaura App</h3><p>Connect with Venaura</p></div><i class="bx bx-right-arrow-alt arrow-icon"></i></div>
+        <div class="sidebar-header">
+            <h3>Menu</h3>
+            <span class="close-sidebar" id="closeSidebar"><i class="bx bx-x"></i></span>
+        </div>
+        <div class="venaura-section" id="venauraIcon">
+            <div class="venaura-icon"><i class="fas fa-trophy"></i></div>
+            <div class="venaura-info"><h3>Venaura App</h3><p>Connect with Venaura</p></div>
+            <i class="bx bx-right-arrow-alt arrow-icon"></i>
+        </div>
         <ul class="sidebar-menu">
             <li id="menuHome"><i class="bx bx-home"></i> Home</li>
             <li id="menuTournaments"><i class="bx bx-trophy"></i> Tournaments</li>
             <li id="menuCreateLeague" class="active"><i class="bx bx-plus-circle"></i> Create League</li>
         </ul>
-        <div class="sidebar-footer"><div class="sidebar-theme" id="menuTheme"><span><i class="bx bx-palette"></i> Theme: <span id="themeLabel">Dark</span></span><div class="theme-toggle"><i class="bx bx-sun" style="display: none;"></i><i class="bx bx-moon"></i></div></div></div>
+        <div class="sidebar-footer">
+            <div class="sidebar-theme" id="menuTheme">
+                <span><i class="bx bx-palette"></i> Theme: <span id="themeLabel">Dark</span></span>
+                <div class="theme-toggle">
+                    <i class="bx bx-sun" style="display: none;"></i>
+                    <i class="bx bx-moon"></i>
+                </div>
+            </div>
+        </div>
     </div>
     <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
@@ -209,19 +515,105 @@
 </div>
 
 <script>
-    // Calculate prize distribution
+    // ================= HAMBURGER MENU =================
+    document.addEventListener('DOMContentLoaded', function() {
+        const menuBtn = document.getElementById('menuBtn');
+        const sidebar = document.getElementById('sidebar');
+        const closeSidebar = document.getElementById('closeSidebar');
+        const overlay = document.getElementById('sidebarOverlay');
+        
+        if (menuBtn && sidebar) {
+            menuBtn.addEventListener('click', () => {
+                sidebar.classList.add('open');
+                if (overlay) overlay.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            });
+            
+            const closeFunc = () => {
+                sidebar.classList.remove('open');
+                if (overlay) overlay.classList.remove('active');
+                document.body.style.overflow = '';
+            };
+            
+            if (closeSidebar) closeSidebar.addEventListener('click', closeFunc);
+            if (overlay) overlay.addEventListener('click', closeFunc);
+            
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && sidebar.classList.contains('open')) closeFunc();
+            });
+        }
+        
+        // Sidebar Navigation
+        const menuHome = document.getElementById('menuHome');
+        const menuTournaments = document.getElementById('menuTournaments');
+        
+        if (menuHome) menuHome.addEventListener('click', () => window.location.href = 'home.html');
+        if (menuTournaments) menuTournaments.addEventListener('click', () => window.location.href = 'tournaments.html');
+        
+        // Venaura Icon
+        const venauraIcon = document.getElementById('venauraIcon');
+        if (venauraIcon) {
+            venauraIcon.addEventListener('click', () => {
+                window.open('https://venauraai.netlify.app/', '_blank');
+            });
+        }
+        
+        // Profile Dropdown
+        const profileDropdown = document.getElementById('profileDropdown');
+        const profilePopup = document.getElementById('profilePopup');
+        if (profileDropdown && profilePopup) {
+            profileDropdown.addEventListener('click', (e) => {
+                e.stopPropagation();
+                profilePopup.classList.toggle('active');
+            });
+            document.addEventListener('click', () => profilePopup.classList.remove('active'));
+        }
+        
+        // Logout
+        const logoutBtn = document.getElementById('logoutBtn');
+        if (logoutBtn) {
+            logoutBtn.addEventListener('click', () => {
+                localStorage.removeItem('crunkUser');
+                window.location.href = 'index.html';
+            });
+        }
+        
+        // Theme Toggle
+        const menuTheme = document.getElementById('menuTheme');
+        const themeLabel = document.getElementById('themeLabel');
+        if (menuTheme) {
+            menuTheme.addEventListener('click', () => {
+                document.body.classList.toggle('light-theme');
+                const isLight = document.body.classList.contains('light-theme');
+                themeLabel.innerText = isLight ? 'Light' : 'Dark';
+                localStorage.setItem('theme', isLight ? 'light' : 'dark');
+                
+                const sunIcon = menuTheme.querySelector('.bx-sun');
+                const moonIcon = menuTheme.querySelector('.bx-moon');
+                if (sunIcon && moonIcon) {
+                    sunIcon.style.display = isLight ? 'inline-block' : 'none';
+                    moonIcon.style.display = isLight ? 'none' : 'inline-block';
+                }
+            });
+        }
+        
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'light') {
+            document.body.classList.add('light-theme');
+            if (themeLabel) themeLabel.innerText = 'Light';
+        }
+    });
+    
+    // ================= LEAGUE CREATION LOGIC =================
+    
     function updatePrizeDistribution() {
         const totalTeams = parseInt(document.getElementById('maxTeams').value) || 16;
         const entryFee = parseInt(document.getElementById('entryFee').value) || 0;
-        const totalPrize = totalTeams * entryFee * 0.8; // 80% goes to prize pool
+        const totalPrize = totalTeams * entryFee * 0.8;
         
-        const first = Math.floor(totalPrize * 0.5);
-        const second = Math.floor(totalPrize * 0.3);
-        const third = Math.floor(totalPrize * 0.2);
-        
-        document.getElementById('firstPrize').value = first;
-        document.getElementById('secondPrize').value = second;
-        document.getElementById('thirdPrize').value = third;
+        document.getElementById('firstPrize').value = Math.floor(totalPrize * 0.5);
+        document.getElementById('secondPrize').value = Math.floor(totalPrize * 0.3);
+        document.getElementById('thirdPrize').value = Math.floor(totalPrize * 0.2);
     }
     
     document.getElementById('maxTeams')?.addEventListener('change', updatePrizeDistribution);
@@ -249,82 +641,50 @@
         }
         document.getElementById('leagueNameError').style.display = 'none';
         
+        const currentUser = JSON.parse(localStorage.getItem('crunkUser'));
+        if (!currentUser) {
+            showToast('Please login first', 'error');
+            window.location.href = 'index.html';
+            return;
+        }
+        
+        const totalTeams = parseInt(document.getElementById('maxTeams').value);
+        const entryFee = parseInt(document.getElementById('entryFee').value);
+        const totalPrize = totalTeams * entryFee * 0.8;
+        
         const leagueData = {
+            id: 'league_' + Date.now(),
             name: leagueName,
             gameType: document.getElementById('gameType').value,
             format: document.getElementById('leagueFormat').value,
-            maxTeams: parseInt(document.getElementById('maxTeams').value),
-            entryFee: parseInt(document.getElementById('entryFee').value),
-            prizePool: parseInt(document.getElementById('firstPrize').value) + parseInt(document.getElementById('secondPrize').value) + parseInt(document.getElementById('thirdPrize').value),
+            maxTeams: totalTeams,
+            entryFee: entryFee,
+            prizePool: totalPrize,
             prizes: {
                 first: parseInt(document.getElementById('firstPrize').value),
                 second: parseInt(document.getElementById('secondPrize').value),
                 third: parseInt(document.getElementById('thirdPrize').value)
             },
             description: document.getElementById('description').value,
-            ownerId: currentUser?.uid,
-            ownerName: currentUser?.displayName,
+            ownerId: currentUser.uid,
+            ownerName: currentUser.displayName,
             createdAt: new Date().toISOString(),
             status: 'registration',
             teams: [],
             matches: [],
-            standings: []
+            pendingRequests: []
         };
         
-        // Save to localStorage
         const leagues = JSON.parse(localStorage.getItem('leagues') || '[]');
-        leagueData.id = 'league_' + Date.now();
         leagues.push(leagueData);
         localStorage.setItem('leagues', JSON.stringify(leagues));
         
         showToast('League created successfully!', 'success');
         setTimeout(() => {
-            window.location.href = 'tournaments.html';
+            window.location.href = `league-view.html?id=${leagueData.id}`;
         }, 1500);
     });
-    // After saving league data
-showToast('League created successfully!', 'success');
-setTimeout(() => {
-    window.location.href = `league-view.html?id=${leagueData.id}`;
-}, 1500);
-</script>
-
-<script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
-    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
     
-    const firebaseConfig = {
-        apiKey: "AIzaSyBW0Sz7TODfa8tQJTfNUaLhfK9qJhdA1yE",
-        authDomain: "crunck-app.firebaseapp.com",
-        projectId: "crunck-app",
-        storageBucket: "crunck-app.firebasestorage.app",
-        messagingSenderId: "475953302982",
-        appId: "1:475953302982:web:607e08379adb12f985f6c7"
-    };
-    
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    window.auth = auth;
-    
-    let currentUser = null;
-    
-    onAuthStateChanged(auth, (user) => {
-        if (user) {
-            currentUser = user;
-            document.getElementById('googleProfilePic').src = user.photoURL || `https://ui-avatars.com/api/?name=${user.displayName}&background=10b981&color=fff`;
-            document.getElementById('popupProfilePic').src = user.photoURL || `https://ui-avatars.com/api/?name=${user.displayName}&background=10b981&color=fff`;
-            document.getElementById('accountName').innerText = user.displayName;
-            document.getElementById('accountEmail').innerText = user.email;
-        } else {
-            window.location.href = 'index.html';
-        }
-    });
-    
-    window.currentUser = currentUser;
-</script>
-
-<script src="nav.js"></script>
-<script>
     function showToast(message, type) {
         const container = document.getElementById('toastContainer');
         const toast = document.createElement('div');
@@ -359,70 +719,35 @@ setTimeout(() => {
         });
     }
 </script>
-    <!-- PWA Service Worker Registration -->
-<script>
-if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/sw.js')
-            .then(registration => {
-                console.log('✅ Service Worker registered:', registration);
-            })
-            .catch(error => {
-                console.error('❌ Service Worker registration failed:', error);
-            });
-    });
-}
 
-// Show install prompt
-let deferredPrompt;
-window.addEventListener('beforeinstallprompt', (e) => {
-    e.preventDefault();
-    deferredPrompt = e;
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
     
-    // Optional: Show install button
-    const installBtn = document.getElementById('installBtn');
-    if (installBtn) {
-        installBtn.style.display = 'flex';
-        installBtn.onclick = () => {
-            deferredPrompt.prompt();
-            deferredPrompt.userChoice.then(() => {
-                deferredPrompt = null;
-                installBtn.style.display = 'none';
-            });
-        };
-    }
-});
-    // After getting the current user
-const user = JSON.parse(localStorage.getItem('crunkUser'));
-
-// When creating league data, add ownerName
-const leagueData = {
-    id: 'league_' + Date.now(),
-    name: leagueName,
-    gameType: document.getElementById('gameType').value,
-    format: document.getElementById('leagueFormat').value,
-    maxTeams: parseInt(document.getElementById('maxTeams').value),
-    entryFee: parseInt(document.getElementById('entryFee').value),
-    prizePool: totalPrize,
-    prizes: {
-        first: firstPrize,
-        second: secondPrize,
-        third: thirdPrize
-    },
-    description: document.getElementById('description').value,
-    ownerId: currentUser.uid,
-    ownerName: currentUser.displayName,  // ← ADD THIS LINE
-    createdAt: new Date().toISOString(),
-    status: 'registration',
-    teams: [],
-    matches: [],
-    pendingRequests: []
-};
+    const firebaseConfig = {
+        apiKey: "AIzaSyBW0Sz7TODfa8tQJTfNUaLhfK9qJhdA1yE",
+        authDomain: "crunck-app.firebaseapp.com",
+        projectId: "crunck-app",
+        storageBucket: "crunck-app.firebasestorage.app",
+        messagingSenderId: "475953302982",
+        appId: "1:475953302982:web:607e08379adb12f985f6c7"
+    };
+    
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    
+    onAuthStateChanged(auth, (user) => {
+        if (user) {
+            document.getElementById('googleProfilePic').src = user.photoURL || `https://ui-avatars.com/api/?name=${user.displayName}&background=10b981&color=fff`;
+            document.getElementById('popupProfilePic').src = user.photoURL || `https://ui-avatars.com/api/?name=${user.displayName}&background=10b981&color=fff`;
+            document.getElementById('accountName').innerText = user.displayName;
+            document.getElementById('accountEmail').innerText = user.email;
+        } else {
+            window.location.href = 'index.html';
+        }
+    });
 </script>
 
-<!-- Optional Install Button (add to top bar) -->
-<button id="installBtn" style="display: none; background: none; border: none; color: #10b981; cursor: pointer;">
-    <i class="fas fa-download"></i> Install App
-</button>
+<script src="nav.js"></script>
 </body>
 </html>
