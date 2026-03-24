@@ -700,8 +700,7 @@ if (claimBtn) {
 }
 
 console.log('✅ Tournaments page loaded - All leagues visible to everyone');
-// ================= ALL REGISTERED USERS =================
-
+// ================= ALL REGISTERED USERS ==============
 function loadAllUsers() {
     const usersContainer = document.getElementById('allUsersList');
     if (!usersContainer) return;
@@ -709,7 +708,7 @@ function loadAllUsers() {
     // Get all users from localStorage
     let allUsers = JSON.parse(localStorage.getItem('users') || '[]');
     
-    // Also get the current user from crunkUser
+    // Get the current user from crunkUser
     const currentUserData = JSON.parse(localStorage.getItem('crunkUser'));
     
     // Add current user if not already in users list
@@ -719,7 +718,7 @@ function loadAllUsers() {
             username: currentUserData.displayName || currentUserData.username,
             displayName: currentUserData.displayName || currentUserData.username,
             email: currentUserData.email,
-            photoURL: currentUserData.photoURL,
+            photoURL: currentUserData.photoURL || currentUserData.avatar,
             status: 'online',
             lastSeen: new Date().toISOString()
         });
@@ -755,7 +754,7 @@ function loadAllUsers() {
         }
     }
     
-    // Sort by username
+    // Sort by display name
     uniqueUsers.sort((a, b) => (a.displayName || a.username || '').localeCompare(b.displayName || b.username || ''));
     
     usersContainer.innerHTML = '';
@@ -770,13 +769,18 @@ function loadAllUsers() {
         const userCard = document.createElement('div');
         userCard.className = 'user-card';
         userCard.onclick = () => viewUserProfile(user.uid);
+        
+        // Use custom display name or fallback
+        const displayName = user.displayName || user.username || 'Player';
+        const avatarUrl = user.photoURL || user.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(displayName)}&background=10b981&color=fff`;
+        
         userCard.innerHTML = `
             <div class="user-avatar">
-                <img src="${user.photoURL || `https://ui-avatars.com/api/?name=${encodeURIComponent(user.displayName || user.username || 'User')}&background=10b981&color=fff`}" alt="${user.displayName || user.username}">
+                <img src="${avatarUrl}" alt="${displayName}">
                 ${user.status === 'online' ? '<span class="online-dot"></span>' : ''}
             </div>
             <div class="user-info">
-                <div class="user-name">${user.displayName || user.username || 'Unknown'}</div>
+                <div class="user-name">${displayName}</div>
                 <div class="user-stats">
                     <span><i class="fas fa-trophy"></i> ${user.leaguesWon || 0}</span>
                     <span><i class="fas fa-futbol"></i> ${user.matchesPlayed || 0}</span>
@@ -789,7 +793,6 @@ function loadAllUsers() {
         usersContainer.appendChild(userCard);
     });
 }
-
 function viewUserProfile(userId) {
     window.location.href = `user-profile.html?id=${userId}`;
 }
