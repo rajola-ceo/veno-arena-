@@ -1,4 +1,4 @@
-// tournaments.js - Main App Logic for Veno-Arena
+// tournaments.js - Complete with Real-time Notifications, Challenges, and League Auto-join
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
 import { 
     getAuth, 
@@ -32,67 +32,344 @@ const allUsersContainer = document.getElementById('allUsersList');
 
 // User Data
 let currentUser = null;
+let notificationCheckInterval = null;
 
-// Veno Coins System
-function getVenoCoins() {
-    return parseInt(localStorage.getItem('venoCoins') || '0');
+// ================= INDIVIDUAL COINS PER ACCOUNT =================
+function getUserCoins(userId = null) {
+    const targetId = userId || (currentUser?.uid || currentUser?.userId);
+    if (!targetId) return 0;
+    
+    // Get all users' coins
+    let allUserCoins = JSON.parse(localStorage.getItem('userCoins') || '{}');
+    
+    // If user has no coins yet, initialize with 100 starting coins
+    if (allUserCoins[targetId] === undefined) {
+        allUserCoins[targetId] = 100; // Starting bonus
+        localStorage.setItem('userCoins', JSON.stringify(allUserCoins));
+    }
+    
+    return allUserCoins[targetId];
+}
+
+function setUserCoins(amount, userId = null) {
+    const targetId = userId || (currentUser?.uid || currentUser?.userId);
+    if (!targetId) return;
+    
+    let allUserCoins = JSON.parse(localStorage.getItem('userCoins') || '{}');
+    allUserCoins[targetId] = amount;
+    localStorage.setItem('userCoins', JSON.stringify(allUserCoins));
+    
+    // If it's the current user, update display
+    if (!userId) updateVenoCoinsDisplay();
+}
+
+function addUserCoins(amount, userId = null) {
+    const currentCoins = getUserCoins(userId);
+    setUserCoins(currentCoins + amount, userId);
+}
+
+function deductUserCoins(amount, userId = null) {
+    const currentCoins = getUserCoins(userId);
+    if (currentCoins >= amount) {
+        setUserCoins(currentCoins - amount, userId);
+        return true;
+    }
+    return false;
 }
 
 function updateVenoCoinsDisplay() {
     const coinsSpan = document.getElementById('venoCoinsAmount');
     if (coinsSpan) {
-        coinsSpan.textContent = getVenoCoins();
+        coinsSpan.textContent = getUserCoins();
     }
 }
+
+// ================= REAL-TIME NOTIFICATIONS =================
+function addNotification(notification) {
+    let notifications = JSON.parse(localStorage.getItem('notifications') || '[]');
+    notifications.unshift({
+        id: Date.now(),
+        ...notification,
+        read: false,
+        time: new Date().toLocaleString()
+    });
+    localStorage.setItem('notifications', JSON.stringify(notifications.slice(0, 50)));
+    updateNotificationBell();
+    playNotificationSound();
+}
+
+function updateNotificationBell() {
+    const notifications = JSON.parse(localStorage.getItem('notifications') || '[]');
+    const unreadCount = notifications.filter(n => !n.read).length;
+    const countSpan = document.getElementById('notificationCount');
+    if (countSpan) {
+        countSpan.textContent = unreadCount;
+        countSpan.style.display = unreadCount > 0 ? 'flex' : 'none';
+    }
+}
+
+function playNotificationSound() {
+    // Optional: play a beep sound
+    try {
+        const audio = new Audio('https://www.soundjay.com/misc/sounds/bell-ringing-05.mp3');
+        audio.volume = 0.3;
+        audio.play().catch(e => console.log('Sound not supported'));
+    } catch(e) {}
+}
+
+function renderNotifications() {
+    const list = document.getElementById('notificationList');
+    if (!list) return;
+    
+    const notifications = JSON.parse(localStorage.getItem('notifications') || '[]');
+    list.innerHTML = '';
+    
+    if (notifications.length === 0) {
+        list.innerHTML = '<div class="empty-state">No notifications</div>';
+        return;
+    }
+    
+    notifications.slice(0, 10).forEach(notif => {
+        const item = document.createElement('div');
+        item.className = `notification-item ${notif.read ? 'read' : 'unread'}`;
+        item.innerHTML = `
+            <div class="notification-icon">${notif.icon || '🔔'}</div>
+            <div class="notification-content">
+                <div class="notification-title">${notif.title}</div>
+                <div class="notification-message">${notif.message}</div>
+                <div class="notification-time">${notif.time}</div>
+            </div>
+            ${!notif.read ? '<span class="notification-badge"></span>' : ''}
+        `;
+        item.onclick = () => markNotificationRead(notif.id, notif);
+        list.appendChild(item);
+    });
+}
+
+function markNotificationRead(notificationId, notification) {
+    let notifications = JSON.parse(localStorage.getItem('notifications') || '[]');
+    notifications = notifications.map(n => n.id === notificationId ? { ...n, read: true } : n);
+    localStorage.setItem('notifications', JSON.stringify(notifications));
+    updateNotificationBell();
+    renderNotifications();
+    
+    // Handle challenge response
+    if (notification.type === 'challenge' && notification.data) {
+        handleChallengeResponse(notification.data);
+    }
+}
+
+// ================= CHALLENGE SYSTEM =================
+function sendChallenge(targetUserId) {
+    if (!currentUser) {
+        showToast('Please login first', 'error');
+        return;
+    }
+    
+    const users = JSON.parse(localStorage.getItem('users') || '[]');
+    const targetUser = users.find(u => u.uid === targetUserId);
+    
+    if (!targetUser) {
+        showToast('User not found', 'error');
+        return;
+    }
+    
+    const challengerName = currentUser.customDisplayName || currentUser.displayName || currentUser.username;
+    const targetName = targetUser.customDisplayName || targetUser.displayName || targetUser.username;
+    
+    // Create challenge code
+    const challengeCode = Math.random().toString(36).substring(2, 8).toUpperCase();
+    const challengeId = 'challenge_' + Date.now();
+    
+    // Add notification to target user
+    addNotification({
+        title: '⚔️ Match Challenge!',
+        message: `${challengerName} has challenged you to a match! Code: ${challengeCode}`,
+        icon: '⚔️',
+        type: 'challenge',
+        data: {
+            challengeId: challengeId,
+            challengerId: currentUser.uid,
+            challengerName: challengerName,
+            code: challengeCode,
+            timestamp: Date.now()
+        }
+    });
+    
+    // Save challenge for acceptance
+    let pendingChallenges = JSON.parse(localStorage.getItem('pendingChallenges') || '[]');
+    pendingChallenges.push({
+        id: challengeId,
+        challengerId: currentUser.uid,
+        challengerName: challengerName,
+        targetId: targetUserId,
+        code: challengeCode,
+        status: 'pending',
+        createdAt: Date.now()
+    });
+    localStorage.setItem('pendingChallenges', JSON.stringify(pendingChallenges));
+    
+    showToast(`Challenge sent to ${targetName}! Code: ${challengeCode}`, 'success');
+}
+
+function handleChallengeResponse(notificationData) {
+    const pendingChallenges = JSON.parse(localStorage.getItem('pendingChallenges') || '[]');
+    const challenge = pendingChallenges.find(c => c.id === notificationData.challengeId);
+    
+    if (!challenge) return;
+    
+    // Show challenge acceptance dialog
+    const accept = confirm(`${notificationData.challengerName} challenged you!\nEnter the code to accept: ${notificationData.code}\n\nDo you want to accept?`);
+    
+    if (accept) {
+        const enteredCode = prompt("Enter the challenge code:", notificationData.code);
+        if (enteredCode === notificationData.code) {
+            // Challenge accepted - create match room
+            const matchRoomId = 'match_' + Date.now();
+            const matchRoom = {
+                id: matchRoomId,
+                player1: challenge.challengerId,
+                player2: currentUser.uid,
+                player1Name: challenge.challengerName,
+                player2Name: currentUser.customDisplayName || currentUser.displayName,
+                code: notificationData.code,
+                status: 'active',
+                createdAt: Date.now(),
+                result: null
+            };
+            
+            let matches = JSON.parse(localStorage.getItem('activeMatches') || '[]');
+            matches.push(matchRoom);
+            localStorage.setItem('activeMatches', JSON.stringify(matches));
+            
+            // Update challenge status
+            challenge.status = 'accepted';
+            localStorage.setItem('pendingChallenges', JSON.stringify(pendingChallenges));
+            
+            // Notify challenger
+            addNotification({
+                title: '✅ Challenge Accepted!',
+                message: `${currentUser.customDisplayName || currentUser.displayName} accepted your challenge! Match code: ${notificationData.code}`,
+                icon: '✅',
+                type: 'match_start',
+                data: { matchId: matchRoomId, code: notificationData.code }
+            });
+            
+            showToast(`Match created! Code: ${notificationData.code}`, 'success');
+            window.location.href = `match-room.html?id=${matchRoomId}&code=${notificationData.code}`;
+        } else {
+            showToast('Incorrect code! Challenge declined.', 'error');
+            challenge.status = 'declined';
+            localStorage.setItem('pendingChallenges', JSON.stringify(pendingChallenges));
+        }
+    } else {
+        challenge.status = 'declined';
+        localStorage.setItem('pendingChallenges', JSON.stringify(pendingChallenges));
+    }
+}
+
+// ================= LEAGUE AUTO-JOIN (No Admin Approval) =================
+window.joinLeague = function(leagueId) {
+    if (!currentUser) {
+        showToast('Please login first', 'error');
+        window.location.href = 'index.html';
+        return;
+    }
+    
+    const userCoins = getUserCoins();
+    const leagues = JSON.parse(localStorage.getItem('leagues') || '[]');
+    const leagueIndex = leagues.findIndex(l => l.id === leagueId);
+    
+    if (leagueIndex === -1) {
+        showToast('League not found', 'error');
+        return;
+    }
+    
+    const league = leagues[leagueIndex];
+    
+    // Check if already joined
+    if (league.teams?.some(t => t.ownerId === currentUser.uid)) {
+        showToast('You already joined this league!', 'info');
+        return;
+    }
+    
+    // Check if league is full
+    const teamCount = league.teams?.length || 0;
+    if (teamCount >= league.maxTeams) {
+        showToast('League is full!', 'error');
+        return;
+    }
+    
+    // Check entry fee
+    if (league.entryFee > userCoins) {
+        showToast(`Need ${league.entryFee} Veno Coins to join! You have ${userCoins}`, 'error');
+        return;
+    }
+    
+    if (confirm(`Join ${league.name}?\n\nEntry Fee: ${league.entryFee} Veno Coins\nPrize Pool: ${league.prizePool} Veno Coins`)) {
+        // Deduct entry fee
+        deductUserCoins(league.entryFee);
+        
+        // Auto-join team (no approval needed)
+        if (!league.teams) league.teams = [];
+        league.teams.push({
+            id: 'team_' + Date.now(),
+            name: `${currentUser.customDisplayName || currentUser.displayName}'s Team`,
+            ownerId: currentUser.uid,
+            ownerName: currentUser.customDisplayName || currentUser.displayName,
+            logo: currentUser.customAvatar || currentUser.photoURL,
+            joinedAt: new Date().toISOString()
+        });
+        
+        // Add notification to league owner
+        addNotification({
+            title: '👥 New Team Joined!',
+            message: `${currentUser.customDisplayName || currentUser.displayName} joined your league "${league.name}"!`,
+            icon: '👥',
+            type: 'league_join',
+            data: { leagueId: league.id, leagueName: league.name }
+        });
+        
+        // Save
+        leagues[leagueIndex] = league;
+        localStorage.setItem('leagues', JSON.stringify(leagues));
+        
+        showToast(`Successfully joined ${league.name}!`, 'success');
+        
+        // Refresh display
+        loadAllLeagues();
+        loadActiveLeagues();
+    }
+};
 
 // ================= LOAD CUSTOM PROFILE =================
 function loadCustomProfile() {
     const user = JSON.parse(localStorage.getItem('crunkUser'));
     
     if (user) {
-        // Get custom values
         const customName = user.customDisplayName || user.displayName || user.username || 'Player';
         const customAvatar = user.customAvatar || user.photoURL;
         
-        // Update header profile picture
         const profileAvatar = document.getElementById('profileAvatarImg');
         const popupAvatar = document.getElementById('popupProfileImg');
         const profileNameSpan = document.getElementById('profileNameDisplay');
         const profileEmailSpan = document.getElementById('profileEmailDisplay');
         
         if (profileAvatar) {
-            if (customAvatar) {
-                profileAvatar.src = customAvatar;
-            } else {
-                profileAvatar.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(customName)}&background=10b981&color=fff&size=128`;
-            }
+            profileAvatar.src = customAvatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(customName)}&background=10b981&color=fff&size=128`;
         }
-        
         if (popupAvatar) {
-            if (customAvatar) {
-                popupAvatar.src = customAvatar;
-            } else {
-                popupAvatar.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(customName)}&background=10b981&color=fff&size=128`;
-            }
+            popupAvatar.src = customAvatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(customName)}&background=10b981&color=fff&size=128`;
         }
+        if (profileNameSpan) profileNameSpan.innerText = customName;
+        if (profileEmailSpan) profileEmailSpan.innerText = user.email || '';
         
-        if (profileNameSpan) {
-            profileNameSpan.innerText = customName;
-        }
-        
-        if (profileEmailSpan) {
-            profileEmailSpan.innerText = user.email || '';
-        }
-        
-        // Update sidebar if exists
         const sidebarName = document.getElementById('sidebarUserName');
         const sidebarAvatar = document.getElementById('sidebarProfilePic');
         if (sidebarName) sidebarName.innerText = customName;
         if (sidebarAvatar) {
             sidebarAvatar.src = customAvatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(customName)}&background=10b981&color=fff&size=128`;
         }
-        
-        console.log('✅ Custom profile loaded:', customName);
     }
 }
 
@@ -113,6 +390,7 @@ function createLeagueCard(league) {
     const maxTeams = league.maxTeams || 16;
     const isFull = teamCount >= maxTeams;
     const isOwner = currentUser && league.ownerId === currentUser.uid;
+    const hasJoined = league.teams?.some(t => t.ownerId === currentUser?.uid);
     
     card.innerHTML = `
         <div class="league-header">
@@ -121,6 +399,7 @@ function createLeagueCard(league) {
             <h3>${league.name || 'Unnamed League'}</h3>
             <div class="league-game">${league.gameType || 'eFootball'}</div>
             ${isOwner ? '<div class="owner-badge"><i class="fas fa-crown"></i> Your League</div>' : ''}
+            ${hasJoined ? '<div class="joined-badge"><i class="fas fa-check-circle"></i> Joined</div>' : ''}
         </div>
         <div class="league-body">
             <div class="league-stats">
@@ -133,15 +412,15 @@ function createLeagueCard(league) {
             <div class="league-owner"><i class="fas fa-user"></i> Created by: <strong>${league.ownerName || 'Unknown'}</strong></div>
         </div>
         <div class="league-footer">
-            ${!isOwner ? `
+            ${!isOwner && !hasJoined ? `
                 <button class="join-btn" onclick="event.stopPropagation(); window.joinLeague('${league.id}')" ${isFull ? 'disabled style="opacity:0.5; cursor:not-allowed;"' : ''}>
-                    <i class="fas fa-sign-in-alt"></i> ${isFull ? 'League Full' : 'Join League'}
+                    <i class="fas fa-sign-in-alt"></i> ${isFull ? 'League Full' : 'Join League'} (${league.entryFee} VC)
                 </button>
-            ` : `
-                <button class="dashboard-btn" onclick="event.stopPropagation(); window.goToDashboard('${league.id}')">
-                    <i class="fas fa-chalkboard-user"></i> Dashboard
+            ` : hasJoined ? `
+                <button class="joined-btn" disabled style="opacity:0.6; cursor:default;">
+                    <i class="fas fa-check-circle"></i> Already Joined
                 </button>
-            `}
+            ` : ''}
             <button class="details-btn" onclick="event.stopPropagation(); window.viewLeague('${league.id}')">
                 <i class="fas fa-info-circle"></i> Details
             </button>
@@ -218,37 +497,11 @@ function loadAllUsers() {
             customAvatar: currentUserData.customAvatar,
             customDisplayName: currentUserData.customDisplayName,
             status: 'online',
+            coins: getUserCoins(currentUserData.userId || currentUserData.uid),
             lastSeen: new Date().toISOString()
         });
         localStorage.setItem('users', JSON.stringify(allUsers));
     }
-    
-    if (currentUserData) {
-        const existingUserIndex = allUsers.findIndex(u => u.uid === (currentUserData.userId || currentUserData.uid));
-        if (existingUserIndex !== -1) {
-            allUsers[existingUserIndex].displayName = currentUserData.customDisplayName || currentUserData.displayName;
-            allUsers[existingUserIndex].photoURL = currentUserData.customAvatar || currentUserData.photoURL;
-            localStorage.setItem('users', JSON.stringify(allUsers));
-        }
-    }
-    
-    const leagues = JSON.parse(localStorage.getItem('leagues') || '[]');
-    leagues.forEach(league => {
-        if (league.teams) {
-            league.teams.forEach(team => {
-                if (team.ownerId && !allUsers.some(u => u.uid === team.ownerId)) {
-                    allUsers.push({
-                        uid: team.ownerId,
-                        username: team.ownerName || team.name,
-                        displayName: team.ownerName || team.name,
-                        photoURL: team.logo || null,
-                        status: 'offline',
-                        lastSeen: league.createdAt
-                    });
-                }
-            });
-        }
-    });
     
     const uniqueUsers = [];
     const seen = new Set();
@@ -276,8 +529,14 @@ function loadAllUsers() {
         userCard.onclick = () => viewUserProfile(user.uid);
         userCard.innerHTML = `
             <div class="user-avatar"><img src="${avatarUrl}" alt="${displayName}">${user.status === 'online' ? '<span class="online-dot"></span>' : ''}</div>
-            <div class="user-info"><div class="user-name">${displayName}</div><div class="user-stats"><span><i class="fas fa-trophy"></i> ${user.leaguesWon || 0}</span><span><i class="fas fa-futbol"></i> ${user.matchesPlayed || 0}</span></div></div>
-            ${!isCurrentUser ? `<button class="challenge-btn" onclick="event.stopPropagation(); challengeUser('${user.uid}')"><i class="fas fa-handshake"></i> Challenge</button>` : '<span class="you-badge">You</span>'}
+            <div class="user-info">
+                <div class="user-name">${displayName}</div>
+                <div class="user-stats">
+                    <span><i class="fas fa-coins"></i> ${getUserCoins(user.uid)} VC</span>
+                    <span><i class="fas fa-trophy"></i> ${user.leaguesWon || 0}</span>
+                </div>
+            </div>
+            ${!isCurrentUser ? `<button class="challenge-btn" onclick="event.stopPropagation(); sendChallenge('${user.uid}')"><i class="fas fa-handshake"></i> Challenge</button>` : '<span class="you-badge">You</span>'}
         `;
         allUsersContainer.appendChild(userCard);
     });
@@ -285,57 +544,6 @@ function loadAllUsers() {
 
 function viewUserProfile(userId) {
     window.location.href = `user-profile.html?id=${userId}`;
-}
-
-function challengeUser(userId) {
-    const users = JSON.parse(localStorage.getItem('users') || '[]');
-    const targetUser = users.find(u => u.uid === userId);
-    const currentUserData = JSON.parse(localStorage.getItem('crunkUser'));
-    if (!targetUser) { showToast('User not found', 'error'); return; }
-    const targetName = targetUser.customDisplayName || targetUser.displayName || targetUser.username;
-    const currentName = currentUserData.customDisplayName || currentUserData.displayName || currentUserData.username;
-    if (confirm(`Challenge ${targetName} to a match?`)) {
-        const notifications = JSON.parse(localStorage.getItem('notifications') || '[]');
-        notifications.unshift({ id: Date.now(), title: 'Match Challenge!', message: `${currentName} challenged you!`, time: 'Just now', read: false, icon: '⚔️', from: currentUserData.uid, fromName: currentName });
-        localStorage.setItem('notifications', JSON.stringify(notifications));
-        showToast(`Challenge sent to ${targetName}!`, 'success');
-    }
-}
-
-// ================= ACTION FUNCTIONS =================
-window.joinLeague = function(leagueId) {
-    if (!currentUser) { showToast('Please login first', 'error'); window.location.href = 'index.html'; return; }
-    const userCoins = getVenoCoins();
-    const leagues = JSON.parse(localStorage.getItem('leagues') || '[]');
-    const leagueIndex = leagues.findIndex(l => l.id === leagueId);
-    if (leagueIndex === -1) { showToast('League not found', 'error'); return; }
-    const league = leagues[leagueIndex];
-    if (league.teams?.some(t => t.ownerId === currentUser.uid)) { showToast('You already joined!', 'info'); return; }
-    if (league.pendingRequests?.some(r => r.ownerId === currentUser.uid)) { showToast('Request already sent!', 'info'); return; }
-    if (league.entryFee > userCoins) { showToast(`Need ${league.entryFee} Veno Coins!`, 'error'); return; }
-    if (confirm(`Join ${league.name}?\nEntry: ${league.entryFee} VC | Prize: ${league.prizePool} VC`)) {
-        localStorage.setItem('venoCoins', userCoins - league.entryFee);
-        updateVenoCoinsDisplay();
-        if (!league.pendingRequests) league.pendingRequests = [];
-        league.pendingRequests.push({ id: 'req_' + Date.now(), teamName: `${currentUser.displayName}'s Team`, ownerId: currentUser.uid, ownerName: currentUser.displayName, logo: currentUser.photoURL, requestedAt: new Date().toISOString() });
-        leagues[leagueIndex] = league;
-        localStorage.setItem('leagues', JSON.stringify(leagues));
-        showToast(`Request sent to ${league.ownerName}!`, 'success');
-    }
-};
-
-window.viewLeague = function(leagueId) { window.location.href = `league-view.html?id=${leagueId}`; };
-window.goToDashboard = function(leagueId) { window.location.href = `league-dashboard.html?id=${leagueId}`; };
-
-function showToast(message, type = 'success') {
-    const container = document.getElementById('toastContainer');
-    if (!container) return;
-    const toast = document.createElement('div');
-    toast.className = `toast ${type}`;
-    toast.innerHTML = `<i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'}"></i> ${message}`;
-    container.appendChild(toast);
-    setTimeout(() => toast.classList.add('show'), 10);
-    setTimeout(() => { toast.classList.remove('show'); setTimeout(() => toast.remove(), 300); }, 3000);
 }
 
 // ================= SPIN WHEEL =================
@@ -396,13 +604,12 @@ function getSpinPrize() {
 
 function doSpin() {
     if (isSpinning) return;
-    const coins = getVenoCoins();
+    const coins = getUserCoins();
     if (coins < 200) { showToast(`Need 200 Veno Coins! You have ${coins}.`, "error"); return; }
     showToast(`🎰 Spinning... 200 coins deducted!`, "info");
-    localStorage.setItem('venoCoins', coins - 200);
-    updateVenoCoinsDisplay();
+    deductUserCoins(200);
     const spinBalanceSpan = document.getElementById('spinBalance');
-    if (spinBalanceSpan) spinBalanceSpan.innerText = coins - 200;
+    if (spinBalanceSpan) spinBalanceSpan.innerText = getUserCoins();
     isSpinning = true;
     const spinBtn = document.getElementById('spinWheelBtn');
     if (spinBtn) spinBtn.disabled = true;
@@ -421,9 +628,7 @@ function doSpin() {
             spinRotation = targetRotation % (Math.PI * 2);
             drawSpinWheel();
             const prize = getSpinPrize();
-            const newCoins = getVenoCoins() + prize.value;
-            localStorage.setItem('venoCoins', newCoins);
-            updateVenoCoinsDisplay();
+            addUserCoins(prize.value);
             const netChange = prize.value - 200;
             if (netChange > 0) showToast(`🎉 You won ${prize.value} coins! +${netChange}!`, "success");
             else if (netChange === 0) showToast(`🎁 You won ${prize.value} coins! You got your coins back!`, "success");
@@ -474,11 +679,10 @@ if (menuCreateTeam) menuCreateTeam.addEventListener('click', () => window.locati
 if (menuLeaderboard) menuLeaderboard.addEventListener('click', () => window.location.href = 'leaderboard.html');
 if (menuSettings) menuSettings.addEventListener('click', () => window.location.href = 'settings.html');
 
-// ================= VENAURA ICON =================
+// ================= OTHER INITIALIZATIONS =================
 const venauraIcon = document.getElementById('venauraIcon');
 if (venauraIcon) venauraIcon.addEventListener('click', () => window.open('https://venauraai.netlify.app/', '_blank'));
 
-// ================= PROFILE DROPDOWN =================
 const profileDropdown = document.getElementById('profileDropdown');
 const profilePopup = document.getElementById('profilePopup');
 if (profileDropdown) {
@@ -486,11 +690,9 @@ if (profileDropdown) {
     document.addEventListener('click', (e) => { if (!profileDropdown.contains(e.target) && !profilePopup.contains(e.target)) profilePopup.classList.remove('active'); });
 }
 
-// ================= LOGOUT =================
 const logoutBtn = document.getElementById('logoutBtn');
 if (logoutBtn) logoutBtn.addEventListener('click', () => { localStorage.removeItem('crunkUser'); window.location.href = 'index.html'; });
 
-// ================= THEME TOGGLE =================
 const menuTheme = document.getElementById('menuTheme');
 const themeLabel = document.getElementById('themeLabel');
 if (menuTheme) {
@@ -508,9 +710,10 @@ if (savedTheme === 'light') { document.body.classList.add('light-theme'); if (th
 onAuthStateChanged(auth, (user) => {
     if (user) {
         currentUser = user;
-        loadCustomProfile();  // ← CRITICAL: Load custom profile
+        loadCustomProfile();
         updateVenoCoinsDisplay();
         loadMyTeams();
+        loadAllUsers();
     }
 });
 
@@ -520,6 +723,15 @@ document.addEventListener('DOMContentLoaded', () => {
     loadActiveLeagues();
     loadAllUsers();
     updateVenoCoinsDisplay();
+    renderNotifications();
+    updateNotificationBell();
+    
+    // Real-time notification check every 5 seconds
+    if (notificationCheckInterval) clearInterval(notificationCheckInterval);
+    notificationCheckInterval = setInterval(() => {
+        renderNotifications();
+        updateNotificationBell();
+    }, 5000);
     
     const spinModal = document.getElementById('spinModal');
     if (spinModal) {
@@ -540,11 +752,38 @@ document.addEventListener('DOMContentLoaded', () => {
             if (modal) {
                 modal.classList.add('active');
                 const balanceSpan = document.getElementById('spinBalance');
-                if (balanceSpan) balanceSpan.innerText = getVenoCoins();
+                if (balanceSpan) balanceSpan.innerText = getUserCoins();
                 setTimeout(() => { spinCanvas = document.getElementById('spinWheelCanvas'); if (spinCanvas) drawSpinWheel(); }, 100);
             }
         };
         quickActions.appendChild(spinCard);
+    }
+    
+    // Notification bell click
+    const notificationBtn = document.getElementById('notificationBtn');
+    const notificationPopup = document.getElementById('notificationPopup');
+    if (notificationBtn && notificationPopup) {
+        notificationBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            notificationPopup.classList.toggle('active');
+            renderNotifications();
+        });
+        document.addEventListener('click', (e) => {
+            if (!notificationBtn.contains(e.target) && !notificationPopup.contains(e.target)) {
+                notificationPopup.classList.remove('active');
+            }
+        });
+    }
+    
+    const markAllRead = document.getElementById('markAllRead');
+    if (markAllRead) {
+        markAllRead.addEventListener('click', () => {
+            let notifications = JSON.parse(localStorage.getItem('notifications') || '[]');
+            notifications = notifications.map(n => ({ ...n, read: true }));
+            localStorage.setItem('notifications', JSON.stringify(notifications));
+            renderNotifications();
+            updateNotificationBell();
+        });
     }
 });
 
@@ -566,11 +805,8 @@ if (claimBtn) {
     }
     claimBtn.addEventListener('click', () => {
         if (canClaim()) {
-            const currentCoins = getVenoCoins();
-            const newCoins = currentCoins + 10;
-            localStorage.setItem('venoCoins', newCoins);
+            addUserCoins(10);
             localStorage.setItem(LAST_CLAIM_KEY, Date.now().toString());
-            updateVenoCoinsDisplay();
             updateClaimButton();
             showToast('🎉 You claimed 10 Veno Coins!', 'success');
         } else showToast('Already claimed! Come back tomorrow', 'error');
@@ -579,4 +815,21 @@ if (claimBtn) {
     setInterval(updateClaimButton, 60000);
 }
 
-console.log('✅ Veno-Arena loaded - Custom profile support enabled');
+function showToast(message, type = 'success') {
+    const container = document.getElementById('toastContainer');
+    if (!container) return;
+    const toast = document.createElement('div');
+    toast.className = `toast ${type}`;
+    toast.innerHTML = `<i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'}"></i> ${message}`;
+    container.appendChild(toast);
+    setTimeout(() => toast.classList.add('show'), 10);
+    setTimeout(() => { toast.classList.remove('show'); setTimeout(() => toast.remove(), 300); }, 3000);
+}
+
+// Make functions global
+window.joinLeague = joinLeague;
+window.viewLeague = (leagueId) => window.location.href = `league-view.html?id=${leagueId}`;
+window.goToDashboard = (leagueId) => window.location.href = `league-dashboard.html?id=${leagueId}`;
+window.sendChallenge = sendChallenge;
+
+console.log('✅ Veno-Arena loaded - Individual coins, real-time notifications, and auto-join enabled');
