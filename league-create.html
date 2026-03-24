@@ -392,6 +392,32 @@ window.addEventListener('beforeinstallprompt', (e) => {
         };
     }
 });
+    // After getting the current user
+const user = JSON.parse(localStorage.getItem('crunkUser'));
+
+// When creating league data, add ownerName
+const leagueData = {
+    id: 'league_' + Date.now(),
+    name: leagueName,
+    gameType: document.getElementById('gameType').value,
+    format: document.getElementById('leagueFormat').value,
+    maxTeams: parseInt(document.getElementById('maxTeams').value),
+    entryFee: parseInt(document.getElementById('entryFee').value),
+    prizePool: totalPrize,
+    prizes: {
+        first: firstPrize,
+        second: secondPrize,
+        third: thirdPrize
+    },
+    description: document.getElementById('description').value,
+    ownerId: currentUser.uid,
+    ownerName: currentUser.displayName,  // ← ADD THIS LINE
+    createdAt: new Date().toISOString(),
+    status: 'registration',
+    teams: [],
+    matches: [],
+    pendingRequests: []
+};
 </script>
 
 <!-- Optional Install Button (add to top bar) -->
