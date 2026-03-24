@@ -282,6 +282,11 @@
             window.location.href = 'tournaments.html';
         }, 1500);
     });
+    // After saving league data
+showToast('League created successfully!', 'success');
+setTimeout(() => {
+    window.location.href = `league-view.html?id=${leagueData.id}`;
+}, 1500);
 </script>
 
 <script type="module">
