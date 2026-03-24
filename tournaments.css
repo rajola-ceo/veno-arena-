@@ -1747,3 +1747,122 @@ body {
         padding-bottom: calc(70px + env(safe-area-inset-bottom));
     }
 }
+/* ===============================
+   USERS SECTION
+=============================== */
+.users-section {
+    padding: 0 20px;
+    margin-bottom: 40px;
+}
+
+.users-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
+}
+
+.user-card {
+    background: var(--bg-tertiary);
+    border-radius: 16px;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    transition: all 0.3s ease;
+    border: 1px solid var(--border-color);
+    cursor: pointer;
+    position: relative;
+}
+
+.user-card:hover {
+    transform: translateY(-5px);
+    border-color: #10b981;
+    box-shadow: 0 10px 25px rgba(16, 185, 129, 0.2);
+}
+
+.user-avatar {
+    position: relative;
+    width: 60px;
+    height: 60px;
+}
+
+.user-avatar img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--primary);
+}
+
+.online-dot {
+    position: absolute;
+    bottom: 2px;
+    right: 2px;
+    width: 12px;
+    height: 12px;
+    background: #10b981;
+    border-radius: 50%;
+    border: 2px solid var(--bg-tertiary);
+    animation: pulse 2s infinite;
+}
+
+.user-info {
+    flex: 1;
+}
+
+.user-name {
+    font-weight: 600;
+    font-size: 16px;
+    margin-bottom: 5px;
+}
+
+.user-stats {
+    display: flex;
+    gap: 15px;
+    font-size: 12px;
+    color: var(--text-secondary);
+}
+
+.user-stats i {
+    color: #fbbf24;
+}
+
+.challenge-btn {
+    padding: 6px 12px;
+    background: transparent;
+    border: 1px solid #10b981;
+    border-radius: 20px;
+    color: #10b981;
+    font-size: 11px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.challenge-btn:hover {
+    background: #10b981;
+    color: white;
+}
+
+.you-badge {
+    padding: 4px 10px;
+    background: rgba(16, 185, 129, 0.2);
+    border-radius: 20px;
+    font-size: 11px;
+    color: #10b981;
+    font-weight: 600;
+}
+
+@media (max-width: 768px) {
+    .users-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .user-card {
+        padding: 15px;
+    }
+    
+    .user-avatar {
+        width: 50px;
+        height: 50px;
+    }
+}
