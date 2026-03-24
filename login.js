@@ -1,7 +1,17 @@
 // ================= SESSION CHECK =================
 const savedUser = localStorage.getItem("crunkUser");
+
+// Check if user has completed profile setup
 if (savedUser) {
-    window.location.href = "home.html";
+    const user = JSON.parse(savedUser);
+    
+    // If user has already set display name, go to home
+    // If not, go to profile settings first
+    if (user.hasSetProfile) {
+        window.location.href = "home.html";
+    } else {
+        window.location.href = "profile-settings.html";
+    }
 }
 
 // ================= LABEL ANIMATION =================
@@ -272,19 +282,24 @@ if (form) {
             
             if (!querySnapshot.empty) {
                 const existingUser = querySnapshot.docs[0].data();
-                localStorage.setItem("crunkUser", JSON.stringify({
+                const userData = {
                     username: existingUser.displayName || existingUser.username,
                     displayName: existingUser.displayName || existingUser.username,
                     email: existingUser.email,
                     phone: existingUser.phone,
                     photoURL: existingUser.photoURL || null,
-                    userId: querySnapshot.docs[0].id
-                }));
+                    userId: querySnapshot.docs[0].id,
+                    hasSetProfile: existingUser.hasSetProfile || false
+                };
+                localStorage.setItem("crunkUser", JSON.stringify(userData));
                 
-                showMessage("Login successful! Redirecting to setup profile...", "success");
-                setTimeout(() => {
-                    window.location.href = "profile-settings.html";
-                }, 1500);
+                if (userData.hasSetProfile) {
+                    showMessage("Login successful! Redirecting...", "success");
+                    setTimeout(() => window.location.href = "home.html", 1500);
+                } else {
+                    showMessage("Please complete your profile setup.", "info");
+                    setTimeout(() => window.location.href = "profile-settings.html", 1500);
+                }
                 return;
             }
 
@@ -303,7 +318,8 @@ if (form) {
                 createdAt: new Date().toISOString(),
                 lastSeen: new Date().toISOString(),
                 status: 'online',
-                userId: userId
+                userId: userId,
+                hasSetProfile: false
             };
 
             try {
@@ -319,10 +335,11 @@ if (form) {
                 email: email, 
                 phone: fullPhoneNumber,
                 photoURL: null,
-                userId: userId 
+                userId: userId,
+                hasSetProfile: false
             }));
 
-            showMessage("Registration successful! Redirecting to setup profile...", "success");
+            showMessage("Registration successful! Please setup your profile.", "success");
             setTimeout(() => {
                 window.location.href = "profile-settings.html";
             }, 1500);
@@ -361,7 +378,8 @@ window.handleGoogleLogin = async function() {
                 displayName: existingUser.displayName || user.displayName,
                 email: user.email,
                 photoURL: user.photoURL,
-                userId: user.uid
+                userId: user.uid,
+                hasSetProfile: existingUser.hasSetProfile || false
             };
         } else {
             console.log("🆕 New user");
@@ -375,7 +393,8 @@ window.handleGoogleLogin = async function() {
                 createdAt: new Date().toISOString(),
                 lastSeen: new Date().toISOString(),
                 status: 'online',
-                userId: user.uid
+                userId: user.uid,
+                hasSetProfile: false
             };
             
             try {
@@ -390,16 +409,21 @@ window.handleGoogleLogin = async function() {
                 displayName: user.displayName,
                 email: user.email,
                 photoURL: user.photoURL,
-                userId: user.uid
+                userId: user.uid,
+                hasSetProfile: false
             };
         }
         
         localStorage.setItem("crunkUser", JSON.stringify(userData));
         console.log("💾 Saved to localStorage:", userData);
         
-        showMessage("Google login successful! Redirecting to setup profile...", "success");
-        console.log("⏰ Redirecting to profile-settings.html NOW!");
-        window.location.href = "profile-settings.html";
+        if (userData.hasSetProfile) {
+            showMessage("Google login successful! Redirecting...", "success");
+            setTimeout(() => window.location.href = "home.html", 1000);
+        } else {
+            showMessage("Welcome! Please setup your profile.", "success");
+            setTimeout(() => window.location.href = "profile-settings.html", 1000);
+        }
         
     } catch (error) {
         console.error("❌ Google login error:", error);
@@ -433,7 +457,8 @@ async function handleRedirectResult() {
                 displayName: user.displayName,
                 email: user.email,
                 photoURL: user.photoURL,
-                userId: user.uid
+                userId: user.uid,
+                hasSetProfile: false
             };
             
             localStorage.setItem("crunkUser", JSON.stringify(userData));
@@ -528,4 +553,4 @@ if (phoneInput) {
     });
 }
 
-console.log("✅ Login system initialized - Redirects to profile settings after login");
+console.log("✅ Login system initialized - Redirects to profile settings for new users");
