@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Profile Settings - Crunk Games</title>
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="home.css">
+    <style>
+        .settings-container {
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 20px;
+        }
+        
+        .settings-card {
+            background: var(--bg-tertiary);
+            border-radius: 24px;
+            padding: 30px;
+            border: 1px solid var(--border-color);
+        }
+        
+        .avatar-section {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .avatar-preview {
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 15px;
+            border-radius: 50%;
+            overflow: hidden;
+            border: 3px solid #10b981;
+            cursor: pointer;
+        }
+        
+        .avatar-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .upload-btn {
+            background: #10b981;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 30px;
+            color: white;
+            cursor: pointer;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            color: var(--text-primary);
+        }
+        
+        .save-btn {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #10b981, #059669);
+            border: none;
+            border-radius: 30px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+        
+        .privacy-note {
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(16, 185, 129, 0.1);
+            border-radius: 12px;
+            font-size: 12px;
+            color: #9ca3af;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="app">
+        <div class="settings-container">
+            <div class="settings-card">
+                <h2 style="margin-bottom: 20px;">Profile Settings</h2>
+                <p style="color: #9ca3af; margin-bottom: 20px;">Choose how you appear to other players</p>
+                
+                <div class="avatar-section">
+                    <div class="avatar-preview" id="avatarPreview" onclick="document.getElementById('avatarUpload').click()">
+                        <img id="previewImg" src="">
+                    </div>
+                    <input type="file" id="avatarUpload" accept="image/*" style="display: none;">
+                    <button class="upload-btn" onclick="document.getElementById('avatarUpload').click()">
+                        <i class="fas fa-camera"></i> Upload Picture
+                    </button>
+                </div>
+                
+                <div class="form-group">
+                    <label>Display Name</label>
+                    <input type="text" id="displayName" placeholder="Your display name (visible to others)">
+                </div>
+                
+                <div class="form-group">
+                    <label>Email (private)</label>
+                    <input type="email" id="email" disabled style="opacity: 0.7;">
+                </div>
+                
+                <button class="save-btn" id="saveBtn">
+                    <i class="fas fa-save"></i> Save Changes
+                </button>
+                
+                <div class="privacy-note">
+                    <i class="fas fa-shield-alt"></i> Your display name and profile picture will be visible to other players. Your email remains private.
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div id="toastContainer" class="toast-container"></div>
+    
+    <script>
+        let currentUser = null;
+        let avatarData = null;
+        
+        function loadUserProfile() {
+            const user = JSON.parse(localStorage.getItem('crunkUser'));
+            if (!user) {
+                window.location.href = 'index.html';
+                return;
+            }
+            currentUser = user;
+            
+            document.getElementById('displayName').value = user.displayName || user.username || '';
+            document.getElementById('email').value = user.email || '';
+            
+            if (user.photoURL && !user.customAvatar) {
+                document.getElementById('previewImg').src = user.photoURL;
+            } else if (user.avatar) {
+                document.getElementById('previewImg').src = user.avatar;
+            } else {
+                document.getElementById('previewImg').src = `https://ui-avatars.com/api/?name=${encodeURIComponent(user.displayName || user.username || 'User')}&background=10b981&color=fff`;
+            }
+        }
+        
+        document.getElementById('avatarUpload').addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    avatarData = event.target.result;
+                    document.getElementById('previewImg').src = avatarData;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+        
+        document.getElementById('saveBtn').addEventListener('click', () => {
+            const displayName = document.getElementById('displayName').value.trim();
+            
+            if (!displayName) {
+                showToast('Please enter a display name', 'error');
+                return;
+            }
+            
+            // Update user data
+            const updatedUser = {
+                ...currentUser,
+                displayName: displayName,
+                username: displayName,
+                customAvatar: true,
+                avatar: avatarData || currentUser.photoURL || currentUser.avatar,
+                photoURL: avatarData || currentUser.photoURL
+            };
+            
+            // Save to localStorage
+            localStorage.setItem('crunkUser', JSON.stringify(updatedUser));
+            
+            // Also update in users list
+            let users = JSON.parse(localStorage.getItem('users') || '[]');
+            const userIndex = users.findIndex(u => u.uid === currentUser.uid || u.userId === currentUser.userId);
+            if (userIndex !== -1) {
+                users[userIndex] = {
+                    ...users[userIndex],
+                    displayName: displayName,
+                    username: displayName,
+                    photoURL: avatarData || currentUser.photoURL,
+                    avatar: avatarData || currentUser.avatar
+                };
+                localStorage.setItem('users', JSON.stringify(users));
+            } else {
+                users.push({
+                    uid: currentUser.uid || currentUser.userId,
+                    displayName: displayName,
+                    username: displayName,
+                    email: currentUser.email,
+                    photoURL: avatarData || currentUser.photoURL
+                });
+                localStorage.setItem('users', JSON.stringify(users));
+            }
+            
+            showToast('Profile updated successfully!', 'success');
+            setTimeout(() => {
+                window.location.href = 'tournaments.html';
+            }, 1500);
+        });
+        
+        function showToast(message, type) {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.innerHTML = `<i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'}"></i> ${message}`;
+            container.appendChild(toast);
+            setTimeout(() => toast.classList.add('show'), 10);
+            setTimeout(() => { toast.classList.remove('show'); setTimeout(() => toast.remove(), 300); }, 3000);
+        }
+        
+        loadUserProfile();
+    </script>
+</body>
+</html>
