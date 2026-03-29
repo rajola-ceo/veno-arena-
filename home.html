@@ -1488,6 +1488,37 @@
             .spin-modal-content {
                 padding: 20px;
             }
+            // Add this to your <style> tag:
+const progressBarCSS = `
+    .league-progress {
+        width: 100%;
+        height: 8px;
+        background: rgba(255, 215, 0, 0.1);
+        border-radius: 10px;
+        overflow: hidden;
+        border: 1px solid var(--primary);
+        margin-bottom: 8px;
+    }
+    
+    .progress-bar {
+        height: 100%;
+        background: linear-gradient(90deg, var(--primary), var(--primary-light));
+        transition: width 0.5s ease;
+        box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+    }
+    
+    .league-progress-text {
+        text-align: center;
+        color: var(--text-light);
+        font-size: 12px;
+        margin-bottom: 15px;
+        font-weight: 600;
+    }
+    
+    .league-progress-text strong {
+        color: var(--primary);
+        font-size: 14px;
+    }
         }
     </style>
 </head>
@@ -1902,51 +1933,238 @@
         });
     }
 
-    // ================= LEAGUES =================
-    function createLeagueCard(league) {
-        const card = document.createElement('div');
-        card.className = 'league-card';
-        
-        const statusClass = league.status === 'live' ? 'status-live' : 
-                            league.status === 'registration' ? 'status-registration' : 
-                            league.status === 'upcoming' ? 'status-upcoming' : 'status-completed';
-        const statusText = league.status === 'live' ? 'LIVE' : 
-                           league.status === 'registration' ? 'REGISTRATION' : 
-                           league.status === 'upcoming' ? 'UPCOMING' : 'COMPLETED';
-        
-        const teamCount = league.teams?.length || 0;
-        const maxTeams = league.maxTeams || 16;
-        const isFull = teamCount >= maxTeams;
-        
-        card.innerHTML = `
-            <div class="league-header">
-                <span class="league-type ${statusClass}">${statusText}</span>
-                <div class="league-icon"><i class="fas fa-futbol"></i></div>
-                <h3>${league.name || 'Unnamed League'}</h3>
-                <div class="league-game">${league.gameType || 'eFootball'}</div>
-            </div>
-            <div class="league-body">
-                <div class="league-stats">
-                    <div class="stat"><div class="stat-value ${isFull ? 'full' : ''}">${teamCount}/${maxTeams}</div><div class="stat-label">Teams ${isFull ? '🔴' : ''}</div></div>
-                    <div class="stat"><div class="stat-value">${league.matches?.length || 0}</div><div class="stat-label">Matches</div></div>
-                    <div class="stat"><div class="stat-value">${league.weeks || 0}</div><div class="stat-label">Weeks</div></div>
-                </div>
-                <div class="league-prize"><span><i class="fas fa-trophy"></i> Prize</span><span class="prize"><i class="fas fa-coins"></i> ${league.prizePool || 0} VC</span></div>
-                <div class="league-prize"><span><i class="fas fa-door-open"></i> Entry</span><span><i class="fas fa-coins"></i> ${league.entryFee || 0} VC</span></div>
-                <div class="league-owner"><i class="fas fa-user"></i> By: <strong>${league.ownerName || 'Unknown'}</strong></div>
-            </div>
-            <div class="league-footer">
-                <button class="join-btn" onclick="joinLeague('${league.id}')" ${isFull ? 'disabled' : ''}>
-                    <i class="fas fa-sign-in-alt"></i> ${isFull ? 'Full' : 'Join'} (${league.entryFee} VC)
-                </button>
-                <button class="details-btn" onclick="viewLeague('${league.id}')">
-                    <i class="fas fa-info-circle"></i> Details
-                </button>
-            </div>
-        `;
-        return card;
+// ================= UPDATED LEAGUE JOIN FUNCTION =================
+window.joinLeague = function(leagueId) {
+    const user = JSON.parse(localStorage.getItem('crunkUser'));
+    if (!user) {
+        showToast('Please login first', 'error');
+        window.location.href = 'index.html';
+        return;
     }
+    
+    const userCoins = getUserCoins();
+    const leagues = JSON.parse(localStorage.getItem('leagues') || '[]');
+    const leagueIndex = leagues.findIndex(l => l.id === leagueId);
+    
+    if (leagueIndex === -1) {
+        showToast('League not found', 'error');
+        return;
+    }
+    
+    const league = leagues[leagueIndex];
+    
+    // Check if already joined
+    if (league.teams?.some(t => t.ownerId === user.userId)) {
+        showToast('You already joined this league!', 'info');
+        return;
+    }
+    
+    // Check if league is full
+    const teamCount = league.teams?.length || 0;
+    if (teamCount >= league.maxTeams) {
+        showToast('League is FULL! It has already started.', 'error');
+        return;
+    }
+    
+    // Check if league is already live
+    if (league.status === 'live') {
+        showToast('League has already started!', 'error');
+        return;
+    }
+    
+    // Check entry fee
+    if (league.entryFee > userCoins) {
+        showToast(`Need ${league.entryFee} VC! You have ${userCoins}`, 'error');
+        return;
+    }
+    
+    if (confirm(`Join ${league.name}?\n\nEntry Fee: ${league.entryFee} VC\nTeams: ${teamCount}/${league.maxTeams}`)) {
+        // Deduct entry fee
+        deductUserCoins(league.entryFee);
+        
+        // Create team entry
+        if (!league.teams) league.teams = [];
+        const newTeam = {
+            id: 'team_' + Date.now(),
+            name: `${user.customDisplayName || user.displayName || user.username}'s Team`,
+            ownerId: user.userId,
+            ownerName: user.customDisplayName || user.displayName || user.username,
+            logo: user.customAvatar || user.photoURL,
+            joinedAt: new Date().toISOString(),
+            wins: 0,
+            matches: 0
+        };
+        league.teams.push(newTeam);
+        
+        // ========== CHECK IF LEAGUE IS NOW FULL ==========
+        const newTeamCount = league.teams.length;
+        if (newTeamCount === league.maxTeams) {
+            // LEAGUE IS FULL - AUTO START IT!
+            league.status = 'live';
+            league.startedAt = new Date().toISOString();
+            league.week = 1;
+            
+            // Generate matches for week 1
+            league.matches = generateWeekMatches(league.teams, 1);
+            
+            // Notify all team owners
+            league.teams.forEach(team => {
+                addNotification({
+                    title: '🔴 LEAGUE STARTED!',
+                    message: `${league.name} has started! ${league.maxTeams} teams are ready. Week 1 matches generated!`,
+                    icon: '🔴',
+                    type: 'league_started',
+                    data: { leagueId: league.id, leagueName: league.name }
+                });
+            });
+            
+            showToast(`🎉 ${league.name} is FULL! League started with all ${league.maxTeams} teams!`, 'success');
+        } else {
+            // League not full yet
+            const spotsLeft = league.maxTeams - newTeamCount;
+            const notification = {
+                title: '✅ Team Joined!',
+                message: `A new team joined ${league.name}! ${spotsLeft} spot${spotsLeft > 1 ? 's' : ''} remaining.`,
+                icon: '✅',
+                type: 'team_joined',
+                data: { leagueId: league.id, leagueName: league.name }
+            };
+            
+            // Notify league owner
+            const leagueOwner = league.teams[0]; // First team is usually owner
+            addNotification(notification);
+            
+            showToast(`Successfully joined ${league.name}! (${newTeamCount}/${league.maxTeams})`, 'success');
+        }
+        
+        // Save updated league
+        leagues[leagueIndex] = league;
+        localStorage.setItem('leagues', JSON.stringify(leagues));
+        
+        // Refresh displays
+        loadAllLeagues();
+        loadActiveLeagues();
+    }
+};
 
+// ================= GENERATE WEEK MATCHES =================
+function generateWeekMatches(teams, week) {
+    const matches = [];
+    const matchId = `week_${week}_match_`;
+    
+    // Simple round-robin: pair teams randomly
+    const shuffled = [...teams].sort(() => Math.random() - 0.5);
+    
+    for (let i = 0; i < shuffled.length; i += 2) {
+        if (i + 1 < shuffled.length) {
+            matches.push({
+                id: matchId + matches.length,
+                week: week,
+                team1Id: shuffled[i].id,
+                team1Name: shuffled[i].name,
+                team2Id: shuffled[i + 1].id,
+                team2Name: shuffled[i + 1].name,
+                status: 'scheduled',
+                createdAt: new Date().toISOString(),
+                result: null
+            });
+        }
+    }
+    
+    return matches;
+}
+
+// ================= CREATE LEAGUE WITH AUTO-START TRIGGER =================
+window.createLeague = function(leagueData) {
+    const user = JSON.parse(localStorage.getItem('crunkUser'));
+    if (!user) {
+        showToast('Please login first', 'error');
+        return;
+    }
+    
+    const newLeague = {
+        id: 'league_' + Date.now(),
+        name: leagueData.name,
+        description: leagueData.description,
+        gameType: leagueData.gameType || 'eFootball',
+        maxTeams: parseInt(leagueData.maxTeams) || 16,
+        entryFee: parseInt(leagueData.entryFee) || 0,
+        prizePool: parseInt(leagueData.prizePool) || 0,
+        weeks: parseInt(leagueData.weeks) || 8,
+        status: 'registration', // Starts as registration
+        ownerId: user.userId,
+        ownerName: user.customDisplayName || user.displayName || user.username,
+        teams: [],
+        matches: [],
+        createdAt: new Date().toISOString(),
+        startedAt: null,
+        week: 0
+    };
+    
+    let leagues = JSON.parse(localStorage.getItem('leagues') || '[]');
+    leagues.push(newLeague);
+    localStorage.setItem('leagues', JSON.stringify(leagues));
+    
+    showToast(`League "${leagueData.name}" created! ${newLeague.maxTeams} teams needed to start.`, 'success');
+    window.location.href = 'home.html';
+};
+
+// ================= UPDATED LEAGUE CARD TO SHOW AUTO-START =================
+function createLeagueCard(league) {
+    const card = document.createElement('div');
+    card.className = 'league-card';
+    
+    const statusClass = league.status === 'live' ? 'status-live' : 
+                        league.status === 'registration' ? 'status-registration' : 
+                        league.status === 'upcoming' ? 'status-upcoming' : 'status-completed';
+    const statusText = league.status === 'live' ? '🔴 LIVE' : 
+                       league.status === 'registration' ? '⏳ REGISTRATION' : 
+                       league.status === 'upcoming' ? '📅 UPCOMING' : '✅ COMPLETED';
+    
+    const teamCount = league.teams?.length || 0;
+    const maxTeams = league.maxTeams || 16;
+    const isFull = teamCount >= maxTeams;
+    const spotsLeft = maxTeams - teamCount;
+    
+    card.innerHTML = `
+        <div class="league-header">
+            <span class="league-type ${statusClass}">${statusText}</span>
+            <div class="league-icon"><i class="fas fa-futbol"></i></div>
+            <h3>${league.name || 'Unnamed League'}</h3>
+            <div class="league-game">${league.gameType || 'eFootball'}</div>
+        </div>
+        <div class="league-body">
+            <div class="league-progress">
+                <div class="progress-bar" style="width: ${(teamCount/maxTeams)*100}%"></div>
+            </div>
+            <div class="league-progress-text">
+                <strong>${teamCount}/${maxTeams}</strong> teams 
+                ${isFull ? '✅ STARTS NOW!' : `(${spotsLeft} spot${spotsLeft > 1 ? 's' : ''} left)`}
+            </div>
+            <div class="league-stats">
+                <div class="stat"><div class="stat-value">${league.weeks}</div><div class="stat-label">Weeks</div></div>
+                <div class="stat"><div class="stat-value"><i class="fas fa-coins"></i> ${league.prizePool}</div><div class="stat-label">Prize</div></div>
+                <div class="stat"><div class="stat-value"><i class="fas fa-coins"></i> ${league.entryFee}</div><div class="stat-label">Entry</div></div>
+            </div>
+            <div class="league-owner"><i class="fas fa-user"></i> <strong>${league.ownerName || 'Unknown'}</strong></div>
+        </div>
+        <div class="league-footer">
+            ${league.status !== 'live' ? `
+                <button class="join-btn" onclick="joinLeague('${league.id}')" ${isFull ? 'disabled' : ''}>
+                    <i class="fas fa-sign-in-alt"></i> ${isFull ? '🎉 STARTING' : `Join (${league.entryFee})`}
+                </button>
+            ` : `
+                <button class="joined-btn" disabled>
+                    <i class="fas fa-play-circle"></i> IN PROGRESS
+                </button>
+            `}
+            <button class="details-btn" onclick="viewLeague('${league.id}')">
+                <i class="fas fa-info-circle"></i> Details
+            </button>
+        </div>
+    `;
+    return card;
+}
     function loadAllLeagues() {
         const container = document.getElementById('featuredLeagues');
         if (!container) return;
