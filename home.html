@@ -5,38 +5,1491 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>Veno-Arena - Tournaments & Leagues</title>
     
-    <!-- Boxicons -->
     <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
-    
-    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <!-- Stylesheets -->
-    <link rel="stylesheet" href="tournaments.css">
-    <link rel="stylesheet" href="nav.css">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;800&display=swap" rel="stylesheet">
     
     <meta name="description" content="Join football leagues, tournaments and competitions on Veno-Arena">
-    <meta name="keywords" content="football leagues, tournaments, eFootball, FC, DLS, competitions">
-    
-    <!-- PWA Meta Tags -->
-    <link rel="manifest" href="/manifest.json">
-    <meta name="theme-color" content="#10b981">
+    <meta name="theme-color" content="#FFD700">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="Veno-Arena">
-    <meta name="mobile-web-app-capable" content="yes">
     
-    <!-- Favicon -->
-    <link rel="icon" type="image/png" sizes="32x32" href="/icons/icon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="/icons/icon-16x16.png">
-    <link rel="apple-touch-icon" sizes="180x180" href="/icons/icon-180x180.png">
-    
-    <!-- Social Sharing -->
-    <meta property="og:title" content="Veno-Arena">
-    <meta property="og:description" content="Play tournaments, create teams, and earn Veno Coins!">
-    <meta property="og:image" content="https://rajola-ceo.github.io/icon-512x512.png">
-    <meta property="og:type" content="website">
-    <meta name="twitter:card" content="summary_large_image">
+    <style>
+        /* ================= GOLDEN YELLOW THEME ================= */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            --primary: #FFD700;
+            --primary-dark: #FFC700;
+            --primary-light: #FFED4E;
+            --bg-gradient-start: #1a1a2e;
+            --bg-gradient-end: #16213e;
+            --container-start: #0f3460;
+            --container-end: #162747;
+            --text-light: #FFE066;
+            --error: #ff5555;
+            --success: #00C851;
+            --info: #FFD700;
+            --border-color: #FFD700;
+            --input-bg: rgba(255, 215, 0, 0.08);
+            --dark-bg: #0f1419;
+            --card-bg: rgba(15, 52, 96, 0.6);
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(135deg, var(--bg-gradient-start), var(--bg-gradient-end));
+            color: #fff;
+            overflow-x: hidden;
+        }
+
+        .app {
+            display: flex;
+            min-height: 100vh;
+            position: relative;
+        }
+
+        /* ================= TOPBAR ================= */
+        .topbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 70px;
+            background: linear-gradient(135deg, var(--container-start), var(--container-end));
+            border-bottom: 2px solid var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            z-index: 1000;
+            box-shadow: 0 4px 15px rgba(255, 215, 0, 0.2);
+        }
+
+        .menu {
+            font-size: 28px;
+            color: var(--primary);
+            cursor: pointer;
+            display: none;
+            transition: all 0.3s ease;
+        }
+
+        .menu:hover {
+            transform: scale(1.1);
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+        }
+
+        .brand h1 {
+            color: var(--primary);
+            font-size: 24px;
+            font-weight: 700;
+            text-shadow: 0 2px 10px rgba(255, 215, 0, 0.3);
+            letter-spacing: 1px;
+        }
+
+        .icons {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        /* ================= VENO COINS ================= */
+        .veno-coins-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(255, 215, 0, 0.1);
+            padding: 8px 15px;
+            border-radius: 20px;
+            border: 1px solid var(--primary);
+        }
+
+        .veno-coins-display {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--primary);
+        }
+
+        .veno-coins-display i {
+            font-size: 18px;
+            animation: spin 3s linear infinite;
+        }
+
+        @keyframes spin {
+            0%, 100% { transform: rotate(0deg); }
+            50% { transform: rotate(180deg); }
+        }
+
+        .veno-coins-display span:first-of-type {
+            font-weight: 700;
+            font-size: 16px;
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+        }
+
+        .coin-label {
+            font-size: 11px;
+            opacity: 0.8;
+        }
+
+        .claim-veno-btn {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            border: none;
+            color: #000;
+            padding: 8px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 12px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(255, 215, 0, 0.3);
+        }
+
+        .claim-veno-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(255, 215, 0, 0.5);
+        }
+
+        .claim-veno-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        /* ================= NOTIFICATION BELL ================= */
+        .notification-container {
+            position: relative;
+        }
+
+        .notification-bell {
+            font-size: 24px;
+            color: var(--primary);
+            cursor: pointer;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .notification-bell:hover {
+            transform: scale(1.2);
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+        }
+
+        .notification-count {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: #ff5555;
+            color: #fff;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            font-weight: 700;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.15); }
+        }
+
+        .notification-popup {
+            position: absolute;
+            top: 70px;
+            right: 0;
+            background: linear-gradient(135deg, var(--container-start), var(--container-end));
+            border: 2px solid var(--primary);
+            border-radius: 15px;
+            width: 350px;
+            max-height: 400px;
+            overflow-y: auto;
+            display: none;
+            flex-direction: column;
+            z-index: 10001;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5);
+        }
+
+        .notification-popup.active {
+            display: flex;
+        }
+
+        .notification-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            border-bottom: 1px solid var(--primary);
+        }
+
+        .notification-header h3 {
+            color: var(--primary);
+            font-size: 16px;
+        }
+
+        .notification-header button {
+            background: transparent;
+            border: none;
+            color: var(--primary);
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .notification-header button:hover {
+            text-decoration: underline;
+        }
+
+        .notification-list {
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        .notification-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 12px 15px;
+            border-bottom: 1px solid rgba(255, 215, 0, 0.1);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .notification-item:hover {
+            background: rgba(255, 215, 0, 0.1);
+        }
+
+        .notification-item.unread {
+            background: rgba(255, 215, 0, 0.05);
+        }
+
+        .notification-icon {
+            font-size: 24px;
+            min-width: 30px;
+        }
+
+        .notification-content {
+            flex: 1;
+        }
+
+        .notification-title {
+            font-weight: 600;
+            color: var(--primary);
+            font-size: 13px;
+        }
+
+        .notification-message {
+            color: var(--text-light);
+            font-size: 12px;
+            margin: 5px 0;
+            line-height: 1.4;
+        }
+
+        .notification-time {
+            color: #888;
+            font-size: 10px;
+        }
+
+        .notification-badge {
+            width: 8px;
+            height: 8px;
+            background: var(--primary);
+            border-radius: 50%;
+            min-width: 8px;
+        }
+
+        /* ================= PROFILE DROPDOWN ================= */
+        .profile-dropdown {
+            position: relative;
+            cursor: pointer;
+        }
+
+        .profile-pic {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            border: 2px solid var(--primary);
+            object-fit: cover;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+        }
+
+        .profile-pic:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 15px rgba(255, 215, 0, 0.5);
+        }
+
+        .profile-popup {
+            position: absolute;
+            top: 70px;
+            right: 0;
+            background: linear-gradient(135deg, var(--container-start), var(--container-end));
+            border: 2px solid var(--primary);
+            border-radius: 15px;
+            width: 280px;
+            display: none;
+            flex-direction: column;
+            z-index: 10001;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5);
+            overflow: hidden;
+        }
+
+        .profile-popup.active {
+            display: flex;
+        }
+
+        .account-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px;
+            border-bottom: 1px solid var(--primary);
+        }
+
+        .account-info img {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: 2px solid var(--primary);
+        }
+
+        .account-info p:first-child {
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .account-info p:last-child {
+            color: var(--text-light);
+            font-size: 12px;
+        }
+
+        .profile-menu {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .profile-menu a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 15px;
+            color: var(--text-light);
+            text-decoration: none;
+            border-bottom: 1px solid rgba(255, 215, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .profile-menu a:hover {
+            background: rgba(255, 215, 0, 0.1);
+            color: var(--primary);
+            padding-left: 20px;
+        }
+
+        .profile-menu a i {
+            font-size: 16px;
+            width: 20px;
+        }
+
+        #logoutBtn {
+            background: linear-gradient(135deg, var(--error), #cc3333);
+            border: none;
+            color: #fff;
+            padding: 12px 15px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            margin: 10px;
+            border-radius: 10px;
+        }
+
+        #logoutBtn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(255, 85, 85, 0.3);
+        }
+
+        /* ================= SIDEBAR ================= */
+        .sidebar {
+            width: 260px;
+            background: linear-gradient(135deg, var(--container-start), var(--container-end));
+            border-right: 2px solid var(--primary);
+            padding-top: 70px;
+            height: 100vh;
+            position: fixed;
+            left: 0;
+            top: 0;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            z-index: 999;
+            box-shadow: 4px 0 15px rgba(255, 215, 0, 0.1);
+        }
+
+        .sidebar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            border-bottom: 1px solid var(--primary);
+        }
+
+        .sidebar-header h3 {
+            color: var(--primary);
+            font-size: 16px;
+        }
+
+        .close-sidebar {
+            display: none;
+            font-size: 24px;
+            color: var(--primary);
+            cursor: pointer;
+        }
+
+        .venaura-section {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 15px 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 10px;
+            background: rgba(255, 215, 0, 0.1);
+            border-radius: 12px;
+            border: 1px solid var(--primary);
+        }
+
+        .venaura-section:hover {
+            background: rgba(255, 215, 0, 0.15);
+            transform: translateX(5px);
+        }
+
+        .venaura-icon {
+            font-size: 24px;
+            color: var(--primary);
+        }
+
+        .venaura-info h3 {
+            color: var(--primary);
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .venaura-info p {
+            color: var(--text-light);
+            font-size: 11px;
+            opacity: 0.8;
+        }
+
+        .arrow-icon {
+            margin-left: auto;
+            color: var(--primary);
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            flex: 1;
+            padding: 10px;
+        }
+
+        .sidebar-menu li {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 15px;
+            cursor: pointer;
+            color: var(--text-light);
+            transition: all 0.3s ease;
+            border-radius: 10px;
+            margin: 5px 0;
+            border-left: 3px solid transparent;
+        }
+
+        .sidebar-menu li:hover {
+            background: rgba(255, 215, 0, 0.1);
+            color: var(--primary);
+            border-left-color: var(--primary);
+            padding-left: 20px;
+        }
+
+        .sidebar-menu li.active {
+            background: rgba(255, 215, 0, 0.15);
+            color: var(--primary);
+            border-left-color: var(--primary);
+            font-weight: 600;
+        }
+
+        .sidebar-menu li i {
+            font-size: 16px;
+            width: 20px;
+        }
+
+        .sidebar-footer {
+            padding: 15px;
+            border-top: 1px solid var(--primary);
+        }
+
+        .sidebar-theme {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 15px;
+            cursor: pointer;
+            color: var(--text-light);
+            transition: all 0.3s ease;
+            border-radius: 10px;
+        }
+
+        .sidebar-theme:hover {
+            background: rgba(255, 215, 0, 0.1);
+            color: var(--primary);
+        }
+
+        .theme-toggle {
+            display: flex;
+            align-items: center;
+            color: var(--primary);
+        }
+
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 998;
+            backdrop-filter: blur(5px);
+        }
+
+        .sidebar-overlay.active {
+            display: block;
+        }
+
+        /* ================= MAIN CONTENT ================= */
+        .tournaments-main {
+            margin-left: 260px;
+            margin-top: 70px;
+            padding: 30px;
+            flex: 1;
+        }
+
+        /* ================= HERO SECTION ================= */
+        .tournaments-hero {
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.15), rgba(255, 215, 0, 0.05));
+            border: 2px solid var(--primary);
+            border-radius: 20px;
+            padding: 50px 30px;
+            text-align: center;
+            margin-bottom: 40px;
+            box-shadow: 0 8px 25px rgba(255, 215, 0, 0.15);
+        }
+
+        .tournaments-hero h1 {
+            font-size: 42px;
+            color: var(--primary);
+            margin-bottom: 15px;
+            text-shadow: 0 2px 10px rgba(255, 215, 0, 0.3);
+        }
+
+        .tournaments-hero p {
+            color: var(--text-light);
+            font-size: 16px;
+            margin-bottom: 25px;
+            opacity: 0.9;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn-primary, .btn-secondary {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 14px 28px;
+            border: none;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 15px;
+            font-family: inherit;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: #000;
+            box-shadow: 0 6px 20px rgba(255, 215, 0, 0.4);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(255, 215, 0, 0.6);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--primary);
+            border: 2px solid var(--primary);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 215, 0, 0.1);
+            transform: translateY(-3px);
+        }
+
+        /* ================= QUICK ACTIONS ================= */
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .action-card {
+            background: linear-gradient(135deg, var(--card-bg), rgba(22, 39, 71, 0.4));
+            border: 2px solid var(--primary);
+            border-radius: 15px;
+            padding: 25px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(255, 215, 0, 0.1);
+        }
+
+        .action-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 30px rgba(255, 215, 0, 0.25);
+            border-color: var(--primary-light);
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.1), rgba(255, 237, 78, 0.05));
+        }
+
+        .action-card i {
+            font-size: 40px;
+            color: var(--primary);
+            margin-bottom: 15px;
+            display: block;
+            text-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
+        }
+
+        .action-card h3 {
+            color: var(--primary);
+            font-size: 16px;
+            margin-bottom: 8px;
+        }
+
+        .action-card p {
+            color: var(--text-light);
+            font-size: 13px;
+            opacity: 0.8;
+        }
+
+        /* ================= SECTIONS ================= */
+        .featured-section, .active-section, .teams-section, .users-section {
+            margin-bottom: 40px;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--primary);
+        }
+
+        .section-header h2 {
+            color: var(--primary);
+            font-size: 22px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-header a {
+            color: var(--text-light);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: all 0.3s ease;
+            font-size: 14px;
+        }
+
+        .section-header a:hover {
+            color: var(--primary);
+            gap: 10px;
+        }
+
+        /* ================= GRIDS ================= */
+        .leagues-grid, .teams-grid, .users-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .empty-state {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--text-light);
+            font-size: 16px;
+        }
+
+        .empty-state i {
+            font-size: 48px;
+            color: var(--primary);
+            margin-bottom: 15px;
+            opacity: 0.5;
+            display: block;
+        }
+
+        /* ================= LEAGUE CARD ================= */
+        .league-card {
+            background: linear-gradient(135deg, var(--card-bg), rgba(22, 39, 71, 0.3));
+            border: 2px solid var(--primary);
+            border-radius: 15px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(255, 215, 0, 0.1);
+        }
+
+        .league-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 30px rgba(255, 215, 0, 0.25);
+            border-color: var(--primary-light);
+        }
+
+        .league-header {
+            background: rgba(255, 215, 0, 0.1);
+            padding: 20px;
+            position: relative;
+            border-bottom: 1px solid var(--primary);
+        }
+
+        .league-type {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .status-live {
+            background: #ef4444;
+            color: #fff;
+            box-shadow: 0 0 10px rgba(239, 68, 68, 0.5);
+            animation: pulse 2s infinite;
+        }
+
+        .status-registration {
+            background: #3b82f6;
+            color: #fff;
+        }
+
+        .status-upcoming {
+            background: #f59e0b;
+            color: #fff;
+        }
+
+        .status-completed {
+            background: #10b981;
+            color: #fff;
+        }
+
+        .league-icon {
+            font-size: 32px;
+            color: var(--primary);
+            margin-bottom: 10px;
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+        }
+
+        .league-header h3 {
+            color: var(--primary);
+            font-size: 18px;
+            margin-bottom: 5px;
+        }
+
+        .league-game {
+            color: var(--text-light);
+            font-size: 12px;
+        }
+
+        .owner-badge, .joined-badge {
+            display: inline-block;
+            background: rgba(255, 215, 0, 0.2);
+            color: var(--primary);
+            padding: 5px 10px;
+            border-radius: 8px;
+            font-size: 11px;
+            margin-top: 8px;
+            margin-right: 5px;
+            font-weight: 600;
+        }
+
+        .league-body {
+            padding: 20px;
+        }
+
+        .league-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .stat {
+            background: rgba(255, 215, 0, 0.05);
+            padding: 10px;
+            border-radius: 10px;
+            border: 1px solid var(--primary);
+        }
+
+        .stat-value {
+            color: var(--primary);
+            font-weight: 700;
+            font-size: 18px;
+        }
+
+        .stat-value.full {
+            color: #ff5555;
+        }
+
+        .stat-label {
+            color: var(--text-light);
+            font-size: 11px;
+            margin-top: 5px;
+        }
+
+        .league-prize, .league-owner {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            color: var(--text-light);
+            font-size: 13px;
+            border-bottom: 1px solid rgba(255, 215, 0, 0.1);
+        }
+
+        .league-prize:last-child, .league-owner {
+            border-bottom: none;
+        }
+
+        .prize {
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .league-footer {
+            display: flex;
+            gap: 10px;
+            padding: 15px 20px;
+            border-top: 1px solid var(--primary);
+        }
+
+        .join-btn, .details-btn, .joined-btn {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 13px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+        }
+
+        .join-btn {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: #000;
+        }
+
+        .join-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(255, 215, 0, 0.4);
+        }
+
+        .join-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .details-btn {
+            background: transparent;
+            border: 1px solid var(--primary);
+            color: var(--primary);
+        }
+
+        .details-btn:hover {
+            background: rgba(255, 215, 0, 0.1);
+        }
+
+        .joined-btn {
+            background: transparent;
+            border: 1px solid #10b981;
+            color: #10b981;
+            cursor: default;
+        }
+
+        /* ================= TEAM CARD ================= */
+        .team-card {
+            background: linear-gradient(135deg, var(--card-bg), rgba(22, 39, 71, 0.3));
+            border: 2px solid var(--primary);
+            border-radius: 15px;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(255, 215, 0, 0.1);
+        }
+
+        .team-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(255, 215, 0, 0.2);
+        }
+
+        .team-logo {
+            width: 70px;
+            height: 70px;
+            background: rgba(255, 215, 0, 0.1);
+            border: 2px solid var(--primary);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            color: var(--primary);
+            flex-shrink: 0;
+        }
+
+        .team-info {
+            flex: 1;
+        }
+
+        .team-name {
+            color: var(--primary);
+            font-weight: 600;
+            font-size: 15px;
+            margin-bottom: 5px;
+        }
+
+        .team-stats {
+            display: flex;
+            gap: 15px;
+            color: var(--text-light);
+            font-size: 12px;
+        }
+
+        .team-stats span {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        /* ================= USER CARD ================= */
+        .user-card {
+            background: linear-gradient(135deg, var(--card-bg), rgba(22, 39, 71, 0.3));
+            border: 2px solid var(--primary);
+            border-radius: 15px;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(255, 215, 0, 0.1);
+        }
+
+        .user-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(255, 215, 0, 0.2);
+        }
+
+        .user-avatar {
+            position: relative;
+            width: 60px;
+            height: 60px;
+            flex-shrink: 0;
+        }
+
+        .user-avatar img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            border: 2px solid var(--primary);
+            object-fit: cover;
+        }
+
+        .online-dot {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 14px;
+            height: 14px;
+            background: #10b981;
+            border: 2px solid var(--container-start);
+            border-radius: 50%;
+            box-shadow: 0 0 5px #10b981;
+        }
+
+        .user-info {
+            flex: 1;
+        }
+
+        .user-name {
+            color: var(--primary);
+            font-weight: 600;
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+
+        .user-stats {
+            display: flex;
+            gap: 15px;
+            color: var(--text-light);
+            font-size: 12px;
+        }
+
+        .user-stats span {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .challenge-btn {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            border: none;
+            color: #000;
+            padding: 8px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 12px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .challenge-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 10px rgba(255, 215, 0, 0.3);
+        }
+
+        .you-badge {
+            background: transparent;
+            border: 1px solid var(--primary);
+            color: var(--primary);
+            padding: 5px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        /* ================= SPIN MODAL ================= */
+        .spin-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 20000;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(5px);
+        }
+
+        .spin-modal.active {
+            display: flex;
+        }
+
+        .spin-modal-content {
+            background: linear-gradient(135deg, var(--container-start), var(--container-end));
+            border: 2px solid var(--primary);
+            border-radius: 20px;
+            padding: 30px;
+            max-width: 450px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 12px 40px rgba(255, 215, 0, 0.25);
+        }
+
+        .spin-modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            color: var(--primary);
+            font-size: 22px;
+            font-weight: 700;
+            border-bottom: 2px solid var(--primary);
+            padding-bottom: 15px;
+        }
+
+        .spin-close {
+            cursor: pointer;
+            font-size: 28px;
+            transition: all 0.3s ease;
+        }
+
+        .spin-close:hover {
+            transform: rotate(90deg);
+            color: var(--error);
+        }
+
+        .spin-modal-body {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .spin-info {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .spin-balance, .spin-cost {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--text-light);
+            font-weight: 600;
+        }
+
+        .spin-balance strong, .spin-cost strong {
+            color: var(--primary);
+            font-size: 18px;
+        }
+
+        .wheel-wrapper {
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 20px 0;
+        }
+
+        #spinWheelCanvas {
+            width: 100%;
+            max-width: 350px;
+            height: auto;
+            filter: drop-shadow(0 0 15px rgba(255, 215, 0, 0.3));
+        }
+
+        .wheel-pointer {
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 30px;
+            color: var(--primary);
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateX(-50%) translateY(0); }
+            50% { transform: translateX(-50%) translateY(-10px); }
+        }
+
+        .spin-wheel-btn {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            border: none;
+            color: #000;
+            padding: 15px;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            box-shadow: 0 6px 20px rgba(255, 215, 0, 0.4);
+        }
+
+        .spin-wheel-btn:hover:not(:disabled) {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(255, 215, 0, 0.6);
+        }
+
+        .spin-wheel-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .prize-list-mini {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            text-align: center;
+            background: rgba(255, 215, 0, 0.05);
+            padding: 15px;
+            border-radius: 12px;
+            border: 1px solid var(--primary);
+        }
+
+        .prize-item {
+            background: rgba(255, 215, 0, 0.1);
+            padding: 10px;
+            border-radius: 8px;
+            color: var(--primary);
+            font-weight: 600;
+            font-size: 13px;
+        }
+
+        /* ================= TOAST ================= */
+        .toast-container {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            z-index: 19999;
+            pointer-events: none;
+        }
+
+        .toast {
+            background: #10b981;
+            color: #fff;
+            padding: 15px 20px;
+            border-radius: 10px;
+            font-weight: 600;
+            margin-top: 10px;
+            opacity: 0;
+            transform: translateX(400px);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+            pointer-events: auto;
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .toast.error {
+            background: #ff5555;
+        }
+
+        .toast.info {
+            background: var(--primary);
+            color: #000;
+        }
+
+        /* ================= FOOTER ================= */
+        .footer {
+            background: var(--container-start);
+            border-top: 2px solid var(--primary);
+            padding: 20px 30px;
+            text-align: center;
+            color: var(--text-light);
+            font-size: 13px;
+        }
+
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 20px;
+        }
+
+        .footer-links a {
+            color: var(--text-light);
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: var(--primary);
+        }
+
+        /* ================= SPIN RESULT ================= */
+        .spin-result-popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            border: 3px solid var(--primary-light);
+            border-radius: 20px;
+            padding: 40px;
+            text-align: center;
+            z-index: 20001;
+            box-shadow: 0 20px 50px rgba(255, 215, 0, 0.5);
+            transition: transform 0.3s ease;
+        }
+
+        .spin-result-popup.show {
+            transform: translate(-50%, -50%) scale(1);
+        }
+
+        .spin-result-icon {
+            font-size: 60px;
+            margin-bottom: 20px;
+            animation: bounce 0.8s ease infinite;
+        }
+
+        .spin-result-popup h3 {
+            color: #000;
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        .spin-result-amount {
+            font-size: 36px;
+            font-weight: 700;
+            color: #000;
+            margin-bottom: 20px;
+            text-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        .spin-result-close {
+            background: #000;
+            color: var(--primary);
+            border: none;
+            padding: 12px 30px;
+            border-radius: 10px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .spin-result-close:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        /* ================= RESPONSIVE ================= */
+        @media (max-width: 768px) {
+            .menu {
+                display: block;
+            }
+
+            .sidebar {
+                transform: translateX(-100%);
+                transition: all 0.3s ease;
+                width: 80%;
+                max-width: 280px;
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .close-sidebar {
+                display: block;
+            }
+
+            .tournaments-main {
+                margin-left: 0;
+                padding: 20px;
+            }
+
+            .leagues-grid, .teams-grid, .users-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .tournaments-hero {
+                padding: 30px 20px;
+            }
+
+            .tournaments-hero h1 {
+                font-size: 28px;
+            }
+
+            .quick-actions {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .hero-buttons {
+                flex-direction: column;
+            }
+
+            .btn-primary, .btn-secondary {
+                width: 100%;
+            }
+
+            .veno-coins-container {
+                flex-direction: column;
+                gap: 8px;
+            }
+
+            .icons {
+                gap: 10px;
+            }
+
+            .notification-popup {
+                width: 300px;
+            }
+
+            .toast-container {
+                bottom: 20px;
+                right: 20px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .topbar {
+                padding: 0 10px;
+            }
+
+            .brand h1 {
+                font-size: 18px;
+            }
+
+            .quick-actions {
+                grid-template-columns: 1fr;
+            }
+
+            .section-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+
+            .tournaments-hero h1 {
+                font-size: 22px;
+            }
+
+            .spin-modal-content {
+                padding: 20px;
+            }
+        }
+    </style>
 </head>
 <body>
 
@@ -58,10 +1511,10 @@
                 <div class="veno-coins-display">
                     <i class="fas fa-coins"></i>
                     <span id="venoCoinsAmount">0</span>
-                    <span class="coin-label">Veno Coins</span>
+                    <span class="coin-label">VC</span>
                 </div>
                 <button id="claimVenoCoinsBtn" class="claim-veno-btn">
-                    <i class="fas fa-gift"></i> Claim 10
+                    <i class="fas fa-gift"></i> Claim
                 </button>
             </div>
 
@@ -69,7 +1522,7 @@
             <div class="notification-container">
                 <div class="notification-bell" id="notificationBtn">
                     <i class="bx bx-bell"></i>
-                    <span class="notification-count" id="notificationCount">3</span>
+                    <span class="notification-count" id="notificationCount">0</span>
                 </div>
                 <div class="notification-popup" id="notificationPopup">
                     <div class="notification-header">
@@ -80,12 +1533,12 @@
                 </div>
             </div>
 
-            <!-- PROFILE DROPDOWN - UPDATED IDs -->
+            <!-- PROFILE DROPDOWN -->
             <div class="profile-dropdown" id="profileDropdown">
-                <img id="profileAvatarImg" class="profile-pic" src="https://ui-avatars.com/api/?name=User&background=10b981&color=fff&size=128" alt="Profile">
+                <img id="profileAvatarImg" class="profile-pic" src="https://ui-avatars.com/api/?name=User&background=FFD700&color=000&size=128" alt="Profile">
                 <div class="profile-popup" id="profilePopup">
                     <div class="account-info">
-                        <img id="popupProfileImg" src="https://ui-avatars.com/api/?name=User&background=10b981&color=fff&size=128" alt="Profile">
+                        <img id="popupProfileImg" src="https://ui-avatars.com/api/?name=User&background=FFD700&color=000&size=128" alt="Profile">
                         <div>
                             <p id="profileNameDisplay">User Name</p>
                             <p id="profileEmailDisplay">user@example.com</p>
@@ -93,7 +1546,6 @@
                     </div>
                     <div class="profile-menu">
                         <a href="#" id="profileView"><i class="bx bx-user"></i> View Profile</a>
-                        <a href="#" id="profileLibrary"><i class="bx bx-library"></i> My Teams</a>
                         <a href="#" id="profileSettings"><i class="bx bx-cog"></i> Settings</a>
                     </div>
                     <button id="logoutBtn"><i class="bx bx-log-out"></i> Logout</button>
@@ -111,32 +1563,29 @@
         
         <div class="venaura-section" id="venauraIcon">
             <div class="venaura-icon">
-                <i class="fas fa-trophy"></i>
+                <i class="fas fa-brain"></i>
             </div>
             <div class="venaura-info">
-                <h3>Venaura App</h3>
-                <p>Connect with Venaura</p>
+                <h3>Venaura AI</h3>
+                <p>Connect with AI</p>
             </div>
             <i class="bx bx-right-arrow-alt arrow-icon"></i>
         </div>
         
         <ul class="sidebar-menu">
-            <li id="menuHome"><i class="bx bx-home"></i> Home</li>
-            <li id="menuTournaments" class="active"><i class="bx bx-trophy"></i> Tournaments</li>
-            <li id="menuLeagues"><i class="bx bx-calendar-event"></i> My Leagues</li>
-            <li id="menuTeams"><i class="bx bx-group"></i> My Teams</li>
+            <li id="menuHome" class="active"><i class="bx bx-home"></i> Home</li>
+            <li id="menuLeagues"><i class="bx bx-calendar-event"></i> Leagues</li>
+            <li id="menuTeams"><i class="bx bx-group"></i> Teams</li>
             <li id="menuCreateLeague"><i class="bx bx-plus-circle"></i> Create League</li>
             <li id="menuCreateTeam"><i class="bx bx-plus-circle"></i> Create Team</li>
             <li id="menuLeaderboard"><i class="bx bx-bar-chart-alt-2"></i> Leaderboard</li>
             <li id="menuSettings"><i class="bx bx-cog"></i> Settings</li>
-            <li id="menuProfile"><i class="bx bx-user-circle"></i> Profile Settings</li>
         </ul>
         
         <div class="sidebar-footer">
             <div class="sidebar-theme" id="menuTheme">
-                <span><i class="bx bx-palette"></i> Theme: <span id="themeLabel">Dark</span></span>
+                <span><i class="bx bx-palette"></i> Theme</span>
                 <div class="theme-toggle">
-                    <i class="bx bx-sun" style="display: none;"></i>
                     <i class="bx bx-moon"></i>
                 </div>
             </div>
@@ -169,21 +1618,21 @@
             <div class="action-card" id="createTeamCard">
                 <i class="fas fa-users"></i>
                 <h3>Create Team</h3>
-                <p>Build your dream team with logo & squad</p>
+                <p>Build your dream team</p>
             </div>
             <div class="action-card" id="joinLeagueCard">
                 <i class="fas fa-door-open"></i>
                 <h3>Join League</h3>
-                <p>Browse and join existing leagues</p>
+                <p>Browse and join leagues</p>
             </div>
             <div class="action-card" id="myLeaguesCard">
-                <i class="fas fa-calendar-check"></i>
+                <i class="fas fa-trophy"></i>
                 <h3>My Leagues</h3>
-                <p>View your active leagues</p>
+                <p>View active leagues</p>
             </div>
             <div class="action-card" id="leaderboardCard">
-                <i class="fas fa-trophy"></i>
-                <h3>Leaderboard</h3>
+                <i class="fas fa-crown"></i>
+                <h3>Top Players</h3>
                 <p>Check global rankings</p>
             </div>
         </div>
@@ -195,17 +1644,17 @@
                 <a href="#" id="viewAllLeagues">View All <i class="bx bx-chevron-right"></i></a>
             </div>
             <div class="leagues-grid" id="featuredLeagues">
-                <div class="empty-state">Loading leagues...</div>
+                <div class="empty-state"><i class="fas fa-trophy"></i><p>Loading leagues...</p></div>
             </div>
         </section>
 
         <!-- Active Leagues -->
         <section class="active-section">
             <div class="section-header">
-                <h2><i class="fas fa-fire"></i> Active Leagues</h2>
+                <h2><i class="fas fa-fire"></i> Active Now</h2>
             </div>
             <div class="leagues-grid" id="activeLeagues">
-                <div class="empty-state">Loading active leagues...</div>
+                <div class="empty-state"><i class="fas fa-trophy"></i><p>Loading active leagues...</p></div>
             </div>
         </section>
 
@@ -216,18 +1665,18 @@
                 <a href="#" id="viewAllTeams">View All <i class="bx bx-chevron-right"></i></a>
             </div>
             <div class="teams-grid" id="myTeams">
-                <div class="empty-state">Loading your teams...</div>
+                <div class="empty-state"><i class="fas fa-shield-alt"></i><p>Loading your teams...</p></div>
             </div>
         </section>
         
-        <!-- All Users Section -->
+        <!-- All Players Section -->
         <section class="users-section">
             <div class="section-header">
-                <h2><i class="fas fa-users"></i> All Players</h2>
+                <h2><i class="fas fa-users"></i> Community Players</h2>
                 <a href="#" id="viewAllUsers">View All <i class="bx bx-chevron-right"></i></a>
             </div>
             <div class="users-grid" id="allUsersList">
-                <div class="empty-state">Loading players...</div>
+                <div class="empty-state"><i class="fas fa-user-friends"></i><p>Loading players...</p></div>
             </div>
         </section>
     </main>
@@ -235,11 +1684,11 @@
     <!-- FOOTER -->
     <footer class="footer">
         <div class="footer-content">
-            <p>Venocyber2026 © 2026 | Veno-Arena</p>
+            <p>© 2026 Veno-Arena | Venocyber</p>
             <div class="footer-links">
                 <a href="#">Terms</a>
                 <a href="#">Privacy</a>
-                <a href="#">Help</a>
+                <a href="#">Support</a>
             </div>
         </div>
     </footer>
@@ -255,11 +1704,10 @@
         <div class="spin-modal-body">
             <div class="spin-info">
                 <div class="spin-balance">
-                    <i class="fas fa-coins"></i> Your Balance: 
-                    <strong id="spinBalance">0</strong> Veno Coins
+                    <i class="fas fa-coins"></i> Your Balance: <strong id="spinBalance">0</strong> VC
                 </div>
                 <div class="spin-cost">
-                    <i class="fas fa-ticket-alt"></i> Cost per spin: <strong>200</strong> Veno Coins
+                    <i class="fas fa-ticket-alt"></i> Cost per spin: <strong>200</strong> VC
                 </div>
             </div>
             
@@ -273,8 +1721,8 @@
             </button>
             
             <div class="prize-list-mini">
-                <div class="prize-item">🏆 5000</div>
-                <div class="prize-item">⭐ 1000</div>
+                <div class="prize-item">🏆 5K</div>
+                <div class="prize-item">⭐ 1K</div>
                 <div class="prize-item">🎁 500</div>
                 <div class="prize-item">🎫 200</div>
                 <div class="prize-item">🎖️ 100</div>
@@ -288,11 +1736,8 @@
 <div id="toastContainer" class="toast-container"></div>
 
 <!-- Scripts -->
-<script src="nav.js"></script>
-<script type="module" src="tournaments.js"></script>
-
 <script>
-    // Hamburger Menu
+    // ================= SIDEBAR TOGGLE =================
     document.addEventListener('DOMContentLoaded', function() {
         const menuBtn = document.getElementById('menuBtn');
         const sidebar = document.getElementById('sidebar');
@@ -319,14 +1764,12 @@
                 if (e.key === 'Escape' && sidebar.classList.contains('open')) closeFunc();
             });
         }
-        
-        // Profile Settings Link
-        const menuProfile = document.getElementById('menuProfile');
-        if (menuProfile) menuProfile.addEventListener('click', () => window.location.href = 'profile-settings.html');
     });
-    
-    // Toast function
-    window.showToast = function(message, type = 'success') {
+
+    // ================= HELPER FUNCTIONS =================
+    const API_BASE = 'https://arena-backend-cv5d.onrender.com/api';
+
+    function showToast(message, type = 'success') {
         const container = document.getElementById('toastContainer');
         if (!container) return;
         const toast = document.createElement('div');
@@ -338,16 +1781,565 @@
             toast.classList.remove('show');
             setTimeout(() => toast.remove(), 300);
         }, 3000);
-    };
-    
-    // PWA Service Worker
-    if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-            navigator.serviceWorker.register('/sw.js')
-                .then(reg => console.log('✅ Service Worker registered'))
-                .catch(err => console.error('❌ Service Worker failed:', err));
+    }
+
+    // ================= USER COINS MANAGEMENT =================
+    function getUserCoins(userId = null) {
+        const user = JSON.parse(localStorage.getItem('crunkUser'));
+        const targetId = userId || user?.userId || user?.uid;
+        if (!targetId) return 0;
+        
+        let allUserCoins = JSON.parse(localStorage.getItem('userCoins') || '{}');
+        if (allUserCoins[targetId] === undefined) {
+            allUserCoins[targetId] = 100;
+            localStorage.setItem('userCoins', JSON.stringify(allUserCoins));
+        }
+        return allUserCoins[targetId];
+    }
+
+    function setUserCoins(amount, userId = null) {
+        const user = JSON.parse(localStorage.getItem('crunkUser'));
+        const targetId = userId || user?.userId || user?.uid;
+        if (!targetId) return;
+        
+        let allUserCoins = JSON.parse(localStorage.getItem('userCoins') || '{}');
+        allUserCoins[targetId] = amount;
+        localStorage.setItem('userCoins', JSON.stringify(allUserCoins));
+        updateVenoCoinsDisplay();
+    }
+
+    function addUserCoins(amount, userId = null) {
+        const current = getUserCoins(userId);
+        setUserCoins(current + amount, userId);
+    }
+
+    function deductUserCoins(amount, userId = null) {
+        const current = getUserCoins(userId);
+        if (current >= amount) {
+            setUserCoins(current - amount, userId);
+            return true;
+        }
+        return false;
+    }
+
+    function updateVenoCoinsDisplay() {
+        const coinsSpan = document.getElementById('venoCoinsAmount');
+        if (coinsSpan) {
+            coinsSpan.textContent = getUserCoins();
+        }
+    }
+
+    // ================= LOAD PROFILE =================
+    function loadCustomProfile() {
+        const user = JSON.parse(localStorage.getItem('crunkUser'));
+        
+        if (!user) {
+            window.location.href = 'index.html';
+            return;
+        }
+        
+        const customName = user.customDisplayName || user.displayName || user.username || 'Player';
+        const customAvatar = user.customAvatar || user.photoURL || `https://ui-avatars.com/api/?name=${encodeURIComponent(customName)}&background=FFD700&color=000&size=128`;
+        
+        const profileAvatar = document.getElementById('profileAvatarImg');
+        const popupAvatar = document.getElementById('popupProfileImg');
+        const profileNameSpan = document.getElementById('profileNameDisplay');
+        const profileEmailSpan = document.getElementById('profileEmailDisplay');
+        
+        if (profileAvatar) profileAvatar.src = customAvatar;
+        if (popupAvatar) popupAvatar.src = customAvatar;
+        if (profileNameSpan) profileNameSpan.innerText = customName;
+        if (profileEmailSpan) profileEmailSpan.innerText = user.email || '';
+    }
+
+    // ================= NOTIFICATIONS =================
+    function addNotification(notification) {
+        let notifications = JSON.parse(localStorage.getItem('notifications') || '[]');
+        notifications.unshift({
+            id: Date.now(),
+            ...notification,
+            read: false,
+            time: new Date().toLocaleString()
+        });
+        localStorage.setItem('notifications', JSON.stringify(notifications.slice(0, 50)));
+        updateNotificationBell();
+    }
+
+    function updateNotificationBell() {
+        const notifications = JSON.parse(localStorage.getItem('notifications') || '[]');
+        const unreadCount = notifications.filter(n => !n.read).length;
+        const countSpan = document.getElementById('notificationCount');
+        if (countSpan) {
+            countSpan.textContent = unreadCount;
+            countSpan.style.display = unreadCount > 0 ? 'flex' : 'none';
+        }
+    }
+
+    function renderNotifications() {
+        const list = document.getElementById('notificationList');
+        if (!list) return;
+        
+        const notifications = JSON.parse(localStorage.getItem('notifications') || '[]');
+        list.innerHTML = '';
+        
+        if (notifications.length === 0) {
+            list.innerHTML = '<div class="empty-state">No notifications</div>';
+            return;
+        }
+        
+        notifications.slice(0, 10).forEach(notif => {
+            const item = document.createElement('div');
+            item.className = `notification-item ${notif.read ? 'read' : 'unread'}`;
+            item.innerHTML = `
+                <div class="notification-icon">${notif.icon || '🔔'}</div>
+                <div class="notification-content">
+                    <div class="notification-title">${notif.title}</div>
+                    <div class="notification-message">${notif.message}</div>
+                    <div class="notification-time">${notif.time}</div>
+                </div>
+            `;
+            list.appendChild(item);
         });
     }
+
+    // ================= LEAGUES =================
+    function createLeagueCard(league) {
+        const card = document.createElement('div');
+        card.className = 'league-card';
+        
+        const statusClass = league.status === 'live' ? 'status-live' : 
+                            league.status === 'registration' ? 'status-registration' : 
+                            league.status === 'upcoming' ? 'status-upcoming' : 'status-completed';
+        const statusText = league.status === 'live' ? 'LIVE' : 
+                           league.status === 'registration' ? 'REGISTRATION' : 
+                           league.status === 'upcoming' ? 'UPCOMING' : 'COMPLETED';
+        
+        const teamCount = league.teams?.length || 0;
+        const maxTeams = league.maxTeams || 16;
+        const isFull = teamCount >= maxTeams;
+        
+        card.innerHTML = `
+            <div class="league-header">
+                <span class="league-type ${statusClass}">${statusText}</span>
+                <div class="league-icon"><i class="fas fa-futbol"></i></div>
+                <h3>${league.name || 'Unnamed League'}</h3>
+                <div class="league-game">${league.gameType || 'eFootball'}</div>
+            </div>
+            <div class="league-body">
+                <div class="league-stats">
+                    <div class="stat"><div class="stat-value ${isFull ? 'full' : ''}">${teamCount}/${maxTeams}</div><div class="stat-label">Teams ${isFull ? '🔴' : ''}</div></div>
+                    <div class="stat"><div class="stat-value">${league.matches?.length || 0}</div><div class="stat-label">Matches</div></div>
+                    <div class="stat"><div class="stat-value">${league.weeks || 0}</div><div class="stat-label">Weeks</div></div>
+                </div>
+                <div class="league-prize"><span><i class="fas fa-trophy"></i> Prize</span><span class="prize"><i class="fas fa-coins"></i> ${league.prizePool || 0} VC</span></div>
+                <div class="league-prize"><span><i class="fas fa-door-open"></i> Entry</span><span><i class="fas fa-coins"></i> ${league.entryFee || 0} VC</span></div>
+                <div class="league-owner"><i class="fas fa-user"></i> By: <strong>${league.ownerName || 'Unknown'}</strong></div>
+            </div>
+            <div class="league-footer">
+                <button class="join-btn" onclick="joinLeague('${league.id}')" ${isFull ? 'disabled' : ''}>
+                    <i class="fas fa-sign-in-alt"></i> ${isFull ? 'Full' : 'Join'} (${league.entryFee} VC)
+                </button>
+                <button class="details-btn" onclick="viewLeague('${league.id}')">
+                    <i class="fas fa-info-circle"></i> Details
+                </button>
+            </div>
+        `;
+        return card;
+    }
+
+    function loadAllLeagues() {
+        const container = document.getElementById('featuredLeagues');
+        if (!container) return;
+        
+        const leagues = JSON.parse(localStorage.getItem('leagues') || '[]');
+        container.innerHTML = '';
+        
+        if (leagues.length === 0) {
+            container.innerHTML = `<div class="empty-state"><i class="fas fa-trophy"></i><p>No leagues yet. Create one!</p></div>`;
+            return;
+        }
+        
+        leagues.forEach(league => container.appendChild(createLeagueCard(league)));
+    }
+
+    function loadActiveLeagues() {
+        const container = document.getElementById('activeLeagues');
+        if (!container) return;
+        
+        const leagues = JSON.parse(localStorage.getItem('leagues') || '[]');
+        const activeLeagues = leagues.filter(l => l.status === 'live' || l.status === 'registration');
+        container.innerHTML = '';
+        
+        if (activeLeagues.length === 0) {
+            container.innerHTML = '<div class="empty-state"><i class="fas fa-trophy"></i><p>No active leagues</p></div>';
+            return;
+        }
+        
+        activeLeagues.forEach(league => container.appendChild(createLeagueCard(league)));
+    }
+
+    // ================= TEAMS =================
+    function createTeamCardFunction(team) {
+        const card = document.createElement('div');
+        card.className = 'team-card';
+        card.innerHTML = `
+            <div class="team-logo">${team.logo ? `<img src="${team.logo}">` : '<i class="fas fa-shield-alt"></i>'}</div>
+            <div class="team-info">
+                <div class="team-name">${team.name}</div>
+                <div class="team-stats">
+                    <span><i class="fas fa-trophy"></i> ${team.wins || 0} Wins</span>
+                    <span><i class="fas fa-futbol"></i> ${team.matches || 0} Matches</span>
+                </div>
+            </div>
+            <i class="fas fa-chevron-right"></i>
+        `;
+        return card;
+    }
+
+    function loadMyTeams() {
+        const container = document.getElementById('myTeams');
+        if (!container) return;
+        
+        const teams = JSON.parse(localStorage.getItem('userTeams') || '[]');
+        container.innerHTML = '';
+        
+        if (teams.length === 0) {
+            container.innerHTML = `<div class="empty-state"><i class="fas fa-users"></i><p>No teams yet. Create one!</p></div>`;
+            return;
+        }
+        
+        teams.forEach(team => container.appendChild(createTeamCardFunction(team)));
+    }
+
+    // ================= USERS =================
+    function loadAllUsers() {
+        const container = document.getElementById('allUsersList');
+        if (!container) return;
+        
+        let allUsers = JSON.parse(localStorage.getItem('users') || '[]');
+        const currentUser = JSON.parse(localStorage.getItem('crunkUser'));
+        
+        if (currentUser && !allUsers.some(u => u.uid === currentUser.userId)) {
+            const customName = currentUser.customDisplayName || currentUser.displayName || currentUser.username;
+            allUsers.push({
+                uid: currentUser.userId,
+                username: customName,
+                displayName: customName,
+                email: currentUser.email,
+                photoURL: currentUser.customAvatar || currentUser.photoURL,
+                coins: getUserCoins()
+            });
+            localStorage.setItem('users', JSON.stringify(allUsers));
+        }
+        
+        container.innerHTML = '';
+        
+        if (allUsers.length === 0) {
+            container.innerHTML = '<div class="empty-state"><i class="fas fa-user-friends"></i><p>No players found</p></div>';
+            return;
+        }
+        
+        allUsers.forEach(user => {
+            const displayName = user.customDisplayName || user.displayName || user.username || 'Player';
+            const avatarUrl = user.photoURL || `https://ui-avatars.com/api/?name=${encodeURIComponent(displayName)}&background=FFD700&color=000`;
+            
+            const userCard = document.createElement('div');
+            userCard.className = 'user-card';
+            userCard.innerHTML = `
+                <div class="user-avatar">
+                    <img src="${avatarUrl}" alt="${displayName}">
+                    <span class="online-dot"></span>
+                </div>
+                <div class="user-info">
+                    <div class="user-name">${displayName}</div>
+                    <div class="user-stats">
+                        <span><i class="fas fa-coins"></i> ${getUserCoins(user.uid)} VC</span>
+                        <span><i class="fas fa-trophy"></i> 0</span>
+                    </div>
+                </div>
+                <button class="challenge-btn" onclick="sendChallenge('${user.uid}')">
+                    <i class="fas fa-handshake"></i> Challenge
+                </button>
+            `;
+            container.appendChild(userCard);
+        });
+    }
+
+    // ================= SPIN WHEEL =================
+    let spinCanvas = null, spinCtx = null, spinRotation = 0, isSpinning = false;
+    const spinPrizes = [
+        { name: "50 VC", value: 50, color: "#3b82f6" },
+        { name: "100 VC", value: 100, color: "#10b981" },
+        { name: "200 VC", value: 200, color: "#f59e0b" },
+        { name: "500 VC", value: 500, color: "#8b5cf6" },
+        { name: "1000 VC", value: 1000, color: "#ec489a" },
+        { name: "5000 VC", value: 5000, color: "#ef4444" }
+    ];
+
+    function drawSpinWheel() {
+        if (!spinCanvas) return;
+        const size = 350;
+        spinCanvas.width = size;
+        spinCanvas.height = size;
+        spinCtx = spinCanvas.getContext('2d');
+        const centerX = size/2, centerY = size/2, radius = size/2;
+        const anglePerSlice = (Math.PI * 2) / spinPrizes.length;
+        
+        for (let i = 0; i < spinPrizes.length; i++) {
+            const startAngle = i * anglePerSlice + spinRotation;
+            const endAngle = (i + 1) * anglePerSlice + spinRotation;
+            spinCtx.beginPath();
+            spinCtx.moveTo(centerX, centerY);
+            spinCtx.arc(centerX, centerY, radius, startAngle, endAngle);
+            spinCtx.fillStyle = spinPrizes[i].color;
+            spinCtx.fill();
+            spinCtx.strokeStyle = "white";
+            spinCtx.lineWidth = 2;
+            spinCtx.stroke();
+        }
+        
+        spinCtx.beginPath();
+        spinCtx.arc(centerX, centerY, 30, 0, Math.PI*2);
+        spinCtx.fillStyle = "#FFD700";
+        spinCtx.fill();
+        spinCtx.fillStyle = "#000";
+        spinCtx.font = "bold 12px Arial";
+        spinCtx.textAlign = "center";
+        spinCtx.textBaseline = "middle";
+        spinCtx.fillText("SPIN", centerX, centerY);
+    }
+
+    function doSpin() {
+        if (isSpinning) return;
+        const coins = getUserCoins();
+        if (coins < 200) {
+            showToast(`Need 200 VC! You have ${coins}`, "error");
+            return;
+        }
+        
+        deductUserCoins(200);
+        showToast("🎰 Spinning...", "info");
+        isSpinning = true;
+        const spinBtn = document.getElementById('spinWheelBtn');
+        if (spinBtn) spinBtn.disabled = true;
+        
+        const spins = 8 + Math.random() * 8;
+        const targetRotation = spinRotation + (Math.PI * 2 * spins);
+        const startTime = performance.now();
+        const duration = 2500;
+        
+        function animate(now) {
+            const elapsed = now - startTime;
+            const progress = Math.min(elapsed / duration, 1);
+            const easeOut = 1 - Math.pow(1 - progress, 3);
+            spinRotation = targetRotation * easeOut;
+            drawSpinWheel();
+            
+            if (progress < 1) {
+                requestAnimationFrame(animate);
+            } else {
+                spinRotation = targetRotation % (Math.PI * 2);
+                drawSpinWheel();
+                
+                const anglePerSlice = (Math.PI*2)/spinPrizes.length;
+                const pointerAngle = (Math.PI*2 - (spinRotation % (Math.PI*2)) + Math.PI/2) % (Math.PI*2);
+                const index = Math.floor(pointerAngle / anglePerSlice) % spinPrizes.length;
+                const prize = spinPrizes[index];
+                
+                addUserCoins(prize.value);
+                showToast(`🎉 You won ${prize.value} VC!`, "success");
+                
+                isSpinning = false;
+                if (spinBtn) spinBtn.disabled = false;
+            }
+        }
+        requestAnimationFrame(animate);
+    }
+
+    // ================= EVENT LISTENERS =================
+    document.addEventListener('DOMContentLoaded', () => {
+        // Load data
+        loadCustomProfile();
+        updateVenoCoinsDisplay();
+        loadAllLeagues();
+        loadActiveLeagues();
+        loadMyTeams();
+        loadAllUsers();
+        renderNotifications();
+        updateNotificationBell();
+
+        // Profile dropdown
+        const profileDropdown = document.getElementById('profileDropdown');
+        const profilePopup = document.getElementById('profilePopup');
+        if (profileDropdown) {
+            profileDropdown.addEventListener('click', (e) => {
+                e.stopPropagation();
+                profilePopup.classList.toggle('active');
+            });
+            document.addEventListener('click', (e) => {
+                if (!profileDropdown.contains(e.target)) {
+                    profilePopup.classList.remove('active');
+                }
+            });
+        }
+
+        // Notification bell
+        const notificationBtn = document.getElementById('notificationBtn');
+        const notificationPopup = document.getElementById('notificationPopup');
+        if (notificationBtn) {
+            notificationBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                notificationPopup.classList.toggle('active');
+                renderNotifications();
+            });
+        }
+
+        // Logout
+        const logoutBtn = document.getElementById('logoutBtn');
+        if (logoutBtn) {
+            logoutBtn.addEventListener('click', () => {
+                localStorage.removeItem('crunkUser');
+                window.location.href = 'index.html';
+            });
+        }
+
+        // Spin wheel
+        const spinModal = document.getElementById('spinModal');
+        const spinWheelBtn = document.getElementById('spinWheelBtn');
+        const spinClose = spinModal?.querySelector('.spin-close');
+
+        if (spinModal) {
+            if (spinClose) {
+                spinClose.addEventListener('click', () => spinModal.classList.remove('active'));
+            }
+            spinModal.addEventListener('click', (e) => {
+                if (e.target === spinModal) spinModal.classList.remove('active');
+            });
+        }
+
+        if (spinWheelBtn) {
+            spinWheelBtn.addEventListener('click', doSpin);
+        }
+
+        // Add spin action card
+        const quickActions = document.querySelector('.quick-actions');
+        if (quickActions && !document.querySelector('.spin-action-card')) {
+            const spinCard = document.createElement('div');
+            spinCard.className = 'action-card spin-action-card';
+            spinCard.innerHTML = `<i class="fas fa-chart-simple"></i><h3>Spin & Win</h3><p>Win up to 5000 VC!</p>`;
+            spinCard.onclick = () => {
+                spinModal.classList.add('active');
+                const balanceSpan = document.getElementById('spinBalance');
+                if (balanceSpan) balanceSpan.innerText = getUserCoins();
+                setTimeout(() => {
+                    spinCanvas = document.getElementById('spinWheelCanvas');
+                    if (spinCanvas) drawSpinWheel();
+                }, 100);
+            };
+            quickActions.appendChild(spinCard);
+        }
+
+        // Navigation
+        document.getElementById('menuHome').addEventListener('click', () => window.location.href = 'home.html');
+        document.getElementById('menuLeagues').addEventListener('click', () => showToast('Navigating to Leagues...', 'info'));
+        document.getElementById('menuTeams').addEventListener('click', () => showToast('Navigating to Teams...', 'info'));
+        document.getElementById('menuCreateLeague').addEventListener('click', () => window.location.href = 'league-create.html');
+        document.getElementById('menuCreateTeam').addEventListener('click', () => window.location.href = 'team-create.html');
+        document.getElementById('menuLeaderboard').addEventListener('click', () => showToast('Navigating to Leaderboard...', 'info'));
+        document.getElementById('menuSettings').addEventListener('click', () => window.location.href = 'settings.html');
+
+        // Action cards
+        document.getElementById('createTeamCard').addEventListener('click', () => window.location.href = 'team-create.html');
+        document.getElementById('joinLeagueCard').addEventListener('click', () => document.querySelector('.featured-section').scrollIntoView({ behavior: 'smooth' }));
+        document.getElementById('myLeaguesCard').addEventListener('click', () => showToast('Navigating to My Leagues...', 'info'));
+        document.getElementById('leaderboardCard').addEventListener('click', () => showToast('Navigating to Leaderboard...', 'info'));
+
+        // Buttons
+        document.getElementById('createLeagueBtn').addEventListener('click', () => window.location.href = 'league-create.html');
+        document.getElementById('joinLeagueBtn').addEventListener('click', () => document.querySelector('.featured-section').scrollIntoView({ behavior: 'smooth' }));
+
+        // Veno coins claim
+        const claimBtn = document.getElementById('claimVenoCoinsBtn');
+        if (claimBtn) {
+            const LAST_CLAIM_KEY = 'lastVenoClaim';
+            function updateClaimButton() {
+                const last = localStorage.getItem(LAST_CLAIM_KEY);
+                if (!last || (Date.now() - parseInt(last)) >= 24 * 60 * 60 * 1000) {
+                    claimBtn.disabled = false;
+                    claimBtn.innerHTML = '<i class="fas fa-gift"></i> Claim 10';
+                    claimBtn.style.opacity = '1';
+                } else {
+                    claimBtn.disabled = true;
+                    const timeLeft = 24 * 60 * 60 * 1000 - (Date.now() - parseInt(last));
+                    const hoursLeft = Math.floor(timeLeft / (60 * 60 * 1000));
+                    const minutesLeft = Math.floor((timeLeft % (60 * 60 * 1000)) / (60 * 1000));
+                    claimBtn.innerHTML = `<i class="fas fa-clock"></i> ${hoursLeft}h ${minutesLeft}m`;
+                    claimBtn.style.opacity = '0.6';
+                }
+            }
+            claimBtn.addEventListener('click', () => {
+                const last = localStorage.getItem(LAST_CLAIM_KEY);
+                if (!last || (Date.now() - parseInt(last)) >= 24 * 60 * 60 * 1000) {
+                    addUserCoins(10);
+                    localStorage.setItem(LAST_CLAIM_KEY, Date.now().toString());
+                    updateClaimButton();
+                    showToast('🎉 You claimed 10 VC!', 'success');
+                }
+            });
+            updateClaimButton();
+            setInterval(updateClaimButton, 60000);
+        }
+
+        // Venaura icon
+        document.getElementById('venauraIcon').addEventListener('click', () => {
+            window.open('https://venauraai.netlify.app/', '_blank');
+        });
+
+        // Theme toggle
+        document.getElementById('menuTheme').addEventListener('click', () => {
+            document.body.classList.toggle('light-theme');
+            localStorage.setItem('theme', document.body.classList.contains('light-theme') ? 'light' : 'dark');
+        });
+    });
+
+    // ================= GLOBAL FUNCTIONS =================
+    window.joinLeague = function(leagueId) {
+        const user = JSON.parse(localStorage.getItem('crunkUser'));
+        if (!user) {
+            showToast('Please login first', 'error');
+            window.location.href = 'index.html';
+            return;
+        }
+        
+        const userCoins = getUserCoins();
+        const leagues = JSON.parse(localStorage.getItem('leagues') || '[]');
+        const league = leagues.find(l => l.id === leagueId);
+        
+        if (!league) {
+            showToast('League not found', 'error');
+            return;
+        }
+        
+        if (league.entryFee > userCoins) {
+            showToast(`Need ${league.entryFee} VC! You have ${userCoins}`, 'error');
+            return;
+        }
+        
+        if (confirm(`Join ${league.name}?\n\nEntry Fee: ${league.entryFee} VC`)) {
+            deductUserCoins(league.entryFee);
+            showToast(`Successfully joined ${league.name}!`, 'success');
+            loadAllLeagues();
+            loadActiveLeagues();
+        }
+    };
+
+    window.viewLeague = function(leagueId) {
+        showToast('Opening league details...', 'info');
+    };
+
+    window.sendChallenge = function(userId) {
+        showToast('Challenge sent!', 'success');
+    };
 </script>
 
 </body>
